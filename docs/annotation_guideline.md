@@ -81,7 +81,7 @@ Several places in one sentence give one event each. "Between A and B" is precisi
 
 1. Read the whole unit once before labelling.
 2. Label events in text order. Draw the shortest span that supports all fields.
-3. Log the minutes spent per unit in the Label Studio comment box.
+3. Enter the minutes spent on the unit in the **Minutes** field at the bottom of the task, and set **Annotation pass** to 1 (2 only for the later consistency re-label).
 4. Never label a test unit after seeing any model output for that report.
 5. When unsure, label your best reading and add the sentence to section 9.
 
