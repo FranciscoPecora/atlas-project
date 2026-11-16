@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+data/raw/
+data/text/
+data/*.parquet
+*.sqlite
+.label-studio/
+.claude/settings.local.json
+data/labelstudio/
+.pytest_cache/
+.ruff_cache/
