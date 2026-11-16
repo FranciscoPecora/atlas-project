@@ -4,7 +4,7 @@ Checked 16 November 2026.
 
 ## ISW (understandingwar.org)
 
-**Status: written permission required. Request not yet sent.**
+**Status: written permission required. Request sent 16 November 2026 to press@understandingwar.org (text in [isw_permission_email.md](isw_permission_email.md)). Collection stays disabled until a reply grants permission.**
 
 Fair Use and Attribution Policy (https://understandingwar.org/fair-use-and-attribution-policy/, last revised 8 January 2026), section 1:
 
