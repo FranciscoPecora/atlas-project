@@ -1,0 +1,14 @@
+# Decisions
+
+One line per design choice: decision, reason, alternative rejected.
+
+- 2026-11-16 · ISW collection waits for written permission (collector refuses while `collect.isw.enabled` is false) · ISW's fair-use policy requires prior written permission to incorporate its material into datasets or maps · rejected: collect now and ask later.
+- 2026-11-16 · No automated access through Cloudflare blocks; criticalthreats.org mirror dropped · both hosts block scripted requests, and getting around bot checks is off the table · rejected: browser-like user agent or headless browser.
+- 2026-11-16 · Gold sampling unit is one of 7 heading-defined sectors, assigned by ordered keyword rules · ISW has no per-direction headings and its heading wording changed between July and November 2026 · rejected: splitting on "X direction" phrases (segmentation errors would leak into the gold set).
+- 2026-11-16 · Empty container headings are skipped and absorbed into the next unit · July's "Russian Main Effort: Eastern Ukraine" has no body and spans three sectors · rejected: treating it as UNMAPPED.
+- 2026-11-16 · GSU report = ArmyInform post whose body states "оперативн… інформаці… станом на 8:00", candidates ranked by slug keywords · slugs vary by day; a `genshtab-zsu` suffix filter found 0 of 3 test days · rejected: slug-only selection; WordPress REST API (disallowed by robots.txt).
+- 2026-11-16 · Gold label files store offsets and the text SHA-256, not quotes · test labels are committed, and source text must never be committed · rejected: storing `evidence_quote` in gold.
+- 2026-11-16 · Confirmation lag (rule 7b) is measured between report dates · the question is when confirmation became available · rejected: event dates (footage often shows earlier events).
+- 2026-11-16 · Two models: `ExtractedEvent` (model output, `extra="forbid"`) and `LedgerEvent` (adds code-computed fields) · the model must not be able to return offsets or coordinates · rejected: one model with optional offset and coordinate fields.
+- 2026-11-16 · `quantity` may match a number word (SPEC Appendix C) · GSU and ISW often write small numbers as words · rejected: digits only (would reject correct records).
+- 2026-11-16 · `gliner2` installed in milestone 2, not at setup · it pulls in PyTorch (about 1 GB) and only baseline B1 uses it.

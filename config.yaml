@@ -1,0 +1,56 @@
+# Claimline configuration. Every eval run logs these values and their hash.
+# Model IDs, effort and thresholds live here only. No model ID in code.
+
+corpus:
+  start: 2026-07-19
+  end: 2026-11-15
+  analysis_end: 2026-10-16
+
+collect:
+  delay_seconds: 3
+  timeout_seconds: 30
+  user_agent: "claimline-research/0.1 (non-commercial research)"
+  isw:
+    # Off until ISW grants written permission (docs/permissions.md).
+    enabled: false
+    url_template: "https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-{month}-{day}-{year}/"
+  gsu:
+    enabled: true
+    sitemap_template: "https://armyinform.com.ua/sitemap-posttype-post.{yyyymm}.xml"
+    # Slugs vary by day. Candidates are that day's posts whose slug contains a
+    # keyword, tried tier by tier until one body states the 08:00 cutoff.
+    slug_keyword_tiers:
+      - ["zitkn", "boyezitkn", "boyiv", "za-dobu-na-fronti", "za-mynulu-dobu"]
+      - ["genshtab"]
+      - ["atak", "napryamk"]
+    # Inflection varies ("Оперативна інформація", "з оперативною інформацією"),
+    # and so does the hour ("08:00", "8:00", "08.00").
+    cutoff_pattern: "(?i)оперативн\\w*\\s+інформаці\\w*\\s+станом\\s+на\\s+0?8[:.]00"
+
+models:
+  # Check https://platform.claude.com/docs/en/models/overview for dated snapshot
+  # IDs before the first API call (milestone 3) and pin them here if listed.
+  extraction: claude-haiku-5-5
+  extraction_effort: low
+  verifier: claude-haiku-5-5
+  verifier_alt: claude-sonnet-5-5
+  verifier_effort: low
+  geocode_disambiguation: claude-sonnet-5-5
+
+eval:
+  match_km: 10
+  match_days: 1
+  grid_km: [5, 10, 25]
+  grid_days: [0, 1, 2]
+  bootstrap_resamples: 2000
+  seed: 20261116
+
+link:
+  duplicate_km: 5
+  duplicate_days: 3
+  confirmation_days: 30
+  report_windows_days: [7, 14, 30]
+
+cost:
+  # Set to the ECB reference rate on the day of each costed run.
+  eur_per_usd: null

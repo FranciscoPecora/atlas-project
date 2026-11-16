@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "EpistemicStatus": {
+      "enum": [
+        "ru_claimed",
+        "ua_claimed",
+        "third_party_claimed",
+        "geolocated_confirmed",
+        "analyst_assessed"
+      ],
+      "title": "EpistemicStatus",
+      "type": "string"
+    },
+    "EventType": {
+      "enum": [
+        "ground_assault",
+        "territorial_advance",
+        "withdrawal",
+        "missile_strike",
+        "drone_strike",
+        "air_strike",
+        "shelling",
+        "air_defence_interception",
+        "force_movement",
+        "logistics_or_infrastructure_strike",
+        "naval_event",
+        "other"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "ExtractedEvent": {
+      "additionalProperties": false,
+      "description": "What the extraction model returns. No offsets, no coordinates, no report metadata.",
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/EventType"
+        },
+        "epistemic_status": {
+          "$ref": "#/$defs/EpistemicStatus"
+        },
+        "claim_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who made the claim as the text names them, e.g. 'Russian MoD'",
+          "title": "Claim Source"
+        },
+        "actor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Side"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "actor_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actor Text"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Side"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Text"
+        },
+        "location_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Place name exactly as written; must appear inside evidence_quote",
+          "title": "Location Text"
+        },
+        "geo_precision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 settlement, 2 direction or area, 3 oblast",
+          "title": "Geo Precision"
+        },
+        "event_date": {
+          "format": "date",
+          "title": "Event Date",
+          "type": "string"
+        },
+        "units": {
+          "items": {
+            "$ref": "#/$defs/UnitMention"
+          },
+          "title": "Units",
+          "type": "array"
+        },
+        "equipment": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Equipment",
+          "type": "array"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must appear inside evidence_quote",
+          "title": "Quantity"
+        },
+        "evidence_quote": {
+          "description": "Exact contiguous text copied from the section",
+          "title": "Evidence Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_type",
+        "epistemic_status",
+        "event_date",
+        "evidence_quote"
+      ],
+      "title": "ExtractedEvent",
+      "type": "object"
+    },
+    "Side": {
+      "enum": [
+        "RU",
+        "UA",
+        "other"
+      ],
+      "title": "Side",
+      "type": "string"
+    },
+    "UnitMention": {
+      "properties": {
+        "name": {
+          "description": "Unit name exactly as written in the evidence quote",
+          "title": "Name",
+          "type": "string"
+        },
+        "echelon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. brigade, regiment, battalion, division",
+          "title": "Echelon"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. VDV, naval infantry, motorized rifle",
+          "title": "Branch"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "UnitMention",
+      "type": "object"
+    }
+  },
+  "description": "Top-level output_format for client.messages.parse: one call per section.",
+  "properties": {
+    "events": {
+      "items": {
+        "$ref": "#/$defs/ExtractedEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "events"
+  ],
+  "title": "ExtractionResult",
+  "type": "object"
+}

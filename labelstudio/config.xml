@@ -1,0 +1,82 @@
+<View>
+  <Header value="$source $report_date · $sector"/>
+  <Text name="text" value="$text" granularity="word"/>
+
+  <Labels name="event" toName="text">
+    <Label value="Event" background="#4C9AFF"/>
+  </Labels>
+
+  <View visibleWhen="region-selected">
+    <Header value="Event type" size="6"/>
+    <Choices name="event_type" toName="text" perRegion="true" required="true" layout="inline">
+      <Choice value="ground_assault"/>
+      <Choice value="territorial_advance"/>
+      <Choice value="withdrawal"/>
+      <Choice value="missile_strike"/>
+      <Choice value="drone_strike"/>
+      <Choice value="air_strike"/>
+      <Choice value="shelling"/>
+      <Choice value="air_defence_interception"/>
+      <Choice value="force_movement"/>
+      <Choice value="logistics_or_infrastructure_strike"/>
+      <Choice value="naval_event"/>
+      <Choice value="other"/>
+    </Choices>
+
+    <Header value="Epistemic status" size="6"/>
+    <Choices name="epistemic_status" toName="text" perRegion="true" required="true" layout="inline">
+      <Choice value="ru_claimed"/>
+      <Choice value="ua_claimed"/>
+      <Choice value="third_party_claimed"/>
+      <Choice value="geolocated_confirmed"/>
+      <Choice value="analyst_assessed"/>
+    </Choices>
+
+    <Header value="Claim source (as named in the text)" size="6"/>
+    <TextArea name="claim_source" toName="text" perRegion="true" rows="1" maxSubmissions="1"/>
+
+    <Header value="Actor" size="6"/>
+    <Choices name="actor" toName="text" perRegion="true" layout="inline">
+      <Choice value="RU"/>
+      <Choice value="UA"/>
+      <Choice value="other"/>
+    </Choices>
+
+    <Header value="Target" size="6"/>
+    <Choices name="target" toName="text" perRegion="true" layout="inline">
+      <Choice value="RU"/>
+      <Choice value="UA"/>
+      <Choice value="other"/>
+    </Choices>
+
+    <Header value="Location text (copy exactly from the span; empty if none)" size="6"/>
+    <TextArea name="location_text" toName="text" perRegion="true" rows="1" maxSubmissions="1"/>
+
+    <Header value="Geo precision" size="6"/>
+    <Choices name="geo_precision" toName="text" perRegion="true" layout="inline">
+      <Choice value="1" hint="settlement or point"/>
+      <Choice value="2" hint="near / toward / direction / area"/>
+      <Choice value="3" hint="oblast only"/>
+    </Choices>
+
+    <Header value="Event date (YYYY-MM-DD)" size="6"/>
+    <TextArea name="event_date" toName="text" perRegion="true" rows="1" maxSubmissions="1" required="true"/>
+
+    <Header value="Quantity (integer stated in the span)" size="6"/>
+    <Number name="quantity" toName="text" perRegion="true" min="0"/>
+
+    <Header value="Units (one per line, as written)" size="6"/>
+    <TextArea name="units" toName="text" perRegion="true" rows="2" maxSubmissions="1"/>
+
+    <Header value="Equipment (one per line, as written)" size="6"/>
+    <TextArea name="equipment" toName="text" perRegion="true" rows="2" maxSubmissions="1"/>
+  </View>
+
+  <Header value="Minutes spent on this unit" size="6"/>
+  <Number name="minutes" toName="text" min="0"/>
+  <Header value="Annotation pass (1 = first, 2 = consistency re-label)" size="6"/>
+  <Choices name="pass" toName="text" layout="inline" required="true">
+    <Choice value="1"/>
+    <Choice value="2"/>
+  </Choices>
+</View>
