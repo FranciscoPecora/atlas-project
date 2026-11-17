@@ -1,0 +1,4 @@
+commit,config_hash,date,split,system,metric,value,n,config
+4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round2,event_error_rate,0.033,30,"gold_review=claude-opus-5-5 effort=high; prelabel=prelabel-rules-v1; audit events=30 paragraphs=10 limit=0.05 round=2 seed=20261117; wilson95=0.006-0.167"
+4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round2,paragraph_miss_rate,0.000,9,"same config; 1 of 10 paragraphs not sure; wilson95=0.000-0.299"
+4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round1-void,event_error_rate,0.800,10,"void: page did not explain shared counts; 20 of 30 not sure; seed=20261116"

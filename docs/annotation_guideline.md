@@ -137,4 +137,7 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 
 | Date | Unit | Events | Minutes | Changes made to this guideline |
 | --- | --- | --- | --- | --- |
-| | | | | |
+| 2026-11-17 | gsu-2026-07-21 FULL | 59 | machine-made (A1) | Hard cases 7, 9 to 12 ruled; section 8.2 added |
+| 2026-11-17 | gsu-2026-07-29 FULL | 66 | machine-made (A1) | |
+| 2026-11-17 | gsu-2026-08-06 FULL | 56 | machine-made (A1) | |
+| 2026-11-17 | Spot check round 2 (30 events, 10 paragraphs) | 40 items | not logged | Count rule stated in 8.2 after void round 1 |
