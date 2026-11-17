@@ -28,6 +28,10 @@ collect:
     cutoff_pattern: "(?i)оперативн\\w*\\s+інформаці\\w*\\s+станом\\s+на\\s+0?8[:.]00"
 
 models:
+  # Baseline B1 entity models (SPEC.md section 6), run locally.
+  b1_gliner_en: fastino/gliner2-base-v1
+  b1_gliner_uk: fastino/gliner2-multi-v1
+  b1_threshold: 0.5
   # Check https://platform.claude.com/docs/en/models/overview for dated snapshot
   # IDs before the first API call (milestone 3) and pin them here if listed.
   extraction: claude-haiku-5-5

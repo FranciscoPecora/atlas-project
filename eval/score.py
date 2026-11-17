@@ -195,7 +195,7 @@ def append_results(rows: list[dict[str, Any]], path: Path = RESULTS) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    from src.baselines import b0_regex
+    from src.baselines import b0_regex, b1_gliner
     from src.collect import DATA
     from src.config import config_hash, load_config
     from src.gazetteer import Gazetteer, read_table
@@ -214,11 +214,15 @@ def main(argv: list[str] | None = None) -> None:
         for rid, src, day in reports
     }
     gold: list[Event] = []
-    preds: dict[str, list[Event]] = {b0_regex.SYSTEM: []}
+    preds: dict[str, list[Event]] = {b0_regex.SYSTEM: [], b1_gliner.SYSTEM: []}
+    gliner = b1_gliner.load_model(cfg["models"], "gsu")
+    threshold = cfg["models"]["b1_threshold"]
     for rid, src, day in reports:
         gold += geocode([g for g in gold_raw if g["report_id"] == rid], texts[rid], gaz, geo)
         if src == "gsu":
             preds["B0"] += geocode(b0_regex.extract(texts[rid], rid, day), texts[rid], gaz, geo)
+            b1 = b1_gliner.extract(gliner, texts[rid], rid, day, threshold)
+            preds["B1"] += geocode(b1, texts[rid], gaz, geo)
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT
     ).stdout.strip()
