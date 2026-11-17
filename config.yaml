@@ -25,7 +25,9 @@ collect:
       - ["atak", "napryamk"]
     # Inflection varies ("Оперативна інформація", "з оперативною інформацією"),
     # and so does the hour ("08:00", "8:00", "08.00").
-    cutoff_pattern: "(?i)оперативн\\w*\\s+інформаці\\w*\\s+станом\\s+на\\s+0?8[:.]00"
+    # Up to 8 words may stand between ("в оперативній інформації Генерального
+    # штабу ЗС України станом на 8:00"). The 08:00 itself is required (SPEC 1).
+    cutoff_pattern: "(?i)оперативн\\w*\\s+інформаці\\w*(?:\\s+[^\\s.]+){0,8}?\\s+станом\\s+на\\s+0?8[:.]00"
 
 models:
   # Baseline B1 entity models (SPEC.md section 6), run locally.
@@ -84,6 +86,7 @@ audit:
   # Round 1 was void: the page did not say that a count shared by several places
   # is left out on purpose, so correct events were marked wrong (DECISIONS.md).
   round: 2
+  test_round: 1
 
 geocode:
   # General Staff front directions and the town each is named after, as

@@ -10,12 +10,13 @@ from src.review import (
     Review,
     ReviewedEvent,
     build_prompt,
-    dev_task_data,
+    gsu_test_dates,
     guideline_rules,
     has_quantity,
     is_human_labelled,
     review_report,
     to_records,
+    unit_task_data,
     write_gold,
 )
 
@@ -110,9 +111,19 @@ def test_review_report_takes_model_and_effort_from_config():
 def test_test_split_and_unknown_dates_are_refused():
     spec = SPEC.read_text(encoding="utf-8")
     with pytest.raises(RefusedTestSplit):
-        dev_task_data("2026-11-10", spec)
+        unit_task_data("2026-11-10", spec)
+    with pytest.raises(RefusedTestSplit):
+        unit_task_data("2026-07-21", spec, split="test")
     with pytest.raises(ValueError):
-        dev_task_data("2026-07-22", spec)
+        unit_task_data("2026-07-22", spec)
+
+
+def test_test_dates_come_from_the_rotation_table(tmp_path):
+    spec = SPEC.read_text(encoding="utf-8")
+    (tmp_path / "text" / "gsu").mkdir(parents=True)
+    (tmp_path / "text" / "gsu" / "2026-11-10.txt").write_text("x", encoding="utf-8")
+    have, missing = gsu_test_dates(spec, tmp_path)
+    assert have == ["2026-11-10"] and len(missing) == 11 and "2026-07-21" not in missing
 
 
 def test_write_gold_marks_method_and_protects_hand_labels(tmp_path):

@@ -64,3 +64,12 @@ def test_isw_cutoff_when_stated_and_none_otherwise():
 
 def test_sha256_is_of_utf8_text():
     assert sha256_text("") == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+
+def test_gsu_cutoff_allows_words_between_and_still_needs_the_hour():
+    text = "в оперативній інформації Генерального штабу ЗС України станом на 8:00 1 жовтня."
+    assert find_cutoff(text, "gsu", GSU_PATTERN) == "08:00 1 жовтня"
+    no_hour = "у зведенні Генерального штабу з оперативною інформацією станом на суботу, 22 серпня."
+    assert find_cutoff(no_hour, "gsu", GSU_PATTERN) is None
+    evening = "в оперативній інформації Генерального штабу станом на 16:00 1 жовтня."
+    assert find_cutoff(evening, "gsu", GSU_PATTERN) is None

@@ -1,6 +1,7 @@
 """Reviewer model: turns rule pre-fills into a draft answer key for GSU dev reports.
 
-    uv run python -m src.review 2026-07-21 [...] [--force]
+    uv run python -m src.review 2026-07-21 [...] [--force]   # dev reports
+    uv run python -m src.review --split test                # the test key, once
 
 Step 2 of amendment A1 (docs/spec_amendment_A1.md). The reviewer
 reads the Ukrainian report, the annotation guideline and the rule pre-fills
@@ -8,7 +9,8 @@ reads the Ukrainian report, the annotation guideline and the rule pre-fills
 quote in the report to get offsets, and rejects any event whose quote, place or
 quantity is not in the text. The key is spot-checked by a person (src/audit.py).
 
-Dev split only: test-split reports are refused until SPEC.md is amended.
+The test key is made once for all collected test reports (--split test); the
+run also builds its spot-check page, so the test files are never read back.
 """
 
 from __future__ import annotations
@@ -155,18 +157,21 @@ def review_report(client: Any, models: dict[str, Any], text: str, guideline: str
     return response.parsed_output
 
 
-def dev_task_data(report_date: str, spec_text: str, data_dir: Path = DATA) -> dict[str, Any]:
-    """Task data (ids, hash, URL) of a GSU dev unit; refuses test units and unknown dates."""
+def unit_task_data(
+    report_date: str, spec_text: str, data_dir: Path = DATA, split: str = "dev"
+) -> dict[str, Any]:
+    """Task data (ids, hash, URL) of a GSU gold unit of `split`. A test unit is given
+    only when test is asked for by name; unknown dates are refused."""
     day = date.fromisoformat(report_date)
     unit = next(
         (u for u in gold_units(spec_text) if u.source == "gsu" and u.report_date == day), None
     )
     if unit is None:
         raise ValueError(f"gsu-{report_date} is not a gold unit in SPEC.md section 4.2")
-    if unit.split != "dev":
+    if unit.split != split:
         raise RefusedTestSplit(
-            f"gsu-{report_date} is a test unit; amendment A1 allows a machine-made test "
-            "key, but it is switched on in milestone 2 (see DECISIONS.md)"
+            f"gsu-{report_date} is a {unit.split} unit, but this run is for {split}; the test "
+            "key is made once, with --split test (SPEC.md amendment A1)"
         )
     tasks, missing = make_tasks([unit], data_dir)
     if missing:
@@ -174,8 +179,8 @@ def dev_task_data(report_date: str, spec_text: str, data_dir: Path = DATA) -> di
     return tasks[0]["data"]
 
 
-def gold_path(report_date: str, gold_dir: Path = GOLD) -> Path:
-    return gold_dir / "dev" / f"gsu-{report_date}__FULL__pass1.jsonl"
+def gold_path(report_date: str, gold_dir: Path = GOLD, split: str = "dev") -> Path:
+    return gold_dir / split / f"gsu-{report_date}__FULL__pass1.jsonl"
 
 
 def is_human_labelled(path: Path) -> bool:
@@ -195,9 +200,54 @@ def write_gold(path: Path, records: list[dict[str, Any]], model: str) -> None:
     )
 
 
+def ensure_translation(client: Any, models: dict[str, Any], day: str, text: str) -> None:
+    """English reading aid for the spot check, made once per report (cached on disk)."""
+    from src.translate import load_translation, paragraphs, translate, write_translation
+
+    if load_translation(day) is None:
+        result = translate(client, models, text)
+        write_translation(day, result, paragraphs(text), models["translation"])
+
+
+def gsu_test_dates(spec_text: str, data_dir: Path = DATA) -> tuple[list[str], list[str]]:
+    """GSU test units of the rotation table: (collected dates, missing dates)."""
+    days = [
+        u.report_date.isoformat()
+        for u in gold_units(spec_text)
+        if u.source == "gsu" and u.split == "test"
+    ]
+    have = [d for d in days if (data_dir / "text" / "gsu" / f"{d}.txt").exists()]
+    return have, [d for d in days if d not in have]
+
+
+def make_test_key(client: Any, cfg: dict[str, Any], spec_text: str, guideline: str) -> None:
+    """Amendment A1, test split: review every collected GSU test report once, write the
+    key, and build the spot-check page from the records in memory. Nothing under
+    eval/gold/test/ is read, and only counts are printed."""
+    from src.audit import build_page
+
+    models = cfg["models"]
+    dates, missing = gsu_test_dates(spec_text)
+    paths = {d: gold_path(d, split="test") for d in dates}
+    if any(p.exists() for p in paths.values()):
+        raise SystemExit("a GSU test key already exists; it is made once (amendment A1)")
+    everything: list[dict[str, Any]] = []
+    for day in dates:
+        data = unit_task_data(day, spec_text, split="test")
+        text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+        ensure_translation(client, models, day, text)
+        records, rejected = to_records(review_report(client, models, text, guideline), text, data)
+        write_gold(paths[day], records, models["gold_review"])
+        everything += records
+        print(f"{day}: {len(records)} events written, {len(rejected)} rejected by checks")
+    print(f"test units not collected: {', '.join(missing) or '-'}")
+    print(build_page(everything, cfg, "test"))
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("dates", nargs="+", help="report dates, YYYY-MM-DD")
+    ap.add_argument("dates", nargs="*", help="dev report dates, YYYY-MM-DD")
+    ap.add_argument("--split", choices=["dev", "test"], default="dev")
     ap.add_argument("--force", action="store_true", help="review again if a key exists")
     args = ap.parse_args(argv)
 
@@ -206,8 +256,11 @@ def main(argv: list[str] | None = None) -> None:
     spec_text = SPEC.read_text(encoding="utf-8")
     guideline = GUIDELINE.read_text(encoding="utf-8")
     client = anthropic.Anthropic()
+    if args.split == "test":
+        make_test_key(client, load_config(), spec_text, guideline)
+        return
     for day in args.dates:
-        data = dev_task_data(day, spec_text)
+        data = unit_task_data(day, spec_text)
         path = gold_path(day)
         if is_human_labelled(path):
             raise SystemExit(f"{path.name} holds hand-made labels; not overwriting")
