@@ -1,4 +1,4 @@
-.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio eval eval-test site
+.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit eval eval-test site
 
 UV ?= uv
 export LABEL_STUDIO_BASE_DATA_DIR := $(CURDIR)/.label-studio
@@ -30,6 +30,11 @@ tasks:
 
 labelstudio:
 	label-studio start --port 8080 --internal-host 127.0.0.1
+
+# Build and open the spot-check page for the machine-made GSU dev key.
+audit:
+	$(UV) run python -m src.audit build
+	open data/audit/audit.html
 
 eval:
 	@echo "make eval: scoring arrives in milestone 2 (eval/score.py)" && exit 1

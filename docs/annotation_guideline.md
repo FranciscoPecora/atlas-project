@@ -87,6 +87,8 @@ Several places in one sentence give one event each. "Between A and B" is precisi
 
 ### 8.1 Pre-filled General Staff dev tasks
 
+> Since 17 November 2026 the checking described below is done by a reviewer model (`src/review.py`), and you only spot-check a random sample in English (`src/audit.py`, section 8.2). The steps below remain the rules the reviewer follows, and the fallback if the spot check fails.
+
 Dev GSU tasks open with events already drawn by `src/prelabel.py` (rules, no model). They are proposals. Your job per task:
 
 1. **Control first.** The task with sector `CONTROL` (two paragraphs of the 6 August report) has no pre-fill. Label it from scratch before opening any pre-filled task. It measures whether the pre-fill steers you (`uv run python -m src.prelabel_check`).
@@ -101,6 +103,14 @@ Dev GSU tasks open with events already drawn by `src/prelabel.py` (rules, no mod
    - all place events are precision 2 ("in the area of", "towards").
 5. Submit as usual: Minutes, Pass 1, Submit.
 
+### 8.2 Spot check of the machine-made General Staff key
+
+1. Open `data/audit/audit.html` (double-click it in Finder). It shows 30 random events and 10 random paragraphs, in English.
+2. Event: **Right** if the paragraph says this kind of event happened at this place (and the count, if shown, is in the paragraph for that event). Otherwise **Wrong**, with a short note.
+3. Paragraph: **Complete** if every event and every attacked village has a box. Otherwise **Something missing**, with a note saying what.
+4. **Not sure** is a valid answer. Do not guess.
+5. Click **Save answers** at the end. The key is accepted if at most 5% of judged events are wrong and at most 5% of judged paragraphs miss something (config `audit.max_error_rate`).
+
 ## 9. Hard cases
 
 Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the ruling, and the reason.
@@ -113,12 +123,12 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 | 4 | An advance "northwest of" a town | Precision 2 at the town (see 5) | |
 | 5 | "Between A and B" | | |
 | 6 | Numbers given as "over", "about", "up to" | | |
-| 7 | GSU daily totals per direction ("X combat clashes on the Pokrovsk direction") | | |
+| 7 | GSU daily totals per direction ("X combat clashes on the Pokrovsk direction") | If the paragraph names settlements: one event per settlement and no event for the total. If it names none: one event per kind (clashes = `ground_assault`, air strikes, shelling) located at the direction, precision 2, with the count as `quantity`. Provisional, 17 Nov 2026 | The total and the settlements describe the same fighting; counting both would double it |
 | 8 | Footage published today showing an event of unknown date | | |
-| 9 | | | |
-| 10 | | | |
-| 11 | | | |
-| 12 | | | |
+| 9 | A count shared by several places ("attacked 14 times towards A, B and C") | No `quantity` on any of them. A count with a single place is that place's `quantity`. Provisional | The share per place is unknown |
+| 10 | Front-wide totals with no place and no direction ("261 clashes over the past day", "60 air strikes", losses of personnel and equipment) | Not an event | No location to match on; it restates the per-direction paragraphs |
+| 11 | Ukrainian strikes on "areas of concentration" or "command posts" with a count but no place | One event per kind, actor UA, target RU, no location, with the count. Provisional | It is a distinct claimed event; it stays unmatched on location by design |
+| 12 | "In the area of", "towards", "near" a settlement | Precision 2 at the settlement (see 5). One event per settlement per paragraph per type | Same as hard case 4 |
 | 13 | | | |
 | 14 | | | |
 | 15 | | | |

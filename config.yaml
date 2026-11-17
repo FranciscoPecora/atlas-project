@@ -40,6 +40,10 @@ models:
   # model than the extractor, so the aid does not share the extractor's errors.
   translation: claude-opus-5-5
   translation_effort: medium
+  # Reviewer that turns rule pre-fills into the GSU answer key (src/review.py).
+  # Larger than the extraction model, so it is not the system under test.
+  gold_review: claude-opus-5-5
+  gold_review_effort: high
 
 eval:
   match_km: 10
@@ -67,3 +71,9 @@ link:
 cost:
   # Set to the ECB reference rate on the day of each costed run.
   eur_per_usd: null
+
+audit:
+  # Spot check of the machine-made GSU answer key (src/audit.py, draft amendment A1).
+  events: 30
+  paragraphs: 10
+  max_error_rate: 0.05

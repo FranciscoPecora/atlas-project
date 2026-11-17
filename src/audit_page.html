@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claimline spot check</title>
+<style>
+  :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
+          --good:#1f7a4d; --bad:#b3372e; --mid:#8a6d1a; --accent:#27457a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font: 17px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .soft { color: var(--soft); font-size: 15px; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; margin: 14px 0 22px; }
+  .bar > div { height: 100%; background: var(--accent); border-radius: 3px; width: 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+          padding: 16px 18px; margin-bottom: 14px; }
+  .label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+           color: var(--soft); margin-bottom: 6px; }
+  .uk { color: var(--soft); font-size: 14px; margin-top: 10px; overflow-wrap: anywhere; }
+  .event { border-left: 4px solid var(--accent); padding: 6px 0 6px 12px; margin: 8px 0; }
+  .event b { font-size: 18px; }
+  .event .quote { font-size: 13px; color: var(--soft); overflow-wrap: anywhere; }
+  .q { font-size: 19px; font-weight: 600; margin: 18px 0 10px; }
+  .buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  button { font: inherit; font-weight: 600; padding: 12px 20px; border-radius: 8px;
+           border: 2px solid var(--line); background: var(--card); color: var(--ink);
+           cursor: pointer; flex: 1 1 150px; }
+  button.good { border-color: var(--good); color: var(--good); }
+  button.bad { border-color: var(--bad); color: var(--bad); }
+  button.mid { border-color: var(--mid); color: var(--mid); }
+  button.on.good { background: var(--good); color: #fff; }
+  button.on.bad { background: var(--bad); color: #fff; }
+  button.on.mid { background: var(--mid); color: #fff; }
+  button.plain { flex: 0 0 auto; }
+  button.main { background: var(--accent); border-color: var(--accent); color: #fff; }
+  textarea { width: 100%; font: inherit; padding: 8px; border: 1px solid var(--line);
+             border-radius: 8px; margin-top: 10px; min-height: 56px; }
+  .nav { display: flex; justify-content: space-between; margin-top: 18px; gap: 10px; }
+  ul { padding-left: 20px; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script id="items" type="application/json">/*ITEMS*/[]</script>
+<script>
+const ITEMS = JSON.parse(document.getElementById("items").textContent);
+const KEY = "claimline-audit-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const TYPES = {
+  ground_assault: "Ground attack", territorial_advance: "Advance (ground taken)",
+  withdrawal: "Withdrawal", missile_strike: "Missile strike", drone_strike: "Drone strike",
+  air_strike: "Air strike (aircraft, guided bombs)", shelling: "Shelling (artillery)",
+  air_defence_interception: "Air defence shot something down", force_movement: "Troop movement",
+  logistics_or_infrastructure_strike: "Strike on logistics or infrastructure",
+  naval_event: "Naval event", other: "Other"
+};
+const STATUS = { ua_claimed: "claimed by Ukraine", ru_claimed: "claimed by Russia",
+  third_party_claimed: "claimed by a third party", geolocated_confirmed: "confirmed by geolocated footage",
+  analyst_assessed: "assessed by analysts" };
+const SIDE = { RU: "Russia", UA: "Ukraine", other: "other" };
+let answers = {};
+let pos = -1;
+try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { answers = saved.answers || {}; pos = saved.pos ?? -1; } } catch (e) {}
+function keep() { try { localStorage.setItem(KEY, JSON.stringify({ answers, pos })); } catch (e) {} }
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const kid of kids) if (kid != null) n.append(kid);
+  return n;
+}
+function eventBox(e) {
+  const who = (SIDE[e.actor] || "unknown") + " → " + (SIDE[e.target] || "unknown");
+  const place = e.place ? (e.place_en ? e.place_en + " (" + e.place + ")" : "the direction or area named at the start of the paragraph (" + e.place + ")") : "no place named";
+  return el("div", { class: "event" },
+    el("b", {}, TYPES[e.event_type] || e.event_type), el("br"),
+    "Where: " + place, el("br"),
+    "Who → whom: " + who + ", " + (STATUS[e.status] || e.status), el("br"),
+    "Date: " + e.event_date + "   Count: " + (e.quantity == null ? "none recorded" : e.quantity),
+    el("div", { class: "quote" }, "Evidence: " + e.quote));
+}
+function choice(item, verdict, text, cls) {
+  const on = (answers[item.id] || {}).verdict === verdict;
+  return el("button", { class: cls + (on ? " on" : ""), onclick: () => {
+    answers[item.id] = { verdict, note: (answers[item.id] || {}).note || "" };
+    keep(); if (verdict === "right" || verdict === "complete") { pos++; keep(); } draw();
+  } }, text);
+}
+function intro() {
+  return [
+    el("h1", {}, "Claimline spot check"),
+    el("p", {}, "A program built the answer key for 3 Ukrainian reports. You check a random sample: " +
+      ITEMS.filter(i => i.kind === "event").length + " single events and " +
+      ITEMS.filter(i => i.kind === "paragraph").length + " whole paragraphs. About 10 to 15 minutes."),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "How to judge an event"),
+      el("ul", {},
+        el("li", {}, "Read the English paragraph. Then read the blue event box."),
+        el("li", {}, "Right: the paragraph really says this happened, at this place, of this kind. If a count is shown, that number is in the paragraph for this event."),
+        el("li", {}, "Wrong: the place is not in the paragraph, the kind is wrong (for example it says shelling but the box says ground attack), or the count is wrong."),
+        el("li", {}, "A place counts once per paragraph. 'Near', 'towards' and 'in the area of' a village all count as that village."),
+        el("li", {}, "The date is always the day before the report. You do not need to check it."))),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "How to judge a paragraph"),
+      el("ul", {},
+        el("li", {}, "Complete: every attack, strike, shelling or advance in the paragraph has a box, and every village named as attacked has a box."),
+        el("li", {}, "Something missing: you can point to a village or an event with no box. Write which one in the note."),
+        el("li", {}, "Paragraphs with no events (titles, greetings, loss totals of equipment) are Complete when the list is empty."))),
+    el("p", { class: "soft" }, "Not sure is allowed. Your progress is kept if you close the page."),
+    el("button", { class: "main", onclick: () => { pos = 0; keep(); draw(); } }, "Start")
+  ];
+}
+function question(item) {
+  const isEvent = item.kind === "event";
+  const a = answers[item.id] || {};
+  const note = el("textarea", { placeholder: "Optional note: what is wrong or missing?" });
+  note.value = a.note || "";
+  note.addEventListener("input", () => { if (answers[item.id]) { answers[item.id].note = note.value; keep(); } });
+  return [
+    el("div", { class: "soft" }, "Item " + (pos + 1) + " of " + ITEMS.length + " · report " + item.report_id.replace("gsu-", "") + " · paragraph " + item.paragraph),
+    el("div", { class: "bar" }, el("div", { style: "width:" + (100 * pos / ITEMS.length) + "%" })),
+    el("div", { class: "card" }, el("div", { class: "label" }, "The paragraph in English"), item.english,
+      el("div", { class: "uk" }, item.ukrainian)),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, isEvent ? "The answer key says" : "Everything the answer key holds for this paragraph (" + item.events.length + ")"),
+      ...(item.events.length ? item.events.map(eventBox) : [el("div", { class: "soft" }, "No events.")])),
+    el("div", { class: "q" }, isEvent ? "Does the paragraph say this?" : "Is anything missing from the list?"),
+    el("div", { class: "buttons" },
+      isEvent ? choice(item, "right", "Right", "good") : choice(item, "complete", "Complete", "good"),
+      isEvent ? choice(item, "wrong", "Wrong", "bad") : choice(item, "missing", "Something missing", "bad"),
+      choice(item, "unsure", "Not sure", "mid")),
+    a.verdict && a.verdict !== "right" && a.verdict !== "complete" ? note : null,
+    el("div", { class: "nav" },
+      el("button", { class: "plain", onclick: () => { pos--; keep(); draw(); } }, "← Back"),
+      a.verdict ? el("button", { class: "plain main", onclick: () => { pos++; keep(); draw(); } }, "Next →") : null)
+  ];
+}
+function save() {
+  const blob = new Blob([JSON.stringify({ version: 1, saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-audit-answers.json" });
+  document.body.append(a); a.click(); a.remove();
+}
+function done() {
+  const left = ITEMS.filter(i => !answers[i.id]).length;
+  return [
+    el("h1", {}, left ? left + " items have no answer" : "All " + ITEMS.length + " items answered"),
+    el("p", {}, "Click the button. A file named claimline-audit-answers.json is saved to your Downloads folder. Then tell Claude: audit done."),
+    el("div", { class: "buttons" },
+      el("button", { class: "plain", onclick: () => { pos = ITEMS.length - 1; keep(); draw(); } }, "← Back"),
+      el("button", { class: "main", onclick: save }, "Save answers"))
+  ];
+}
+function draw() {
+  const app = document.getElementById("app");
+  app.replaceChildren(...(pos < 0 ? intro() : pos >= ITEMS.length ? done() : question(ITEMS[pos])));
+  window.scrollTo(0, 0);
+}
+draw();
+</script>
+</body>
+</html>

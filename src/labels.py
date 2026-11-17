@@ -217,6 +217,11 @@ def region_to_record(region: dict, data: dict) -> dict[str, Any]:
     for f in LIST_FIELDS:
         lines = [ln.strip() for ln in (region.get(f) or "").splitlines() if ln.strip()]
         fields[f] = [{"name": ln} for ln in lines] if f == "units" else lines
+    return event_record(fields, data, data["unit_start"] + span["start"])
+
+
+def event_record(fields: dict[str, Any], data: dict, start: int) -> dict[str, Any]:
+    """Validate event fields and return a gold record: offsets, no quoted text."""
     event = ExtractedEvent.model_validate(fields)  # same enums and ranges as the model
     record = event.model_dump(mode="json", exclude={"evidence_quote"})
     record.update(
@@ -224,8 +229,8 @@ def region_to_record(region: dict, data: dict) -> dict[str, Any]:
         source=data["source"],
         report_date=data["report_date"],
         sector=data["sector"],
-        evidence_start=data["unit_start"] + span["start"],
-        evidence_end=data["unit_start"] + span["end"],
+        evidence_start=start,
+        evidence_end=start + len(fields["evidence_quote"]),
         text_sha256=data["text_sha256"],
         source_url=data["source_url"],
     )
