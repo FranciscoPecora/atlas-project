@@ -52,7 +52,7 @@ class GoldUnit:
         return f"{self.source}-{self.report_date.isoformat()}"
 
 
-def gold_units(spec_text: str) -> list[GoldUnit]:
+def gold_units(spec_text: str, substitutions: bool = True) -> list[GoldUnit]:
     units = [
         GoldUnit(
             row=int(m.group(1)),
@@ -65,7 +65,17 @@ def gold_units(spec_text: str) -> list[GoldUnit]:
     ]
     if len(units) != 45:
         raise ValueError(f"expected 45 rotation rows in SPEC.md, found {len(units)}")
-    return units
+    subs = load_config().get("gold", {}).get("substitutions", {})
+    return [substitute(u, subs) for u in units] if substitutions else units
+
+
+def substitute(unit: GoldUnit, subs: dict[str, Any]) -> GoldUnit:
+    """SPEC 4.1: a sampled report missing from the corpus is replaced by the next
+    available date of that source. The replacements are pinned in config.yaml."""
+    new = subs.get(unit.report_id)
+    if new is None:
+        return unit
+    return GoldUnit(unit.row, date.fromisoformat(str(new)), unit.source, unit.sectors, unit.split)
 
 
 def resolve_sectors(drawn: tuple[str, ...], available: set[str]) -> list[str]:

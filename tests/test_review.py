@@ -17,6 +17,7 @@ from src.review import (
     review_report,
     to_records,
     unit_task_data,
+    with_retries,
     write_gold,
 )
 
@@ -134,3 +135,17 @@ def test_write_gold_marks_method_and_protects_hand_labels(tmp_path):
     assert not is_human_labelled(path)
     path.write_text('{"event_type": "shelling"}\n', encoding="utf-8")
     assert is_human_labelled(path)
+
+
+def test_with_retries_tries_again_then_gives_up():
+    calls = []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) < 3:
+            raise RuntimeError("stopped")
+        return "ok"
+
+    assert with_retries(flaky) == "ok" and len(calls) == 3
+    with pytest.raises(ValueError):
+        with_retries(lambda: (_ for _ in ()).throw(ValueError("bad")), attempts=2)

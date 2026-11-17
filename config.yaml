@@ -113,3 +113,11 @@ geocode:
     Придніпровський: ["Херсон", "Kherson"]
   # A candidate farther than this from its direction's town is not trusted.
   max_anchor_km: 120
+
+gold:
+  # SPEC 4.1: "If a sampled report is missing from the corpus: take the next
+  # available date for that source and log it." The posts of 22 and 30 August
+  # do not state the 08:00 cutoff, so they are not reports under SPEC section 1.
+  substitutions:
+    gsu-2026-08-22: 2026-08-25
+    gsu-2026-08-30: 2026-08-31

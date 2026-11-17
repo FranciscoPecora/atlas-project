@@ -199,3 +199,16 @@ def test_control_labels_go_to_check_dir_not_gold(tmp_path):
     assert counts == {"control": 1}
     assert (tmp_path / "check" / "gsu-2026-07-29__CONTROL__pass1.jsonl").exists()
     assert not (tmp_path / "gold").exists()
+
+
+def test_missing_sampled_reports_take_the_pinned_next_date():
+    from src.labels import substitute
+
+    spec = SPEC.read_text(encoding="utf-8")
+    table = {u.report_id for u in gold_units(spec, substitutions=False)}
+    used = {u.report_id: u for u in gold_units(spec)}
+    assert "gsu-2026-08-22" in table and "gsu-2026-08-22" not in used
+    assert used["gsu-2026-08-25"].split == "test" and "gsu-2026-08-31" in used
+    assert len(used) == 45
+    unit = gold_units(spec, substitutions=False)[0]
+    assert substitute(unit, {}) is unit

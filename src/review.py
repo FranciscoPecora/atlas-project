@@ -209,6 +209,17 @@ def ensure_translation(client: Any, models: dict[str, Any], day: str, text: str)
         write_translation(day, result, paragraphs(text), models["translation"])
 
 
+def with_retries(call: Any, attempts: int = 3) -> Any:
+    """Run `call`, trying again after an API or validation error."""
+    for n in range(attempts):
+        try:
+            return call()
+        except (anthropic.APIError, RuntimeError, ValueError):
+            if n == attempts - 1:
+                raise
+    return None
+
+
 def gsu_test_dates(spec_text: str, data_dir: Path = DATA) -> tuple[list[str], list[str]]:
     """GSU test units of the rotation table: (collected dates, missing dates)."""
     days = [
@@ -231,15 +242,17 @@ def make_test_key(client: Any, cfg: dict[str, Any], spec_text: str, guideline: s
     paths = {d: gold_path(d, split="test") for d in dates}
     if any(p.exists() for p in paths.values()):
         raise SystemExit("a GSU test key already exists; it is made once (amendment A1)")
-    everything: list[dict[str, Any]] = []
-    for day in dates:
+    made: dict[str, list[dict[str, Any]]] = {}
+    for day in dates:  # everything stays in memory until every report has succeeded
         data = unit_task_data(day, spec_text, split="test")
         text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
         ensure_translation(client, models, day, text)
-        records, rejected = to_records(review_report(client, models, text, guideline), text, data)
+        review = with_retries(lambda t=text: review_report(client, models, t, guideline))
+        made[day], rejected = to_records(review, text, data)
+        print(f"{day}: {len(made[day])} events, {len(rejected)} rejected by checks", flush=True)
+    for day, records in made.items():
         write_gold(paths[day], records, models["gold_review"])
-        everything += records
-        print(f"{day}: {len(records)} events written, {len(rejected)} rejected by checks")
+    everything = [r for records in made.values() for r in records]
     print(f"test units not collected: {', '.join(missing) or '-'}")
     print(build_page(everything, cfg, "test"))
 
