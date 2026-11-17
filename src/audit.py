@@ -227,7 +227,8 @@ def build(cfg: dict[str, Any]) -> None:
     sample_path(a["round"]).write_text(json.dumps(public, indent=1), encoding="utf-8")
     n_events = sum(s["kind"] == "event" for s in sample)
     print(
-        f"round {a['round']}: {n_events} events and {len(sample) - n_events} paragraphs -> {PAGE.relative_to(ROOT)}"
+        f"round {a['round']}: {n_events} events and {len(sample) - n_events} paragraphs "
+        f"-> {PAGE.relative_to(ROOT)}"
     )
 
 
