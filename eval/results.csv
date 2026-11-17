@@ -9,3 +9,17 @@ commit,config_hash,date,split,system,metric,value,n,config
 713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_recall,0.9503,181,K=10km D=1d resamples=2000 seed=20261116
 713a579,a7cbb796b2b3,2026-11-17,dev,B0,status_accuracy,1.0,172,K=10km D=1d resamples=2000 seed=20261116
 713a579,a7cbb796b2b3,2026-11-17,dev,B0,quantity_exact,1.0,5,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,event_f1,0.9745,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,event_f1_low,0.9464,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,event_f1_high,1.0,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,event_precision,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,event_recall,0.9503,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,status_accuracy,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B0,quantity_exact,1.0,5,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_f1,0.9226,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_f1_low,0.8889,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_f1_high,0.9545,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_precision,0.9583,168,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_recall,0.8895,181,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,status_accuracy,1.0,161,K=10km D=1d resamples=2000 seed=20261116
+7669aa8,fa1cf632763b,2026-11-17,dev,B1,quantity_exact,0.0,2,K=10km D=1d resamples=2000 seed=20261116
