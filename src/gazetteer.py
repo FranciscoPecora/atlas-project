@@ -247,10 +247,10 @@ def dev_names(n: int, seed: int) -> list[dict[str, Any]]:
     return [seen[k] for k in sorted(random.Random(seed).sample(names, min(n, len(names))))]
 
 
-def direction_anchor(
+def direction_place(
     gaz: Gazetteer, direction: str | None, anchors: dict[str, list[str]]
-) -> tuple[float, float] | None:
-    """Coordinates of the town a front direction is named after (config.yaml)."""
+) -> Place | None:
+    """The town a front direction is named after (config.yaml), as a gazetteer row."""
     if not direction:
         return None
     words = set(stem(direction).split())
@@ -258,8 +258,16 @@ def direction_anchor(
         if stem(adjective) in words:
             rows = [p for p in gaz.lookup(town, limit=50)[1] if p.oblast in (oblast, "")]
             rows.sort(key=lambda p: (not p.kind.startswith("PPL"), -p.population))
-            return (rows[0].lat, rows[0].lon) if rows else None
+            return rows[0] if rows else None
     return None
+
+
+def direction_anchor(
+    gaz: Gazetteer, direction: str | None, anchors: dict[str, list[str]]
+) -> tuple[float, float] | None:
+    """Coordinates of the direction's town, to choose between same-named places."""
+    place = direction_place(gaz, direction, anchors)
+    return (place.lat, place.lon) if place else None
 
 
 def resolve(

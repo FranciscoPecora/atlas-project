@@ -37,7 +37,7 @@ audit:
 	open data/audit/audit.html
 
 eval:
-	@echo "make eval: scoring arrives in milestone 2 (eval/score.py)" && exit 1
+	$(UV) run python -m eval.score --split dev
 
 # Scores the TEST split once per release. Added in milestone 5.
 eval-test:
