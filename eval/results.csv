@@ -23,3 +23,5 @@ commit,config_hash,date,split,system,metric,value,n,config
 7669aa8,fa1cf632763b,2026-11-17,dev,B1,event_recall,0.8895,181,K=10km D=1d resamples=2000 seed=20261116
 7669aa8,fa1cf632763b,2026-11-17,dev,B1,status_accuracy,1.0,161,K=10km D=1d resamples=2000 seed=20261116
 7669aa8,fa1cf632763b,2026-11-17,dev,B1,quantity_exact,0.0,2,K=10km D=1d resamples=2000 seed=20261116
+f725e3e,e9b1f958ae77,2026-11-17,dev,gold-reviewer-stability,kappa_event_type,1.0,125,gold_review=claude-opus-5-5 reports=2026-07-21+2026-07-29
+f725e3e,e9b1f958ae77,2026-11-17,dev,gold-reviewer-stability,kappa_epistemic_status,1.0,125,gold_review=claude-opus-5-5 reports=2026-07-21+2026-07-29
