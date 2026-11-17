@@ -6,8 +6,8 @@ export LABEL_STUDIO_BASE_DATA_DIR := $(CURDIR)/.label-studio
 all: lint test data eval site
 
 lint:
-	$(UV) run ruff check src tests
-	$(UV) run ruff format --check src tests
+	$(UV) run ruff check src tests eval
+	$(UV) run ruff format --check src tests eval
 
 test:
 	$(UV) run pytest -q

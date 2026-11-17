@@ -198,12 +198,25 @@ class Collector:
         status = f"missing ({len(candidates)} candidates, {errors} http errors)"
         return self._row(day, "gsu", "", "", status)
 
+    def _kept(self, source: str, day: date) -> ManifestRow | None:
+        """The manifest row of a day that is already saved. Saved text is never fetched
+        again: gold offsets and hashes point into it."""
+        path = self.data_dir / "text" / source / f"{day.isoformat()}.txt"
+        manifest = self.data_dir / "manifest.csv"
+        if not path.exists() or not manifest.exists():
+            return None
+        for r in read_manifest(manifest):
+            if r["date"] == day.isoformat() and r["source"] == source and r["status"] == "ok":
+                return ManifestRow(**r)
+        return None
+
     def collect(self, source: str, days: Iterable[date]) -> list[ManifestRow]:
         fn = self.collect_isw if source == "isw" else self.collect_gsu
         rows = []
         for day in days:
-            row = fn(day)
-            print(f"{row.date} {row.source} {row.status} {row.url}")
+            kept = self._kept(source, day)
+            row = kept or fn(day)
+            print(f"{row.date} {row.source} {'kept' if kept else row.status} {row.url}")
             rows.append(row)
         return rows
 

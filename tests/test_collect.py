@@ -137,3 +137,16 @@ def test_manifest_upserts_on_date_and_source(tmp_path):
     write_manifest([ManifestRow("2026-07-29", "gsu", "u", "h", "c", "ok", "t2")], path)
     rows = read_manifest(path)
     assert len(rows) == 1 and rows[0]["status"] == "ok"
+
+
+def test_collect_keeps_days_that_are_already_saved(tmp_path):
+    from src.collect import ManifestRow
+
+    text = tmp_path / "text" / "gsu" / "2026-07-29.txt"
+    text.parent.mkdir(parents=True)
+    text.write_text("saved text", encoding="utf-8")
+    kept = ManifestRow("2026-07-29", "gsu", "u", "h", "c", "ok", "t1")
+    write_manifest([kept], tmp_path / "manifest.csv")
+    rows = Collector(CFG, make_fetcher({}), data_dir=tmp_path).collect("gsu", [date(2026, 7, 29)])
+    assert rows == [kept]  # no request was made: the fetcher has no routes
+    assert text.read_text(encoding="utf-8") == "saved text"
