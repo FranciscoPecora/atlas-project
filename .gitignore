@@ -11,3 +11,4 @@ data/labelstudio/
 .pytest_cache/
 .ruff_cache/
 data/audit/
+.DS_Store

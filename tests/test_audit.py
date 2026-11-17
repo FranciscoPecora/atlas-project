@@ -70,6 +70,7 @@ def test_items_show_english_place_and_all_events_of_a_paragraph():
     event = items[0]
     assert event["paragraph"] == 2 and "Yasne" in event["english"]
     assert event["events"][0]["place_en"] == "Yasne"
+    assert event["events"][0]["same_kind"] == 1
     assert event["events"][0]["quote"].startswith("Ворог атакував")
     by_paragraph = {i["paragraph"]: i for i in items if i["kind"] == "paragraph"}
     assert len(by_paragraph[2]["events"]) == 1 and by_paragraph[3]["events"] == []

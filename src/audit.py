@@ -20,6 +20,7 @@ import json
 import math
 import random
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -91,7 +92,9 @@ def draw(
     return sample
 
 
-def card(record: dict[str, Any], text: str, names: dict[str, str]) -> dict[str, Any]:
+def card(
+    record: dict[str, Any], text: str, names: dict[str, str], same_kind: int = 1
+) -> dict[str, Any]:
     """What the page shows for one event. Holds source text: page only, never committed."""
     place = record.get("location_text")
     return {
@@ -102,6 +105,7 @@ def card(record: dict[str, Any], text: str, names: dict[str, str]) -> dict[str, 
         "place": place,
         "place_en": names.get(place or ""),
         "quantity": record.get("quantity"),
+        "same_kind": same_kind,  # events of this type in the paragraph (a shared count)
         "event_date": record["event_date"],
         "quote": text[record["evidence_start"] : record["evidence_end"]],
     }
@@ -126,6 +130,8 @@ def build_items(
             a, b = spans[number - 1]
             chosen = [r for r in records if r["report_id"] == rid and a <= r["evidence_start"] < b]
         a, b = spans[number - 1]
+        inside = [r for r in records if r["report_id"] == rid and a <= r["evidence_start"] < b]
+        kinds = Counter(r["event_type"] for r in inside)
         items.append(
             {
                 "id": s["id"],
@@ -134,7 +140,7 @@ def build_items(
                 "paragraph": number,
                 "english": english_paragraphs(aid["translation"]).get(number, "(no translation)"),
                 "ukrainian": text[a:b],
-                "events": [card(r, text, names) for r in chosen],
+                "events": [card(r, text, names, kinds[r["event_type"]]) for r in chosen],
             }
         )
     return items
@@ -196,6 +202,10 @@ def committable(s: dict[str, Any], records: list[dict[str, Any]]) -> dict[str, A
     return {**keep, **{k: r[k] for k in ("evidence_start", "evidence_end", "event_type")}}
 
 
+def sample_path(audit_round: int) -> Path:
+    return AUDIT_DIR / f"dev_sample_round{audit_round}.json"
+
+
 def build(cfg: dict[str, Any]) -> None:
     records = read_key()
     if not records:
@@ -207,21 +217,25 @@ def build(cfg: dict[str, Any]) -> None:
     aids = {f"gsu-{d}": load_translation(d) for d in dates}
     counts = {rid: len(paragraph_spans(t)) for rid, t in texts.items()}
     a = cfg["audit"]
-    sample = draw(records, counts, a["events"], a["paragraphs"], cfg["eval"]["seed"])
+    seed = cfg["eval"]["seed"] + a["round"] - 1  # a fresh sample per audit round
+    sample = draw(records, counts, a["events"], a["paragraphs"], seed)
     PAGE.parent.mkdir(parents=True, exist_ok=True)
     items = build_items(sample, records, texts, aids)
     PAGE.write_text(render_page(items, TEMPLATE.read_text(encoding="utf-8")), encoding="utf-8")
     AUDIT_DIR.mkdir(parents=True, exist_ok=True)
     public = [committable(s, records) for s in sample]
-    (AUDIT_DIR / "dev_sample.json").write_text(json.dumps(public, indent=1), encoding="utf-8")
+    sample_path(a["round"]).write_text(json.dumps(public, indent=1), encoding="utf-8")
     n_events = sum(s["kind"] == "event" for s in sample)
-    print(f"{n_events} events and {len(sample) - n_events} paragraphs -> {PAGE.relative_to(ROOT)}")
+    print(
+        f"round {a['round']}: {n_events} events and {len(sample) - n_events} paragraphs -> {PAGE.relative_to(ROOT)}"
+    )
 
 
 def report(cfg: dict[str, Any], answers_path: Path) -> None:
-    sample = json.loads((AUDIT_DIR / "dev_sample.json").read_text(encoding="utf-8"))
+    n = cfg["audit"]["round"]
+    sample = json.loads(sample_path(n).read_text(encoding="utf-8"))
     answers = clean_answers(json.loads(answers_path.read_text(encoding="utf-8")))
-    (AUDIT_DIR / "dev_answers.json").write_text(
+    (AUDIT_DIR / f"dev_answers_round{n}.json").write_text(
         json.dumps(answers, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     limit = cfg["audit"]["max_error_rate"]

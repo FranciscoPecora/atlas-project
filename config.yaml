@@ -77,3 +77,6 @@ audit:
   events: 30
   paragraphs: 10
   max_error_rate: 0.05
+  # Round 1 was void: the page did not say that a count shared by several places
+  # is left out on purpose, so correct events were marked wrong (DECISIONS.md).
+  round: 2

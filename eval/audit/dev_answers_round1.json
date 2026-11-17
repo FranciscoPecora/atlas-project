@@ -1,0 +1,162 @@
+{
+ "e01": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e02": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e03": {
+  "verdict": "wrong",
+  "note": "There is key info missing"
+ },
+ "e04": {
+  "verdict": "unsure",
+  "note": "It is missing the number of attacks"
+ },
+ "e05": {
+  "verdict": "unsure",
+  "note": "missing number"
+ },
+ "e06": {
+  "verdict": "unsure",
+  "note": "missing count\n"
+ },
+ "e07": {
+  "verdict": "unsure",
+  "note": "again missing count\n"
+ },
+ "e08": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e09": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e10": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e11": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e12": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e13": {
+  "verdict": "unsure",
+  "note": "missing count\n"
+ },
+ "e14": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e15": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e16": {
+  "verdict": "wrong",
+  "note": "missing count\n"
+ },
+ "e17": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e18": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e19": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e20": {
+  "verdict": "wrong",
+  "note": "missing count"
+ },
+ "e21": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e22": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e23": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e24": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e25": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e26": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e27": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e28": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e29": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "e30": {
+  "verdict": "unsure",
+  "note": "missing count"
+ },
+ "p01": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p02": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p03": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p04": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p05": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p06": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p07": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p08": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p09": {
+  "verdict": "missing",
+  "note": "missing count"
+ },
+ "p10": {
+  "verdict": "missing",
+  "note": "missing count"
+ }
+}

@@ -106,7 +106,7 @@ Dev GSU tasks open with events already drawn by `src/prelabel.py` (rules, no mod
 ### 8.2 Spot check of the machine-made General Staff key
 
 1. Open `data/audit/audit.html` (double-click it in Finder). It shows 30 random events and 10 random paragraphs, in English.
-2. Event: **Right** if the paragraph says this kind of event happened at this place (and the count, if shown, is in the paragraph for that event). Otherwise **Wrong**, with a short note.
+2. Event: **Right** if the paragraph says this kind of event happened at this place (and the count, if shown, is in the paragraph for that event). Otherwise **Wrong**, with a short note. An empty count is correct when the paragraph's number is a total for several places (hard case 9); it is never a reason for Wrong or Something missing.
 3. Paragraph: **Complete** if every event and every attacked village has a box. Otherwise **Something missing**, with a note saying what.
 4. **Not sure** is a valid answer. Do not guess.
 5. Click **Save answers** at the end. The key is accepted if at most 5% of judged events are wrong and at most 5% of judged paragraphs miss something (config `audit.max_error_rate`).

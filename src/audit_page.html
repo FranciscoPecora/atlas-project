@@ -79,7 +79,10 @@ function eventBox(e) {
     el("b", {}, TYPES[e.event_type] || e.event_type), el("br"),
     "Where: " + place, el("br"),
     "Who → whom: " + who + ", " + (STATUS[e.status] || e.status), el("br"),
-    "Date: " + e.event_date + "   Count: " + (e.quantity == null ? "none recorded" : e.quantity),
+    "Date: " + e.event_date, el("br"),
+    "Count: " + (e.quantity != null ? e.quantity
+      : e.same_kind > 1 ? "left empty on purpose. The paragraph's number is one total for " + e.same_kind + " places, so it belongs to no single place. This is correct."
+      : "none recorded"),
     el("div", { class: "quote" }, "Evidence: " + e.quote));
 }
 function choice(item, verdict, text, cls) {
@@ -99,8 +102,10 @@ function intro() {
       el("div", { class: "label" }, "How to judge an event"),
       el("ul", {},
         el("li", {}, "Read the English paragraph. Then read the blue event box."),
-        el("li", {}, "Right: the paragraph really says this happened, at this place, of this kind. If a count is shown, that number is in the paragraph for this event."),
-        el("li", {}, "Wrong: the place is not in the paragraph, the kind is wrong (for example it says shelling but the box says ground attack), or the count is wrong."),
+        el("li", {}, "Right: the paragraph really says this happened, at this place, of this kind."),
+        el("li", {}, "About counts: 'attacked 14 times towards A, B and C' is 3 events, one per village, and none of them gets the 14, because nobody knows how many attacks each village had. An empty count is correct there. Do not mark it wrong."),
+        el("li", {}, "A count is only checked when the box shows a number: that number must be in the paragraph and must count this one event."),
+        el("li", {}, "Wrong: the place is not in the paragraph, the kind is wrong (for example it says shelling but the box says ground attack), or a number shown in the box is wrong."),
         el("li", {}, "A place counts once per paragraph. 'Near', 'towards' and 'in the area of' a village all count as that village."),
         el("li", {}, "The date is always the day before the report. You do not need to check it."))),
     el("div", { class: "card" },
@@ -108,6 +113,7 @@ function intro() {
       el("ul", {},
         el("li", {}, "Complete: every attack, strike, shelling or advance in the paragraph has a box, and every village named as attacked has a box."),
         el("li", {}, "Something missing: you can point to a village or an event with no box. Write which one in the note."),
+        el("li", {}, "A missing count is not something missing. Only a missing village or a missing event is."),
         el("li", {}, "Paragraphs with no events (titles, greetings, loss totals of equipment) are Complete when the list is empty."))),
     el("p", { class: "soft" }, "Not sure is allowed. Your progress is kept if you close the page."),
     el("button", { class: "main", onclick: () => { pos = 0; keep(); draw(); } }, "Start")

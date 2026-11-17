@@ -1,0 +1,302 @@
+[
+ {
+  "id": "e01",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 763,
+  "evidence_end": 815,
+  "event_type": "other"
+ },
+ {
+  "id": "e02",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 818,
+  "evidence_end": 970,
+  "event_type": "air_strike"
+ },
+ {
+  "id": "e03",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 1391,
+  "evidence_end": 1464,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e04",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 1862,
+  "evidence_end": 1960,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e05",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2024,
+  "evidence_end": 2133,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e06",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2024,
+  "evidence_end": 2133,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e07",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2193,
+  "evidence_end": 2270,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e08",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2280,
+  "evidence_end": 2436,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e09",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2280,
+  "evidence_end": 2436,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e10",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2469,
+  "evidence_end": 2566,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e11",
+  "kind": "event",
+  "report_id": "gsu-2026-07-21",
+  "evidence_start": 2626,
+  "evidence_end": 2730,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e12",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 300,
+  "evidence_end": 404,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e13",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 300,
+  "evidence_end": 437,
+  "event_type": "air_strike"
+ },
+ {
+  "id": "e14",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 820,
+  "evidence_end": 951,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e15",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 953,
+  "evidence_end": 1139,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e16",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 953,
+  "evidence_end": 1139,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e17",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 953,
+  "evidence_end": 1139,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e18",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 1298,
+  "evidence_end": 1438,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e19",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 1298,
+  "evidence_end": 1438,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e20",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 1440,
+  "evidence_end": 1589,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e21",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 1591,
+  "evidence_end": 1915,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e22",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 2014,
+  "evidence_end": 2199,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e23",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 2014,
+  "evidence_end": 2199,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e24",
+  "kind": "event",
+  "report_id": "gsu-2026-07-29",
+  "evidence_start": 2201,
+  "evidence_end": 2351,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e25",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 311,
+  "evidence_end": 535,
+  "event_type": "shelling"
+ },
+ {
+  "id": "e26",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 815,
+  "evidence_end": 873,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e27",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 815,
+  "evidence_end": 886,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e28",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 936,
+  "evidence_end": 1043,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e29",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 1099,
+  "evidence_end": 1207,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "e30",
+  "kind": "event",
+  "report_id": "gsu-2026-08-06",
+  "evidence_start": 1882,
+  "evidence_end": 2016,
+  "event_type": "ground_assault"
+ },
+ {
+  "id": "p01",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-07-21",
+  "paragraph": 5
+ },
+ {
+  "id": "p02",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-07-21",
+  "paragraph": 7
+ },
+ {
+  "id": "p03",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-07-21",
+  "paragraph": 9
+ },
+ {
+  "id": "p04",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-07-21",
+  "paragraph": 13
+ },
+ {
+  "id": "p05",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-07-29",
+  "paragraph": 16
+ },
+ {
+  "id": "p06",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-08-06",
+  "paragraph": 3
+ },
+ {
+  "id": "p07",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-08-06",
+  "paragraph": 5
+ },
+ {
+  "id": "p08",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-08-06",
+  "paragraph": 8
+ },
+ {
+  "id": "p09",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-08-06",
+  "paragraph": 10
+ },
+ {
+  "id": "p10",
+  "kind": "paragraph",
+  "report_id": "gsu-2026-08-06",
+  "paragraph": 14
+ }
+]
