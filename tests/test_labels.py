@@ -8,11 +8,14 @@ from src.labels import (
     NO_AID,
     SPEC,
     GoldUnit,
+    attach_prefill,
     attach_reading_aid,
+    control_task,
     export,
     gold_units,
     resolve_sectors,
     tasks_for_unit,
+    with_control,
 )
 
 
@@ -153,3 +156,46 @@ def test_reading_aid_only_on_gsu_dev_tasks():
     assert test["translation"] == NO_AID and test["places"] == ""
     isw = attach_reading_aid(_task("isw", "dev"), None)["data"]
     assert isw["translation"] == NO_AID
+
+
+GSU_TEXT = (
+    "Заголовок\n\n"
+    "На Зеленому напрямку ворог тричі атакував у районах Нової Балки та Кам’янки.\n\n"
+    "На Синьому напрямку окупанти атакували в бік Ясного.\n"
+)
+
+
+def _gsu_task(split: str) -> dict:
+    unit = GoldUnit(2, date(2026, 7, 21), "gsu", ("FULL",), split)
+    (task,) = tasks_for_unit(unit, GSU_TEXT, "ab" * 32, "https://armyinform.com.ua/x/")
+    return task
+
+
+def test_prefill_on_gsu_dev_only():
+    dev = attach_prefill(_gsu_task("dev"), GSU_TEXT)
+    assert dev["data"]["prelabel"] == "prelabel-rules-v1"
+    labels = [r for r in dev["predictions"][0]["result"] if r["type"] == "labels"]
+    assert len(labels) == 3
+    test = attach_prefill(_gsu_task("test"), GSU_TEXT)
+    assert "predictions" not in test and test["data"]["prelabel"] == ""
+
+
+def test_control_task_comes_first_and_has_no_prefill():
+    full = attach_prefill(_gsu_task("dev"), GSU_TEXT)
+    tasks = with_control([full], "gsu-2026-07-21", [2])
+    control = tasks[0]
+    assert control["data"]["purpose"] == "control" and "predictions" not in control
+    d = control["data"]
+    assert GSU_TEXT[d["unit_start"] : d["unit_start"] + len(d["text"])] == d["text"]
+    assert d["text"].startswith("На Зеленому") and d["text"].endswith("Кам’янки.")
+    with pytest.raises(ValueError):
+        control_task(attach_prefill(_gsu_task("test"), GSU_TEXT), [2])
+
+
+def test_control_labels_go_to_check_dir_not_gold(tmp_path):
+    task = ls_task([good_region()], {"pass": "1"})
+    task["data"].update(purpose="control", sector="CONTROL", prelabel="")
+    counts = export([task], tmp_path / "gold", tmp_path / "check")
+    assert counts == {"control": 1}
+    assert (tmp_path / "check" / "gsu-2026-07-29__CONTROL__pass1.jsonl").exists()
+    assert not (tmp_path / "gold").exists()

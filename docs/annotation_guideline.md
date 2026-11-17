@@ -85,6 +85,22 @@ Several places in one sentence give one event each. "Between A and B" is precisi
 4. Never label a test unit after seeing any model output for that report.
 5. When unsure, label your best reading and add the sentence to section 9.
 
+### 8.1 Pre-filled General Staff dev tasks
+
+Dev GSU tasks open with events already drawn by `src/prelabel.py` (rules, no model). They are proposals. Your job per task:
+
+1. **Control first.** The task with sector `CONTROL` (two paragraphs of the 6 August report) has no pre-fill. Label it from scratch before opening any pre-filled task. It measures whether the pre-fill steers you (`uv run python -m src.prelabel_check`).
+2. **Check every pre-filled event** in the region list on the left: right place, right type, right date. Fix wrong fields, delete wrong events (select, Backspace), and add events the rules missed.
+3. **What the rules cannot see,** so look for it yourself:
+   - front-wide totals and Ukrainian strikes with no place (the 2 to 3 paragraphs after the "8:00" line): decide per hard case 7, and add a row to section 9 for strikes with no place;
+   - the type: every place event is pre-filled as `ground_assault`; change it if the sentence says shelling, an air strike or an advance;
+   - two events at one place on one day (an assault and an advance): the rules make one.
+4. **Pre-fill conventions** (keep or overrule them, then record the ruling in section 9):
+   - a count shared by several places ("attacked 14 times towards A, B and C") gives no `quantity`; a count with a single place does;
+   - a paragraph with no settlement but a named direction gives one event per kind (clash, air strike, shelling) located at the direction, precision 2;
+   - all place events are precision 2 ("in the area of", "towards").
+5. Submit as usual: Minutes, Pass 1, Submit.
+
 ## 9. Hard cases
 
 Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the ruling, and the reason.

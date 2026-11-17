@@ -17,7 +17,7 @@ Source text is stored locally and never committed or published.
 
 ## Limits
 
-This measures confirmation inside the sources' own reporting, not ground truth. There is one annotator; agreement figures measure self-consistency only. The annotator reads no Ukrainian: General Staff dev reports were labelled with a Claude translation shown beside the original, which may bias those labels toward Claude's reading.
+This measures confirmation inside the sources' own reporting, not ground truth. There is one annotator; agreement figures measure self-consistency only. The annotator reads no Ukrainian: General Staff dev reports were labelled with a Claude translation shown beside the original, which may bias those labels toward Claude's reading. General Staff dev labels started from rule-based pre-fills that the annotator checked; an anchoring check compares them with labels made from scratch.
 
 ## Intended use
 

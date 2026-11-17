@@ -49,6 +49,15 @@ eval:
   bootstrap_resamples: 2000
   seed: 20261116
 
+prelabel:
+  # Rule-based pre-fill for GSU dev units (src/prelabel.py). Not for test units.
+  # Anchoring check: these paragraphs of this report are labelled first, from
+  # scratch, as a separate CONTROL task; the same paragraphs are later checked
+  # with pre-fills. Agreement between the two is reported against the target.
+  control_report: 2026-08-06
+  control_paragraphs: [6, 7]
+  agreement_target: 0.9
+
 link:
   duplicate_km: 5
   duplicate_days: 3

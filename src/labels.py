@@ -21,12 +21,14 @@ from pathlib import Path
 from typing import Any
 
 from src.collect import DATA, ROOT, read_manifest
+from src.config import load_config
 from src.schema import ExtractedEvent
 from src.segment import segment
 
 SPEC = ROOT / "SPEC.md"
 TASKS = DATA / "labelstudio" / "tasks.json"
 GOLD = ROOT / "eval" / "gold"
+CHECK_DIR = ROOT / "eval" / "prelabel_check"  # control-task labels; not gold
 # Seeded permutation from SPEC.md section 4.1, used for the absent-sector fallback.
 PERM = ["AIR", "RU_INTERIOR", "OSKIL", "KHARKIV", "NORTH", "SOUTH", "DONETSK"]
 ROW = re.compile(
@@ -119,10 +121,51 @@ def make_tasks(units: list[GoldUnit], data_dir: Path = DATA) -> tuple[list[dict]
         if not m or m["status"] != "ok" or not path.exists():
             missing.append(u.report_id)
             continue
-        unit_tasks = tasks_for_unit(u, path.read_text(encoding="utf-8"), m["sha256"], m["url"])
+        text = path.read_text(encoding="utf-8")
+        unit_tasks = tasks_for_unit(u, text, m["sha256"], m["url"])
         reading_aid = load_translation(u.report_date.isoformat(), data_dir / "text" / "gsu_en")
-        tasks += [attach_reading_aid(t, reading_aid) for t in unit_tasks]
+        tasks += [attach_prefill(attach_reading_aid(t, reading_aid), text) for t in unit_tasks]
     return tasks, missing
+
+
+def attach_prefill(task: dict[str, Any], report_text: str) -> dict[str, Any]:
+    """Rule-based pre-fill for GSU dev tasks only. Test tasks start empty (SPEC 4)."""
+    from src.prelabel import VERSION, prefill_report, to_prediction
+
+    data = task["data"]
+    data["prelabel"] = ""
+    if data["source"] == "gsu" and data["split"] == "dev" and data["sector"] == "FULL":
+        task["predictions"] = [to_prediction(prefill_report(report_text), data)]
+        data["prelabel"] = VERSION
+    return task
+
+
+def control_task(full_task: dict[str, Any], paragraphs: list[int]) -> dict[str, Any]:
+    """The anchoring check: chosen paragraphs of a GSU dev report, no pre-fill, labelled
+    before the full pre-filled task. Its labels go to eval/prelabel_check/, not gold."""
+    from src.prelabel import paragraph_spans
+
+    data = full_task["data"]
+    if data["split"] != "dev" or data["sector"] != "FULL":
+        raise ValueError("a control task is cut from a GSU dev FULL task only")
+    spans = paragraph_spans(data["text"])
+    start, end = spans[paragraphs[0] - 1][0], spans[paragraphs[-1] - 1][1]
+    return {
+        "data": {
+            **data,
+            "text": data["text"][start:end],
+            "unit_start": data["unit_start"] + start,
+            "sector": "CONTROL",
+            "purpose": "control",
+            "prelabel": "",  # same reading aid as the full task; only the pre-fill differs
+        }
+    }
+
+
+def with_control(tasks: list[dict[str, Any]], report_id: str, paragraphs: list[int]) -> list[dict]:
+    """Put the control task first, so it is labelled before any pre-fill is seen."""
+    full = next(t for t in tasks if t["data"]["report_id"] == report_id)
+    return [control_task(full, paragraphs), *tasks]
 
 
 NO_AID = "(no translation: English source, or test-split report)"
@@ -189,7 +232,9 @@ def region_to_record(region: dict, data: dict) -> dict[str, Any]:
     return record
 
 
-def export(ls_export: list[dict], gold_dir: Path = GOLD) -> dict[str, int]:
+def export(
+    ls_export: list[dict], gold_dir: Path = GOLD, check_dir: Path = CHECK_DIR
+) -> dict[str, int]:
     """Write one JSONL file per (unit, pass) into the split given by the task. Returns counts."""
     counts: dict[str, int] = defaultdict(int)
     for task in ls_export:
@@ -203,17 +248,15 @@ def export(ls_export: list[dict], gold_dir: Path = GOLD) -> dict[str, int]:
             for r in records:
                 r["annotation_pass"] = n_pass
                 r["minutes"] = task_level.get("minutes")
+                r["prelabel"] = data.get("prelabel") or None
             records.sort(key=lambda r: (r["evidence_start"], r["evidence_end"]))
-            out = (
-                gold_dir
-                / data["split"]
-                / f"{data['report_id']}__{data['sector']}__pass{n_pass}.jsonl"
-            )
+            folder = check_dir if data.get("purpose") == "control" else gold_dir / data["split"]
+            out = folder / f"{data['report_id']}__{data['sector']}__pass{n_pass}.jsonl"
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(
                 "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8"
             )
-            counts[data["split"]] += len(records)
+            counts["control" if data.get("purpose") == "control" else data["split"]] += len(records)
     return dict(counts)
 
 
@@ -231,6 +274,10 @@ def main(argv: list[str] | None = None) -> None:
         if args.pilot:
             units = [u for u in units if u.split == "dev"]
         tasks, missing = make_tasks(units)
+        pre = load_config()["prelabel"]
+        control_id = f"gsu-{pre['control_report']}"
+        if any(t["data"]["report_id"] == control_id for t in tasks):
+            tasks = with_control(tasks, control_id, pre["control_paragraphs"])
         TASKS.parent.mkdir(parents=True, exist_ok=True)
         TASKS.write_text(json.dumps(tasks, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"{len(tasks)} tasks -> {TASKS.relative_to(ROOT)}")
