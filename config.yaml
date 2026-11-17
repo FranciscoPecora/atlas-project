@@ -73,7 +73,7 @@ cost:
   eur_per_usd: null
 
 audit:
-  # Spot check of the machine-made GSU answer key (src/audit.py, draft amendment A1).
+  # Spot check of the machine-made GSU answer key (src/audit.py, amendment A1).
   events: 30
   paragraphs: 10
   max_error_rate: 0.05

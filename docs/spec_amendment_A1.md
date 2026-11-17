@@ -1,7 +1,7 @@
-# Draft amendment A1: machine-made answer key for General Staff reports
+# Amendment A1: machine-made answer key for General Staff reports
 
-Status: **DRAFT, not in force.** SPEC.md is unchanged until Francisco approves this text.
-Until then the method below runs on dev reports only, which SPEC 4.3 already allows.
+Status: **approved by Francisco Pecora on 2026-11-17** and recorded in SPEC.md, Amendments.
+In code the method still runs on dev reports only; test reports are enabled in milestone 2 (see DECISIONS.md).
 
 ## Why
 

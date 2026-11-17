@@ -3,7 +3,7 @@
     uv run python -m src.audit build            # write data/audit/audit.html
     uv run python -m src.audit score ANSWERS    # read the answers saved by the page
 
-Step 3 of draft amendment A1. `build` draws a seeded random sample of events
+Step 3 of amendment A1. `build` draws a seeded random sample of events
 and paragraphs from the reviewed dev key and writes one local web page. The
 annotator clicks Right/Wrong per event and Complete/Missing per paragraph, in
 English. `score` reports the error rates with 95% Wilson intervals.

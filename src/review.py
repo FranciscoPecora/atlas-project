@@ -2,7 +2,7 @@
 
     uv run python -m src.review 2026-07-21 [...] [--force]
 
-Step 2 of draft amendment A1 (docs/spec_amendment_A1_draft.md). The reviewer
+Step 2 of amendment A1 (docs/spec_amendment_A1.md). The reviewer
 reads the Ukrainian report, the annotation guideline and the rule pre-fills
 (src/prelabel.py), and returns the final list of events. Code then finds each
 quote in the report to get offsets, and rejects any event whose quote, place or
@@ -166,7 +166,7 @@ def dev_task_data(report_date: str, spec_text: str, data_dir: Path = DATA) -> di
     if unit.split != "dev":
         raise RefusedTestSplit(
             f"gsu-{report_date} is a test unit; SPEC.md 4.3 forbids labelling it from model "
-            "output until amendment A1 (docs/spec_amendment_A1_draft.md) is approved"
+            "output until amendment A1 (docs/spec_amendment_A1.md) is enabled for test units in milestone 2"
         )
     tasks, missing = make_tasks([unit], data_dir)
     if missing:
