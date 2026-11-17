@@ -127,7 +127,7 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 | 8 | Footage published today showing an event of unknown date | | |
 | 9 | A count shared by several places ("attacked 14 times towards A, B and C") | No `quantity` on any of them. A count with a single place is that place's `quantity`. Provisional | The share per place is unknown |
 | 10 | Front-wide totals with no place and no direction ("261 clashes over the past day", "60 air strikes", losses of personnel and equipment) | Not an event | No location to match on; it restates the per-direction paragraphs |
-| 11 | Ukrainian strikes on "areas of concentration" or "command posts" with a count but no place | One event per kind, actor UA, target RU, no location, with the count. Provisional | It is a distinct claimed event; it stays unmatched on location by design |
+| 11 | Ukrainian strikes on "areas of concentration" or "command posts" with a count but no place | One event per kind of target struck, type `other` when aviation, missiles and artillery are named together, actor UA, target RU, no location, with the count. Confirmed by the owner, 17 Nov 2026 | It is a distinct claimed event; it stays unmatched on location by design |
 | 12 | "In the area of", "towards", "near" a settlement | Precision 2 at the settlement (see 5). One event per settlement per paragraph per type | Same as hard case 4 |
 | 13 | | | |
 | 14 | | | |
