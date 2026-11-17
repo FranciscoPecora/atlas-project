@@ -2,3 +2,10 @@ commit,config_hash,date,split,system,metric,value,n,config
 4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round2,event_error_rate,0.033,30,"gold_review=claude-opus-5-5 effort=high; prelabel=prelabel-rules-v1; audit events=30 paragraphs=10 limit=0.05 round=2 seed=20261117; wilson95=0.006-0.167"
 4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round2,paragraph_miss_rate,0.000,9,"same config; 1 of 10 paragraphs not sure; wilson95=0.000-0.299"
 4a95436,92caacc28ec6,2026-11-17,dev,gold-key-audit-round1-void,event_error_rate,0.800,10,"void: page did not explain shared counts; 20 of 30 not sure; seed=20261116"
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_f1,0.9745,181,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_f1_low,0.9464,181,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_f1_high,1.0,181,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_precision,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,event_recall,0.9503,181,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,status_accuracy,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+713a579,a7cbb796b2b3,2026-11-17,dev,B0,quantity_exact,1.0,5,K=10km D=1d resamples=2000 seed=20261116
