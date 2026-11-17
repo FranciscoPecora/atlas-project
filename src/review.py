@@ -165,8 +165,8 @@ def dev_task_data(report_date: str, spec_text: str, data_dir: Path = DATA) -> di
         raise ValueError(f"gsu-{report_date} is not a gold unit in SPEC.md section 4.2")
     if unit.split != "dev":
         raise RefusedTestSplit(
-            f"gsu-{report_date} is a test unit; SPEC.md 4.3 forbids labelling it from model "
-            "output until amendment A1 (docs/spec_amendment_A1.md) is enabled for test units in milestone 2"
+            f"gsu-{report_date} is a test unit; amendment A1 allows a machine-made test "
+            "key, but it is switched on in milestone 2 (see DECISIONS.md)"
         )
     tasks, missing = make_tasks([unit], data_dir)
     if missing:
