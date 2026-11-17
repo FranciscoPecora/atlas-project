@@ -80,3 +80,29 @@ audit:
   # Round 1 was void: the page did not say that a count shared by several places
   # is left out on purpose, so correct events were marked wrong (DECISIONS.md).
   round: 2
+
+geocode:
+  # General Staff front directions and the town each is named after, as
+  # [Ukrainian name, GeoNames oblast]. Used only to choose between same-named
+  # places (the nearest to the direction's town wins); never as coordinates of
+  # an event. The Slobozhanskyi and Kursk directions are named after regions,
+  # and Oleksandrivka has many namesakes, so those anchors are approximate.
+  direction_anchors:
+    Північно-Слобожанський: ["Суми", "Sumy"]
+    Курський: ["Суми", "Sumy"]
+    Південно-Слобожанський: ["Харків", "Kharkiv"]
+    Куп’янський: ["Куп’янськ", "Kharkiv"]
+    Лиманський: ["Лиман", "Donetsk"]
+    Слов’янський: ["Слов’янськ", "Donetsk"]
+    Сіверський: ["Сіверськ", "Donetsk"]
+    Краматорський: ["Краматорськ", "Donetsk"]
+    Костянтинівський: ["Костянтинівка", "Donetsk"]
+    Торецький: ["Торецьк", "Donetsk"]
+    Покровський: ["Покровськ", "Donetsk"]
+    Новопавлівський: ["Новопавлівка", "Dnipropetrovsk"]
+    Олександрівський: ["Олександроград", "Donetsk"]
+    Гуляйпільський: ["Гуляйполе", "Zaporizhzhia"]
+    Оріхівський: ["Оріхів", "Zaporizhzhia"]
+    Придніпровський: ["Херсон", "Kherson"]
+  # A candidate farther than this from its direction's town is not trusted.
+  max_anchor_km: 120
