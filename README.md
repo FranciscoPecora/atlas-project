@@ -17,7 +17,7 @@ Source text is stored locally and never committed or published.
 
 ## Limits
 
-This measures confirmation inside the sources' own reporting, not ground truth. There is one annotator; agreement figures measure self-consistency only.
+This measures confirmation inside the sources' own reporting, not ground truth. There is one annotator; agreement figures measure self-consistency only. The annotator reads no Ukrainian: General Staff dev reports were labelled with a Claude translation shown beside the original, which may bias those labels toward Claude's reading.
 
 ## Intended use
 

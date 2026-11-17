@@ -79,7 +79,7 @@ Several places in one sentence give one event each. "Between A and B" is precisi
 
 ## 8. Procedure
 
-1. Read the whole unit once before labelling.
+1. Read the whole unit once before labelling. For a General Staff dev unit, read the English reading aid on the right: each paragraph `[n]` starts with the first Ukrainian words of paragraph n on the left. Select evidence on the Ukrainian side only, and copy place names from it (Cmd+C, Cmd+V) into `location_text`. The aid is machine translation: if it seems to contradict the numbers or names in the Ukrainian, the Ukrainian wins; note the case in section 9.
 2. Label events in text order. Draw the shortest span that supports all fields.
 3. Enter the minutes spent on the unit in the **Minutes** field at the bottom of the task, and set **Annotation pass** to 1 (2 only for the later consistency re-label).
 4. Never label a test unit after seeing any model output for that report.

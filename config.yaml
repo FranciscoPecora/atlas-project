@@ -36,6 +36,10 @@ models:
   verifier_alt: claude-sonnet-5-5
   verifier_effort: low
   geocode_disambiguation: claude-sonnet-5-5
+  # Annotator reading aid for Ukrainian dev reports (src/translate.py). A larger
+  # model than the extractor, so the aid does not share the extractor's errors.
+  translation: claude-opus-5-5
+  translation_effort: medium
 
 eval:
   match_km: 10

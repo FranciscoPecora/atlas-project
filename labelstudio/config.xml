@@ -1,6 +1,17 @@
 <View>
   <Header value="$source $report_date · $sector"/>
-  <Text name="text" value="$text" granularity="word"/>
+  <View style="display: flex; gap: 1em; align-items: flex-start">
+    <View style="flex: 1">
+      <Header value="Report: select evidence here" size="6"/>
+      <Text name="text" value="$text" granularity="word"/>
+    </View>
+    <View style="flex: 1; background: #f4f6f8; padding: 0.5em; border-radius: 6px">
+      <Header value="English reading aid (machine translation, read only, do not label)" size="6"/>
+      <Text name="translation" value="$translation"/>
+      <Header value="Place names in this report (Ukrainian as written = English)" size="6"/>
+      <Text name="places" value="$places"/>
+    </View>
+  </View>
 
   <Labels name="event" toName="text">
     <Label value="Event" background="#4C9AFF"/>

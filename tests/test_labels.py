@@ -4,7 +4,16 @@ from datetime import date
 import pytest
 from pydantic import ValidationError
 
-from src.labels import SPEC, GoldUnit, export, gold_units, resolve_sectors, tasks_for_unit
+from src.labels import (
+    NO_AID,
+    SPEC,
+    GoldUnit,
+    attach_reading_aid,
+    export,
+    gold_units,
+    resolve_sectors,
+    tasks_for_unit,
+)
 
 
 def test_rotation_table_parses_to_45_units_with_10_dev():
@@ -129,3 +138,18 @@ def test_export_rejects_invalid_labels(tmp_path):
     bad["event_date"] = "28 July"
     with pytest.raises(ValidationError):
         export([ls_task([bad])], tmp_path)
+
+
+def _task(source: str, split: str) -> dict:
+    return {"data": {"source": source, "split": split, "text": "x"}}
+
+
+def test_reading_aid_only_on_gsu_dev_tasks():
+    record = {"translation": "[1] starts: … \nEnglish", "places": "Покровськ = Pokrovsk"}
+    dev = attach_reading_aid(_task("gsu", "dev"), record)["data"]
+    assert dev["translation"] == record["translation"] and dev["places"] == record["places"]
+    # a test unit never gets model output, even if a file exists (SPEC.md section 4)
+    test = attach_reading_aid(_task("gsu", "test"), record)["data"]
+    assert test["translation"] == NO_AID and test["places"] == ""
+    isw = attach_reading_aid(_task("isw", "dev"), None)["data"]
+    assert isw["translation"] == NO_AID

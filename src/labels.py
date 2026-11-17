@@ -108,6 +108,8 @@ def tasks_for_unit(unit: GoldUnit, text: str, sha: str, url: str) -> list[dict[s
 
 
 def make_tasks(units: list[GoldUnit], data_dir: Path = DATA) -> tuple[list[dict], list[str]]:
+    from src.translate import load_translation  # local: src.translate imports this module
+
     manifest = {(r["date"], r["source"]): r for r in read_manifest(data_dir / "manifest.csv")}
     tasks: list[dict] = []
     missing: list[str] = []
@@ -117,8 +119,22 @@ def make_tasks(units: list[GoldUnit], data_dir: Path = DATA) -> tuple[list[dict]
         if not m or m["status"] != "ok" or not path.exists():
             missing.append(u.report_id)
             continue
-        tasks += tasks_for_unit(u, path.read_text(encoding="utf-8"), m["sha256"], m["url"])
+        unit_tasks = tasks_for_unit(u, path.read_text(encoding="utf-8"), m["sha256"], m["url"])
+        reading_aid = load_translation(u.report_date.isoformat(), data_dir / "text" / "gsu_en")
+        tasks += [attach_reading_aid(t, reading_aid) for t in unit_tasks]
     return tasks, missing
+
+
+NO_AID = "(no translation: English source, or test-split report)"
+
+
+def attach_reading_aid(task: dict[str, Any], record: dict[str, str] | None) -> dict[str, Any]:
+    """Add the English reading aid to a GSU dev task. Never for test units (SPEC 4)."""
+    data = task["data"]
+    usable = record is not None and data["source"] == "gsu" and data["split"] == "dev"
+    data["translation"] = record["translation"] if usable else NO_AID
+    data["places"] = record["places"] if usable else ""
+    return task
 
 
 def _regions(result: list[dict]) -> tuple[dict[str, dict], dict[str, Any]]:
