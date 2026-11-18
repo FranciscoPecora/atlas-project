@@ -253,8 +253,13 @@ def report(cfg: dict[str, Any], answers_path: Path, split: str = "dev") -> None:
     n = cfg["audit"]["round"] if split == "dev" else cfg["audit"]["test_round"]
     sample = json.loads(sample_path(n, split).read_text(encoding="utf-8"))
     answers = clean_answers(json.loads(answers_path.read_text(encoding="utf-8")))
+    public = answers
+    if split == "test":  # notes may quote the reports: keep them local, commit verdicts only
+        public = {k: {"verdict": v["verdict"]} for k, v in answers.items()}
+        notes = page_path(split).with_name(f"{split}_notes_round{n}.json")
+        notes.write_text(json.dumps(answers, ensure_ascii=False, indent=1), encoding="utf-8")
     (AUDIT_DIR / f"{split}_answers_round{n}.json").write_text(
-        json.dumps(answers, ensure_ascii=False, indent=1), encoding="utf-8"
+        json.dumps(public, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     limit = cfg["audit"]["max_error_rate"]
     for kind, res in score(sample, answers).items():

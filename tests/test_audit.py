@@ -118,3 +118,21 @@ def test_clean_answers_keeps_verdict_and_note_only():
     assert clean_answers(raw) == {"e01": {"verdict": "wrong", "note": "bad place"}}
     with pytest.raises(ValueError):
         clean_answers({"answers": {"e01": {"verdict": "maybe"}}})
+
+
+def test_test_split_answers_are_committed_without_notes(tmp_path, monkeypatch):
+    import src.audit as audit
+
+    monkeypatch.setattr(audit, "AUDIT_DIR", tmp_path / "eval")
+    monkeypatch.setattr(audit, "PAGE", tmp_path / "data" / "audit.html")
+    (tmp_path / "eval").mkdir()
+    (tmp_path / "data").mkdir()
+    sample = [{"id": "e01", "kind": "event"}, {"id": "p01", "kind": "paragraph"}]
+    (tmp_path / "eval" / "test_sample_round1.json").write_text(json.dumps(sample), "utf-8")
+    raw = {"answers": {"e01": {"verdict": "wrong", "note": "quoted words"}}}
+    (tmp_path / "a.json").write_text(json.dumps(raw), "utf-8")
+    cfg = {"audit": {"round": 2, "test_round": 1, "max_error_rate": 0.05}}
+    audit.report(cfg, tmp_path / "a.json", "test")
+    committed = (tmp_path / "eval" / "test_answers_round1.json").read_text("utf-8")
+    assert "quoted words" not in committed and '"wrong"' in committed
+    assert "quoted words" in (tmp_path / "data" / "test_notes_round1.json").read_text("utf-8")
