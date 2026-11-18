@@ -136,3 +136,11 @@ def test_test_split_answers_are_committed_without_notes(tmp_path, monkeypatch):
     committed = (tmp_path / "eval" / "test_answers_round1.json").read_text("utf-8")
     assert "quoted words" not in committed and '"wrong"' in committed
     assert "quoted words" in (tmp_path / "data" / "test_notes_round1.json").read_text("utf-8")
+
+
+def test_page_states_both_rules_that_caused_wrong_verdicts():
+    from src.audit import TEMPLATE
+
+    page = TEMPLATE.read_text(encoding="utf-8")
+    assert "An empty count is correct" in page  # dev round 1 was void without it
+    assert "several kinds of event" in page  # test round 1 needed a re-read without it
