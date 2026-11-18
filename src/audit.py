@@ -76,11 +76,18 @@ def draw(
     n_events: int,
     n_paragraphs: int,
     seed: int,
+    skip: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
-    """Seeded sample: events from the key, paragraphs from all paragraphs of its reports."""
+    """Seeded sample: events from the key, paragraphs from all paragraphs of its reports.
+
+    `skip` is an earlier sample from `draw`; its events and paragraphs are not drawn again."""
     rng = random.Random(seed)
-    events = rng.sample(range(len(records)), min(n_events, len(records)))
+    seen_events = {s["record"] for s in skip or [] if s["kind"] == "event"}
+    seen_units = {(s["report_id"], s["paragraph"]) for s in skip or [] if s["kind"] != "event"}
+    pool = [i for i in range(len(records)) if i not in seen_events]
+    events = rng.sample(pool, min(n_events, len(pool)))
     units = [(rid, p) for rid in sorted(paragraphs) for p in range(1, paragraphs[rid] + 1)]
+    units = [u for u in units if u not in seen_units]
     chosen = rng.sample(units, min(n_paragraphs, len(units)))
     sample = [
         {"id": f"e{n:02d}", "kind": "event", "report_id": records[i]["report_id"], "record": i}
@@ -203,6 +210,48 @@ def committable(s: dict[str, Any], records: list[dict[str, Any]]) -> dict[str, A
     return {**keep, **{k: r[k] for k in ("evidence_start", "evidence_end", "event_type")}}
 
 
+def pooled(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """Several rounds of `score` added up. Valid only when the rounds share no item."""
+    out: dict[str, Any] = {}
+    for kind, bad in (("event", "wrong"), ("paragraph", "missing")):
+        judged = sum(r[kind]["judged"] for r in results)
+        n_bad = sum(r[kind][bad] for r in results)
+        lo, hi = wilson(n_bad, judged)
+        out[kind] = {
+            "judged": judged,
+            bad: n_bad,
+            "rate": round(n_bad / judged, 3) if judged else None,
+            "interval95": [round(lo, 3), round(hi, 3)],
+        }
+    return out
+
+
+def round_sizes(cfg: dict[str, Any], audit_round: int) -> dict[str, Any]:
+    """Sample sizes of one dev round: A1's sizes unless config `audit.extra_rounds` names it."""
+    a = cfg["audit"]
+    base = {"events": a["events"], "paragraphs": a["paragraphs"], "skip_rounds": []}
+    return {**base, **a.get("extra_rounds", {}).get(audit_round, {})}
+
+
+def earlier_draws(
+    records: list[dict[str, Any]], counts: dict[str, int], cfg: dict[str, Any], rounds: list[int]
+) -> list[dict[str, Any]]:
+    """Re-draw earlier dev rounds from their seeds, to know which items they held.
+
+    Refuses to continue if a re-drawn round differs from its committed sample file:
+    that would mean the key changed, and "not drawn before" could not be guaranteed."""
+    out: list[dict[str, Any]] = []
+    for n in rounds:
+        size = round_sizes(cfg, n)
+        seed = cfg["eval"]["seed"] + n - 1
+        sample = draw(records, counts, size["events"], size["paragraphs"], seed)
+        on_file = json.loads(sample_path(n).read_text(encoding="utf-8"))
+        if [committable(s, records) for s in sample] != on_file:
+            raise SystemExit(f"round {n} cannot be reproduced from the current key")
+        out += sample
+    return out
+
+
 def sample_path(audit_round: int, split: str = "dev") -> Path:
     return AUDIT_DIR / f"{split}_sample_round{audit_round}.json"
 
@@ -224,7 +273,13 @@ def build_page(records: list[dict[str, Any]], cfg: dict[str, Any], split: str = 
     counts = {rid: len(paragraph_spans(t)) for rid, t in texts.items()}
     a = cfg["audit"]
     n = a["round"] if split == "dev" else a["test_round"]
-    sample = draw(records, counts, a["events"], a["paragraphs"], cfg["eval"]["seed"] + n - 1)
+    seed = cfg["eval"]["seed"] + n - 1
+    if split == "dev":
+        size = round_sizes(cfg, n)
+        skip = earlier_draws(records, counts, cfg, size["skip_rounds"])
+        sample = draw(records, counts, size["events"], size["paragraphs"], seed, skip)
+    else:
+        sample = draw(records, counts, a["events"], a["paragraphs"], seed)
     page = page_path(split)
     page.parent.mkdir(parents=True, exist_ok=True)
     items = build_items(sample, records, texts, aids)
@@ -262,9 +317,19 @@ def report(cfg: dict[str, Any], answers_path: Path, split: str = "dev") -> None:
         json.dumps(public, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     limit = cfg["audit"]["max_error_rate"]
-    for kind, res in score(sample, answers).items():
+    result = score(sample, answers)
+    for kind, res in result.items():
         ok = res["rate"] is not None and res["rate"] <= limit and not res["unanswered"]
         print(f"{kind}: {res} -> {'OK' if ok else 'NOT ACCEPTED'} (limit {limit})")
+    earlier = round_sizes(cfg, n)["skip_rounds"] if split == "dev" else []
+    if earlier:
+        results = [result]
+        for m in earlier:
+            old_sample = json.loads(sample_path(m).read_text(encoding="utf-8"))
+            old = json.loads((AUDIT_DIR / f"dev_answers_round{m}.json").read_text(encoding="utf-8"))
+            results.append(score(old_sample, old))
+        for kind, res in pooled(results).items():
+            print(f"rounds {earlier + [n]} together, {kind}: {res}")
     for item_id, a in answers.items():
         if a["verdict"] in ("wrong", "missing", "unsure"):
             print(f"  {item_id}: {a['verdict']} {a['note']}")

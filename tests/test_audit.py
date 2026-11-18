@@ -10,7 +10,9 @@ from src.audit import (
     english_paragraphs,
     glossary,
     paragraph_of,
+    pooled,
     render_page,
+    round_sizes,
     score,
     wilson,
 )
@@ -144,3 +146,42 @@ def test_page_states_both_rules_that_caused_wrong_verdicts():
     page = TEMPLATE.read_text(encoding="utf-8")
     assert "An empty count is correct" in page  # dev round 1 was void without it
     assert "several kinds of event" in page  # test round 1 needed a re-read without it
+
+
+def test_draw_never_repeats_an_item_of_an_earlier_sample():
+    records = [{**RECORD, "evidence_start": i} for i in range(20)]
+    counts = {"gsu-2026-07-21": 8}
+    first = draw(records, counts, 5, 3, seed=1)
+    second = draw(records, counts, 15, 5, seed=2, skip=first)
+    old_events = {s["record"] for s in first if s["kind"] == "event"}
+    new_events = {s["record"] for s in second if s["kind"] == "event"}
+    assert not old_events & new_events and len(new_events) == 15
+    old_units = {s["paragraph"] for s in first if s["kind"] == "paragraph"}
+    new_units = {s["paragraph"] for s in second if s["kind"] == "paragraph"}
+    assert not old_units & new_units and len(new_units) == 5
+
+
+def test_pooled_adds_rounds_and_recomputes_the_interval():
+    one = {"event": {"judged": 30, "wrong": 1}, "paragraph": {"judged": 9, "missing": 0}}
+    two = {"event": {"judged": 100, "wrong": 1}, "paragraph": {"judged": 20, "missing": 0}}
+    both = pooled([one, two])
+    assert both["event"]["judged"] == 130 and both["event"]["wrong"] == 2
+    assert both["event"]["interval95"][1] == pytest.approx(0.054, abs=0.001)
+    assert both["paragraph"] == {
+        "judged": 29,
+        "missing": 0,
+        "rate": 0.0,
+        "interval95": [0.0, 0.117],
+    }
+
+
+def test_round_sizes_default_to_a1_and_follow_extra_rounds():
+    cfg = {
+        "audit": {
+            "events": 30,
+            "paragraphs": 10,
+            "extra_rounds": {3: {"events": 100, "paragraphs": 20, "skip_rounds": [2]}},
+        }
+    }
+    assert round_sizes(cfg, 2) == {"events": 30, "paragraphs": 10, "skip_rounds": []}
+    assert round_sizes(cfg, 3) == {"events": 100, "paragraphs": 20, "skip_rounds": [2]}

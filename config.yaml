@@ -101,8 +101,12 @@ audit:
   max_error_rate: 0.05
   # Round 1 was void: the page did not say that a count shared by several places
   # is left out on purpose, so correct events were marked wrong (DECISIONS.md).
-  round: 2
+  # Round 3 is extra, not required by A1: round 2 accepted the key, but 30 events
+  # leave a 95% interval up to 16.7%. Round 3 adds items that round 2 did not hold.
+  round: 3
   test_round: 1
+  extra_rounds:
+    3: {events: 100, paragraphs: 20, skip_rounds: [2]}
 
 geocode:
   # General Staff front directions and the town each is named after, as

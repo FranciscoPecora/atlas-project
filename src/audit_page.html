@@ -97,7 +97,7 @@ function intro() {
     el("h1", {}, "Claimline spot check"),
     el("p", {}, "A program built the answer key for 3 Ukrainian reports. You check a random sample: " +
       ITEMS.filter(i => i.kind === "event").length + " single events and " +
-      ITEMS.filter(i => i.kind === "paragraph").length + " whole paragraphs. About 10 to 15 minutes."),
+      ITEMS.filter(i => i.kind === "paragraph").length + " whole paragraphs. About " + Math.ceil(ITEMS.length * 0.3) + " to " + Math.ceil(ITEMS.length * 0.45) + " minutes. You can stop at any time and continue later."),
     el("div", { class: "card" },
       el("div", { class: "label" }, "How to judge an event"),
       el("ul", {},
