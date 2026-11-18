@@ -1,4 +1,4 @@
-.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit eval eval-test site
+.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit handlabel eval eval-test site
 
 UV ?= uv
 export LABEL_STUDIO_BASE_DATA_DIR := $(CURDIR)/.label-studio
@@ -35,6 +35,11 @@ labelstudio:
 audit:
 	$(UV) run python -m src.audit build
 	open data/audit/audit.html
+
+# Build and open the hand-labelling page for the GSU dev reports (English, no pre-fills).
+handlabel:
+	$(UV) run python -m src.handlabel build
+	open data/handlabel/label.html
 
 eval:
 	$(UV) run python -m eval.score --split dev

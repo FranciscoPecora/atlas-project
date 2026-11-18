@@ -13,3 +13,4 @@ data/labelstudio/
 data/audit/
 .DS_Store
 data/pred/
+data/handlabel/

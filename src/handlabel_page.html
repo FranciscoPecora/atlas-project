@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claimline hand labelling</title>
+<style>
+  :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
+          --good:#1f7a4d; --bad:#b3372e; --accent:#27457a; --pick:#e4ebf7; --mark:#fff1b8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font: 17px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 20px 16px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .soft { color: var(--soft); font-size: 15px; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; margin: 10px 0 16px; }
+  .bar > div { height: 100%; background: var(--accent); border-radius: 3px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+          padding: 14px 16px; margin-bottom: 12px; }
+  .label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+           color: var(--soft); margin-bottom: 6px; }
+  .english { font-size: 19px; }
+  .english mark { background: var(--mark); padding: 0 2px; border-radius: 3px; }
+  .uk { color: var(--soft); font-size: 13px; margin-top: 10px; overflow-wrap: anywhere; }
+  .grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  button { font: inherit; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--line);
+           background: var(--card); color: var(--ink); cursor: pointer; text-align: left; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.on { border-color: var(--accent); background: var(--pick); font-weight: 600; }
+  button.main { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button.go { background: var(--good); border-color: var(--good); color: #fff; font-weight: 600; }
+  kbd { display: inline-block; min-width: 20px; text-align: center; font: 12px/18px ui-monospace, Menlo, monospace;
+        border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px;
+        margin-right: 6px; background: #fafaf7; color: var(--soft); }
+  button.main kbd, button.go kbd { background: transparent; color: #fff; border-color: rgba(255,255,255,.5); }
+  .small { font-size: 12px; color: var(--soft); }
+  .hint { font-size: 14px; color: var(--soft); min-height: 21px; margin-top: 8px; }
+  .warn { color: var(--bad); font-weight: 600; min-height: 24px; margin: 6px 0; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  input[type=text], input[type=number] { font: inherit; padding: 7px 9px; border: 2px solid var(--line);
+           border-radius: 8px; width: 110px; }
+  input.wide { width: 230px; }
+  .event { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+           border-left: 4px solid var(--good); padding: 4px 0 4px 10px; margin: 6px 0; }
+  .event button { padding: 2px 9px; border-color: var(--line); color: var(--bad); }
+  .nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  li { margin-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  td { border-top: 1px solid var(--line); padding: 5px 8px 5px 0; vertical-align: top; }
+  details { margin-bottom: 12px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script id="items" type="application/json">/*ITEMS*/[]</script>
+<script>
+const ITEMS = JSON.parse(document.getElementById("items").textContent);
+const KEY = "claimline-handlabel-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const MAX_SECONDS = 180;
+// [value, button text, shortcut key or "", when to use it]
+const TYPES = [
+  ["ground_assault", "Ground attack", "1", "Troops attacked or clashed at a place: 'attacked near', 'assaults', 'combat clashes', 'tried to advance', 'repelled attacks'."],
+  ["air_strike", "Air strike", "2", "Aircraft or guided (glide) bombs hit a place: 'air strike', 'dropped guided bombs'."],
+  ["shelling", "Shelling", "3", "Artillery, mortars or rocket launchers fired: 'shelled', 'attacks with fire', 'MLRS'."],
+  ["drone_strike", "Drone strike", "4", "Attack drones hit a target: 'Shahed', 'FPV', 'kamikaze drones'."],
+  ["missile_strike", "Missile strike", "5", "Ballistic or cruise missiles: 'missile strike', 'Iskander', 'Kalibr'."],
+  ["territorial_advance", "Advance (ground taken)", "6", "A side gained ground or seized a place: 'advanced', 'captured', 'took control'. Only if the text says ground was taken."],
+  ["air_defence_interception", "Air defence shot down", "7", "Missiles or drones were shot down or intercepted."],
+  ["logistics_or_infrastructure_strike", "Strike on depot / infrastructure", "8", "The target is a depot, refinery, bridge, railway, energy site, airfield or port. Use this whatever the weapon."],
+  ["withdrawal", "Withdrawal", "9", "A side left positions or a place: 'withdrew', 'retreated'."],
+  ["other", "Other", "0", "A military event that fits nothing else. Also: Ukrainian strikes on 'areas of concentration' or 'command posts' given with a count and no place."],
+  ["force_movement", "Troop movement", "", "Forces redeployed, built up or rotated."],
+  ["naval_event", "Naval event", "", "Action at sea or against ships."]
+];
+const TYPE_NAME = Object.fromEntries(TYPES.map(t => [t[0], t[1]]));
+const LETTERS = "abcdefghijklmnopqrstuvwxyz";
+
+let answers = {};
+let pos = -1;
+try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { answers = saved.answers || {}; pos = saved.pos ?? -1; } } catch (e) {}
+function keep() { try { localStorage.setItem(KEY, JSON.stringify({ answers, pos })); } catch (e) {} }
+
+let draft = fresh();           // the event being built
+let shownAt = Date.now();      // when the current paragraph was shown
+let warning = "";
+function fresh() { return { type: null, places: [], noPlace: false, actor: "RU", count: "", free: "" }; }
+
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids) if (kid != null) n.append(kid);
+  return n;
+}
+function answer(item) { return answers[item.id] || (answers[item.id] = { done: false, seconds: 0, events: [] }); }
+function chips(item) {
+  // every place button of a paragraph, with its letter: villages first, then front directions
+  const all = item.places.map(p => ({ ...p, direction: false }))
+    .concat(item.directions.map((d, i) => ({ ...d, direction: true, nth: i + 1 })));
+  return all.map((c, i) => ({ ...c, letter: LETTERS[i] || "" }));
+}
+function chipName(c) {
+  if (!c.direction) return c.en;
+  return (c.en ? c.en + " direction" : "front direction no. " + c.nth + " named at the start") + " (whole direction)";
+}
+function placeName(item, key) {
+  if (key == null) return "no place";
+  if (key.startsWith("free:")) return key.slice(5) + " (typed)";
+  const c = chips(item).find(c => c.key === key);
+  return c ? chipName(c) : key;
+}
+function leave() {
+  // add the time spent on the paragraph that is on screen
+  if (pos >= 0 && pos < ITEMS.length) {
+    const a = answer(ITEMS[pos]);
+    a.seconds = Math.round((a.seconds || 0) + Math.min((Date.now() - shownAt) / 1000, MAX_SECONDS));
+  }
+  shownAt = Date.now();
+}
+function go(to, markDone) {
+  leave();
+  if (markDone && pos >= 0 && pos < ITEMS.length) answer(ITEMS[pos]).done = true;
+  pos = Math.max(-1, Math.min(ITEMS.length, to));
+  draft = fresh(); warning = ""; keep(); draw();
+}
+function togglePlace(key) {
+  draft.noPlace = false;
+  draft.places = draft.places.includes(key) ? draft.places.filter(k => k !== key) : draft.places.concat(key);
+  if (targets().length > 1) draft.count = "";
+  warning = ""; draw();
+}
+function targets() {
+  // the places the draft applies to: clicked buttons, a typed place, or null for "no place"
+  const typed = draft.free.trim() ? ["free:" + draft.free.trim()] : [];
+  const picked = draft.places.concat(typed);
+  return picked.length ? picked : (draft.noPlace ? [null] : []);
+}
+function add() {
+  const item = ITEMS[pos];
+  if (!draft.type) { warning = "Pick what happened first (step 1)."; return draw(); }
+  const where = targets();
+  if (!where.length) { warning = "Pick at least one place, or click 'No place named' (step 2)."; return draw(); }
+  const count = draft.count === "" ? null : parseInt(draft.count, 10);
+  if (count != null && (isNaN(count) || count < 0)) { warning = "The count must be a whole number."; return draw(); }
+  if (count != null && where.length > 1) { warning = "A count shared by several places belongs to none of them. Clear the count."; return draw(); }
+  const a = answer(item);
+  for (const place of where) {
+    if (a.events.some(e => e.event_type === draft.type && e.place === place && e.actor === draft.actor)) continue;
+    a.events.push({ event_type: draft.type, actor: draft.actor, place, quantity: count });
+  }
+  draft = fresh(); warning = ""; keep(); draw();
+}
+function remove(item, i) { answer(item).events.splice(i, 1); keep(); draw(); }
+
+function english(item) {
+  // the English paragraph with the listed place names highlighted
+  const names = [...new Set(chips(item).map(c => c.en).filter(Boolean))].sort((a, b) => b.length - a.length);
+  const box = el("div", { class: "english" });
+  if (!names.length) { box.append(item.english); return box; }
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const parts = item.english.split(new RegExp("(" + names.map(esc).join("|") + ")", "g"));
+  parts.forEach((p, i) => box.append(i % 2 ? el("mark", {}, p) : p));
+  return box;
+}
+function intro() {
+  const done = ITEMS.filter(i => (answers[i.id] || {}).done).length;
+  return [
+    el("h1", {}, "Claimline hand labelling"),
+    el("p", {}, "You read " + ITEMS.length + " paragraphs of " + new Set(ITEMS.map(i => i.report_id)).size +
+      " Ukrainian General Staff reports in English and record every battlefield event yourself. " +
+      "No program has filled anything in. About " + Math.ceil(ITEMS.length * 1.2) + " to " + Math.ceil(ITEMS.length * 2) +
+      " minutes. Your work is kept if you close the page."),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "How it works"),
+      el("ul", {},
+        el("li", {}, "Step 1: pick what happened. Step 2: click every place it happened at. Step 3: press Enter. You get one event per place."),
+        el("li", {}, "'Attacked 14 times near A, B and C' is one Ground attack with A, B and C clicked: three events. Leave the count empty, because nobody knows how many attacks each place had."),
+        el("li", {}, "Fill the count only when the number counts one event at one place, for example '5 air strikes near A', or a direction with no villages (next rule)."),
+        el("li", {}, "A paragraph that names a front direction and no villages ('In the Kursk direction: 1 clash, 3 air strikes, 66 shellings'): one event per kind, placed at the whole direction, each with its own count."),
+        el("li", {}, "A paragraph that names villages: one event per village. Do not add an extra event for the direction or for the total."),
+        el("li", {}, "No event: titles, greetings, front-wide totals with no place ('261 clashes over the past day', '60 air strikes'), and losses of personnel and equipment. Just press Enter to go on."),
+        el("li", {}, "A paragraph can hold several kinds: 'shelled A and B; air strikes hit C' is Shelling for A and B, then Air strike for C."),
+        el("li", {}, "Ukrainian strikes on 'areas of concentration' or 'command posts' with a count and no place: Other, 'Ukraine did it', 'No place named', with the count. One event per kind of target."),
+        el("li", {}, "A place counts once per paragraph and kind. 'Near', 'towards' and 'in the area of' a village all mean that village."),
+        el("li", {}, "You do not set the date or the source. Code fills them in."))),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "Keys"),
+      el("table", {},
+        el("tr", {}, el("td", {}, el("kbd", {}, "1"), "to", el("kbd", { style: "margin-left:6px" }, "0")), el("td", {}, "pick what happened")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "a"), el("kbd", {}, "b"), el("kbd", {}, "c"), "…"), el("td", {}, "switch a place on or off")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "*")), el("td", {}, "all villages of the paragraph")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "-")), el("td", {}, "no place named")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "/")), el("td", {}, "switch between 'Russia did it' and 'Ukraine did it'")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "#")), el("td", {}, "jump to the count box")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "Enter")), el("td", {}, "add the event. With nothing picked: paragraph done, go to the next")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "Esc")), el("td", {}, "clear what you picked")),
+        el("tr", {}, el("td", {}, el("kbd", {}, "←")), el("td", {}, "previous paragraph")))),
+    el("button", { class: "main", onclick: () => go(Math.max(0, ITEMS.findIndex(i => !(answers[i.id] || {}).done)), false) },
+      done ? "Continue (" + done + " of " + ITEMS.length + " done)" : "Start")
+  ];
+}
+function question(item) {
+  const a = answer(item);
+  const all = chips(item);
+  const many = targets().length > 1;
+  const type = TYPES.find(t => t[0] === draft.type);
+  const count = el("input", { type: "number", min: "0", id: "count", placeholder: "none", disabled: many });
+  count.value = draft.count;
+  count.addEventListener("input", () => { draft.count = count.value; });
+  const free = el("input", { type: "text", class: "wide", id: "free", placeholder: "type its English name" });
+  free.value = draft.free;
+  free.addEventListener("input", () => { draft.free = free.value; draft.noPlace = false; });
+  const villages = all.filter(c => !c.direction);
+  return [
+    el("div", { class: "soft" }, "Report " + item.report_id.replace("gsu-", "") + " · paragraph " + item.paragraph +
+      " · " + (pos + 1) + " of " + ITEMS.length + (a.done ? " · done" : "")),
+    el("div", { class: "bar" }, el("div", { style: "width:" + (100 * pos / ITEMS.length) + "%" })),
+    el("div", { class: "card" }, english(item), el("div", { class: "uk" }, item.ukrainian)),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "Events you recorded for this paragraph (" + a.events.length + ")"),
+      ...(a.events.length ? a.events.map((e, i) => el("div", { class: "event" },
+        el("span", {}, el("b", {}, TYPE_NAME[e.event_type]), " · " + placeName(item, e.place) +
+          (e.actor === "UA" ? " · Ukraine did it" : "") + (e.quantity != null ? " · count " + e.quantity : "")),
+        el("button", { title: "Remove", onclick: () => remove(item, i) }, "×")))
+        : [el("div", { class: "soft" }, "None yet. If nothing happened here, press Enter.")])),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "Step 1 · What happened?"),
+      el("div", { class: "grid" }, ...TYPES.map(t => el("button", { class: draft.type === t[0] ? "on" : "",
+        onclick: () => { draft.type = draft.type === t[0] ? null : t[0]; warning = ""; draw(); } },
+        t[2] ? el("kbd", {}, t[2]) : null, t[1]))),
+      el("div", { class: "hint" }, type ? type[3] : "")),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "Step 2 · Where? Click every place this happened at"),
+      el("div", { class: "grid" },
+        ...all.map(c => el("button", { class: draft.places.includes(c.key) ? "on" : "", onclick: () => togglePlace(c.key) },
+          c.letter ? el("kbd", {}, c.letter) : null, chipName(c), el("span", { class: "small" }, "  " + c.uk))),
+        villages.length > 1 ? el("button", { onclick: () => { draft.places = villages.map(c => c.key); draft.noPlace = false; draft.count = ""; draw(); } },
+          el("kbd", {}, "*"), "All " + villages.length + " villages") : null,
+        el("button", { class: draft.noPlace ? "on" : "", onclick: () => { draft.noPlace = !draft.noPlace; draft.places = []; draft.free = ""; draw(); } },
+          el("kbd", {}, "-"), "No place named")),
+      el("div", { class: "row small" }, "A place is in the paragraph but has no button:", free)),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "Step 3 · Details, then add"),
+      el("div", { class: "row" },
+        el("button", { class: draft.actor === "UA" ? "on" : "", onclick: () => { draft.actor = draft.actor === "UA" ? "RU" : "UA"; draw(); } },
+          el("kbd", {}, "/"), draft.actor === "UA" ? "Ukraine did it (to Russia)" : "Russia did it (to Ukraine)"),
+        el("span", {}, el("kbd", {}, "#"), "Count:"), count,
+        el("span", { class: "small" }, many ? "Off: several places share the number." : "Only if the number counts this one event.")),
+      el("div", { class: "warn" }, warning),
+      el("button", { class: "main", onclick: add }, el("kbd", {}, "Enter"),
+        "Add " + (targets().length > 1 ? targets().length + " events" : "event"))),
+    el("div", { class: "nav" },
+      el("button", { onclick: () => go(pos - 1, false) }, el("kbd", {}, "←"), "Back"),
+      el("button", { onclick: () => go(-1, false) }, "Rules"),
+      el("button", { class: "go", onclick: () => go(pos + 1, true) }, "Paragraph done, next →"))
+  ];
+}
+function save() {
+  leave(); keep();
+  const blob = new Blob([JSON.stringify({ version: 1, kind: "handlabel", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-handlabel-answers.json" });
+  document.body.append(a); a.click(); a.remove();
+}
+function done() {
+  const left = ITEMS.filter(i => !(answers[i.id] || {}).done).length;
+  const events = ITEMS.reduce((n, i) => n + ((answers[i.id] || {}).events || []).length, 0);
+  return [
+    el("h1", {}, left ? left + " paragraphs are not marked done" : "All " + ITEMS.length + " paragraphs done"),
+    el("p", {}, "You recorded " + events + " events. Click the button: a file named claimline-handlabel-answers.json is saved to your Downloads folder. Then tell Claude: labels done."),
+    el("div", { class: "grid" },
+      el("button", { onclick: () => go(left ? ITEMS.findIndex(i => !(answers[i.id] || {}).done) : ITEMS.length - 1, false) }, left ? "Go to the first one" : "← Back"),
+      el("button", { class: "main", onclick: save }, "Save answers"))
+  ];
+}
+function draw() {
+  const app = document.getElementById("app");
+  const y = window.scrollY;
+  app.replaceChildren(...(pos < 0 ? intro() : pos >= ITEMS.length ? done() : question(ITEMS[pos])));
+  window.scrollTo(0, pos >= 0 && pos < ITEMS.length ? y : 0);
+}
+document.addEventListener("keydown", ev => {
+  if (pos < 0 || pos >= ITEMS.length || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const typing = ev.target.tagName === "INPUT";
+  const item = ITEMS[pos];
+  if (ev.key === "Enter") {
+    ev.preventDefault();
+    if (draft.type || targets().length || draft.count !== "") add(); else go(pos + 1, true);
+    return;
+  }
+  if (ev.key === "Escape") { draft = fresh(); warning = ""; ev.target.blur && ev.target.blur(); return draw(); }
+  if (typing) return;
+  const t = TYPES.find(t => t[2] && t[2] === ev.key);
+  if (t) { draft.type = t[0]; warning = ""; return draw(); }
+  const chip = chips(item).find(c => c.letter && c.letter === ev.key.toLowerCase());
+  if (chip && ev.key.length === 1) return togglePlace(chip.key);
+  if (ev.key === "*") { draft.places = chips(item).filter(c => !c.direction).map(c => c.key); draft.noPlace = false; if (targets().length > 1) draft.count = ""; return draw(); }
+  if (ev.key === "-") { draft.noPlace = !draft.noPlace; draft.places = []; draft.free = ""; return draw(); }
+  if (ev.key === "/") { ev.preventDefault(); draft.actor = draft.actor === "UA" ? "RU" : "UA"; return draw(); }
+  if (ev.key === "#") { ev.preventDefault(); const c = document.getElementById("count"); if (c && !c.disabled) c.focus(); return; }
+  if (ev.key === "ArrowLeft") return go(pos - 1, false);
+});
+window.addEventListener("beforeunload", () => { leave(); keep(); });
+draw();
+</script>
+</body>
+</html>

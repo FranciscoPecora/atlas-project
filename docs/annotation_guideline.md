@@ -111,6 +111,10 @@ Dev GSU tasks open with events already drawn by `src/prelabel.py` (rules, no mod
 4. **Not sure** is a valid answer. Do not guess.
 5. Click **Save answers** at the end. The key is accepted if at most 5% of judged events are wrong and at most 5% of judged paragraphs miss something (config `audit.max_error_rate`).
 
+### 8.3 Hand labelling of General Staff dev units from the translation
+
+`make handlabel` opens a local page that shows one paragraph at a time in English. Nothing is pre-filled and the machine-made key is not shown. For each event the annotator picks the type, clicks every place it happened at (one event per place) and, when a number counts that one event, types the count. Code fills in the place name as written in Ukrainian, the evidence offsets (the sentence that holds the place, or the whole paragraph when no place is clicked), the date, `ua_claimed` and precision 2. The place buttons come from the translation's list of place names. The page logs minutes per unit. The result is saved to `eval/human/dev/` and is compared with the machine-made key; it does not replace the key.
+
 ## 9. Hard cases
 
 Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the ruling, and the reason.
