@@ -1,0 +1,41 @@
+{
+ "gsu-2026-07-21": {
+  "paragraphs": 19,
+  "done": 19,
+  "minutes": 16.4,
+  "dropped": [],
+  "events": 55
+ },
+ "gsu-2026-07-29": {
+  "paragraphs": 16,
+  "done": 16,
+  "minutes": 8.8,
+  "dropped": [
+   {
+    "paragraph": 1,
+    "problem": "place typed by hand, not in the list: 'Pokrovsk'"
+   },
+   {
+    "paragraph": 1,
+    "problem": "place typed by hand, not in the list: 'Kostiantynivka'"
+   }
+  ],
+  "events": 66
+ },
+ "gsu-2026-08-06": {
+  "paragraphs": 16,
+  "done": 16,
+  "minutes": 5.0,
+  "dropped": [
+   {
+    "paragraph": 1,
+    "problem": "place typed by hand, not in the list: 'Pokrovsk'"
+   },
+   {
+    "paragraph": 1,
+    "problem": "place typed by hand, not in the list: 'Kostiantynivka'"
+   }
+  ],
+  "events": 53
+ }
+}

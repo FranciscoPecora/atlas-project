@@ -1,0 +1,192 @@
+{
+ "reports": [
+  "2026-07-21",
+  "2026-07-29",
+  "2026-08-06"
+ ],
+ "summary": {
+  "human_events": 177,
+  "key_events": 175,
+  "paired": 171,
+  "human_only": 6,
+  "key_only": 4,
+  "event_precision": 0.9661,
+  "event_recall": 0.9771,
+  "event_f1": 0.9716,
+  "type_same": 170,
+  "kappa_event_type": 0.9146280579131303,
+  "actor_same": 171,
+  "pairs_with_a_count": 9,
+  "count_same": 3,
+  "human_not_imported": 4
+ },
+ "disagreements": [
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 4,
+   "event_type": "missile_strike",
+   "actor": "RU",
+   "place": null,
+   "quantity": 2
+  },
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 4,
+   "event_type": "air_strike",
+   "actor": "RU",
+   "place": null,
+   "quantity": 78
+  },
+  {
+   "kind": "different event_type",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 5,
+   "event_type": "missile_strike",
+   "actor": "UA",
+   "place": null,
+   "quantity": null,
+   "human": "missile_strike",
+   "key": "other"
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 5,
+   "event_type": "missile_strike",
+   "actor": "UA",
+   "place": null,
+   "quantity": null,
+   "human": null,
+   "key": 3
+  },
+  {
+   "kind": "key only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 5,
+   "event_type": "other",
+   "actor": "UA",
+   "place": null,
+   "quantity": 5
+  },
+  {
+   "kind": "key only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 5,
+   "event_type": "other",
+   "actor": "UA",
+   "place": null,
+   "quantity": 2
+  },
+  {
+   "kind": "key only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 6,
+   "event_type": "ground_assault",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": null
+  },
+  {
+   "kind": "key only",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 6,
+   "event_type": "shelling",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": null
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-07-29",
+   "paragraph": 12,
+   "event_type": "ground_assault",
+   "actor": "RU",
+   "place": "Воскресенка",
+   "quantity": null,
+   "human": null,
+   "key": 1
+  },
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-07-29",
+   "paragraph": 1,
+   "event_type": null,
+   "actor": null,
+   "place": "(typed by hand)",
+   "quantity": null
+  },
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-07-29",
+   "paragraph": 1,
+   "event_type": null,
+   "actor": null,
+   "place": "(typed by hand)",
+   "quantity": null
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 4,
+   "event_type": "ground_assault",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": 7,
+   "human": 7,
+   "key": null
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 4,
+   "event_type": "air_strike",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": 2,
+   "human": 2,
+   "key": null
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 4,
+   "event_type": "shelling",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": 75,
+   "human": 75,
+   "key": null
+  },
+  {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 12,
+   "event_type": "ground_assault",
+   "actor": "RU",
+   "place": "Олександрограда",
+   "quantity": null,
+   "human": null,
+   "key": 1
+  },
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 1,
+   "event_type": null,
+   "actor": null,
+   "place": "(typed by hand)",
+   "quantity": null
+  },
+  {
+   "kind": "human only",
+   "report_id": "gsu-2026-08-06",
+   "paragraph": 1,
+   "event_type": null,
+   "actor": null,
+   "place": "(typed by hand)",
+   "quantity": null
+  }
+ ]
+}

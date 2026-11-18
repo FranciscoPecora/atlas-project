@@ -45,6 +45,7 @@ from src.verify_det import has_quantity
 PAGE = DATA / "handlabel" / "label.html"
 TEMPLATE = Path(__file__).with_name("handlabel_page.html")
 OUT = ROOT / "eval" / "human" / "dev"
+LOG = OUT / "import_log.json"
 METHOD = "human-from-translation-v1"
 JOINER = re.compile(r"\s+(?:і|та)\s+")
 
@@ -186,6 +187,7 @@ def report_records(
     rid, paras = data["report_id"], paragraph_spans(text)
     records: list[dict[str, Any]] = []
     problems: list[str] = []
+    dropped: list[dict[str, Any]] = []
     done = seconds = 0
     for n, para in enumerate(paras, start=1):
         answer = answers.get(f"{rid}:{n}") or {}
@@ -195,12 +197,14 @@ def report_records(
             record, problem = to_record(event, text, para, data)
             if record is None:
                 problems.append(f"{rid} paragraph {n}: {problem}")
+                dropped.append({"paragraph": n, "problem": problem})
             else:
                 records.append(record)
     minutes = round(seconds / 60, 1)
     for r in records:
         r["minutes"] = minutes
-    return records, problems, {"paragraphs": len(paras), "done": done, "minutes": minutes}
+    facts = {"paragraphs": len(paras), "done": done, "minutes": minutes, "dropped": dropped}
+    return records, problems, facts
 
 
 def out_path(report_id: str, out_dir: Path = OUT) -> Path:
@@ -228,6 +232,7 @@ def save(answers_path: Path) -> None:
     if raw.get("kind") != "handlabel":
         raise SystemExit("this file was not saved by the hand-labelling page")
     spec_text = SPEC.read_text(encoding="utf-8")
+    log = json.loads(LOG.read_text(encoding="utf-8")) if LOG.exists() else {}
     for day in dev_gsu_dates(spec_text):
         data = unit_task_data(day, spec_text)
         text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
@@ -245,6 +250,9 @@ def save(answers_path: Path) -> None:
             "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8"
         )
         print(f"  written: {path.relative_to(ROOT)}")
+        log[data["report_id"]] = {**facts, "events": len(records)}
+    if log:
+        LOG.write_text(json.dumps(log, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> None:

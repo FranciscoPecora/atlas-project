@@ -141,3 +141,7 @@ af04ba4,e9b1f958ae77,2026-11-18,test,gold-key-audit-round1-reread,event_error_ra
 0568069,ea085ef7b446,2026-11-18,dev,S1-medium,cost_usd_per_report,0.009114,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=medium
 0568069,ea085ef7b446,2026-11-18,dev,S1-medium,cost_eur_per_report,0.008293,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=medium
 0568069,ea085ef7b446,2026-11-18,dev,S1-medium,seconds_per_report_median,55.0,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=medium
+8406598,dc705365dcb7,2026-11-18,dev,human-vs-key,event_precision,0.9661,177,reports=2026-07-21+2026-07-29+2026-08-06
+8406598,dc705365dcb7,2026-11-18,dev,human-vs-key,event_recall,0.9771,175,reports=2026-07-21+2026-07-29+2026-08-06
+8406598,dc705365dcb7,2026-11-18,dev,human-vs-key,event_f1,0.9716,171,reports=2026-07-21+2026-07-29+2026-08-06
+8406598,dc705365dcb7,2026-11-18,dev,human-vs-key,kappa_event_type,0.9146,171,reports=2026-07-21+2026-07-29+2026-08-06

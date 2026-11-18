@@ -119,7 +119,8 @@ def test_report_records_count_progress_minutes_and_problems():
     records, problems, facts = report_records(answers, TEXT, DATA)
     assert len(records) == 1 and records[0]["minutes"] == 2.0
     assert len(problems) == 1 and "paragraph 2" in problems[0]
-    assert facts == {"paragraphs": 3, "done": 2, "minutes": 2.0}
+    assert (facts["paragraphs"], facts["done"], facts["minutes"]) == (3, 2, 2.0)
+    assert [d["paragraph"] for d in facts["dropped"]] == [2]
 
 
 def test_out_path_is_outside_the_gold_folder(tmp_path):
@@ -142,3 +143,15 @@ def test_english_directions_come_from_the_opening_words():
 def test_items_name_directions_in_english():
     items = items_for("gsu-2026-07-21", TEXT, AID)
     assert [d["en"] for d in items[2]["directions"]] == ["Kursk", "Sumy"]
+
+
+def test_report_records_lists_events_it_could_not_import():
+    text = "Ворог атакував поблизу Яблунівки."
+    data = {"report_id": "gsu-x", "source": "gsu", "report_date": "2026-01-02", "sector": "FULL",
+            "text_sha256": "0", "source_url": "u"}  # fmt: skip
+    answers = {"gsu-x:1": {"done": True, "seconds": 5, "events": [
+        {"event_type": "ground_assault", "actor": "RU", "place": "free:Somewhere", "quantity": None}
+    ]}}  # fmt: skip
+    records, problems, facts = report_records(answers, text, data)
+    assert records == [] and len(problems) == 1
+    assert facts["dropped"][0]["paragraph"] == 1
