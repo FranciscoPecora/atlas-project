@@ -91,3 +91,35 @@ def test_counts_by_report_and_grid():
     }
     cells = grid(preds, gold, [5, 10, 25], [0, 1, 2])
     assert cells[(10, 1)] == 0.5 and cells[(25, 0)] == 1.0 and len(cells) == 9
+
+
+def test_fact_rows_convert_cost_and_list_rejections():
+    from eval.score import fact_rows
+
+    facts = {"S2": {"cost_usd_per_report": 0.01, "seconds_median": 50.0,
+                    "rejected": {"quote_missing": 2}, "n_before": 40}}  # fmt: skip
+    rows = {r["metric"]: r for r in fact_rows(facts, 0.9, "dev")}
+    assert rows["cost_eur_per_report"]["value"] == 0.009
+    assert rows["rejected_quote_missing"]["value"] == 2
+    assert rows["rejected_quote_missing"]["n"] == 40
+
+
+def test_metric_rows_score_only_the_gold_given():
+    from eval.score import metric_rows
+
+    ev = {"match_km": 10, "match_days": 1, "bootstrap_resamples": 10, "seed": 1,
+          "grid_km": [10], "grid_days": [1]}  # fmt: skip
+    base = {"sector": "FULL", "event_type": "shelling", "event_date": "2026-07-20",
+            "lat": None, "lon": None}  # fmt: skip
+    gold = [{**base, "id": "g1", "report_id": "r1"}]
+    preds = {
+        "X": [{**base, "id": "p1", "report_id": "r1"}, {**base, "id": "p2", "report_id": "r2"}]
+    }
+    rows = {r["metric"]: r["value"] for r in metric_rows(preds, gold, ev, "dev-heldout")}
+    assert rows["event_f1"] == 1.0  # the prediction for r2 is outside the gold units
+
+
+def test_geocode_tolerates_a_record_without_offsets():
+    from src.geocode import paragraph_at
+
+    assert paragraph_at("One.\n\nTwo.", None) == ""

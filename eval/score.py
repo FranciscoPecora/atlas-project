@@ -194,6 +194,117 @@ def append_results(rows: list[dict[str, Any]], path: Path = RESULTS) -> None:
         writer.writerows(rows)
 
 
+MODEL_SYSTEMS = ("B2", "S1", "S1-medium")  # read from data/pred/ when present
+
+
+def model_predictions(
+    reports: list[tuple[str, str, str]], texts: dict[str, str]
+) -> tuple[dict[str, list[Event]], dict[str, dict[str, Any]]]:
+    """Ungeocoded records of the model systems, and run facts (cost, time, rejections).
+
+    S2 is not a separate run: it is S1's output after deterministic verification.
+    """
+    from statistics import median
+
+    from src.extract import read_pred, to_records
+    from src.verify_det import REASONS, verify
+
+    preds: dict[str, list[Event]] = {}
+    facts: dict[str, dict[str, Any]] = {}
+    for system in MODEL_SYSTEMS:
+        runs = {rid: read_pred(system, rid) for rid, _, _ in reports}
+        if any(r is None for r in runs.values()):
+            continue  # not run on every report of this split
+        meta = {rid: {"report_id": rid, "source": src, "report_date": day, "sector": "FULL"}
+                for rid, src, day in reports}  # fmt: skip
+        preds[system] = [
+            rec for rid, run in runs.items()
+            for rec in to_records(run["events"], texts[rid], meta[rid], system)
+        ]  # fmt: skip
+        first = next(iter(runs.values()))
+        facts[system] = {
+            "cost_usd_per_report": sum(r["cost_usd"] for r in runs.values()) / len(runs),
+            "seconds_median": median(r["seconds"] for r in runs.values()),
+            "model": f"model={first['model']} effort={first['effort']}",
+        }
+        if system == "S1":
+            kept: list[Event] = []
+            rejected: dict[str, int] = dict.fromkeys(REASONS, 0)
+            for rid in runs:
+                mine = [r for r in preds["S1"] if r["report_id"] == rid]
+                ok, why = verify(mine, texts[rid])
+                kept += [{**r, "id": r["id"].replace(":S1:", ":S2:"), "system": "S2"} for r in ok]
+                for reason, n in why.items():
+                    rejected[reason] += n
+            preds["S2"] = kept
+            facts["S2"] = {**facts["S1"], "rejected": rejected, "n_before": len(preds["S1"])}
+    return preds, facts
+
+
+def metric_rows(
+    preds: dict[str, list[Event]], gold: list[Event], ev: dict[str, Any], split: str
+) -> list[dict[str, Any]]:
+    """Print each system's scores on `gold` and return them as result rows (no stamp)."""
+    rows = []
+    k, d = ev["match_km"], ev["match_days"]
+    units = {(g["report_id"], g["sector"]) for g in gold}
+    report_ids = sorted({g["report_id"] for g in gold})
+    print(f"-- {split}: {len(gold)} gold events in {len(report_ids)} reports")
+    for system, events in preds.items():
+        res = score(events, gold, k, d, ev["bootstrap_resamples"], ev["seed"])
+        kept = in_gold_units(events, units)
+        matches = []
+        for rid in report_ids:
+            mine = [p for p in kept if p["report_id"] == rid]
+            matches += match(mine, [g for g in gold if g["report_id"] == rid], k, d)
+        status, n_status = accuracy(matches, "epistemic_status")
+        qty, n_qty = accuracy(matches, "quantity", only_gold_set=True)
+        print(
+            f"{system}: P {res['precision']:.3f} R {res['recall']:.3f} F1 {res['f1']:.3f} "
+            f"[{res['f1_low']:.3f}, {res['f1_high']:.3f}] "
+            f"TP {res['tp']} FP {res['fp']} FN {res['fn']} | status acc {status} "
+            f"(n={n_status}) | quantity exact {qty} (n={n_qty})"
+        )
+        cells = grid(events, gold, ev["grid_km"], ev["grid_days"])
+        print("  F1 grid (km, days): " + ", ".join(f"{c}:{v:.3f}" for c, v in cells.items()))
+        metrics = [
+            ("event_f1", res["f1"], len(gold)),
+            ("event_f1_low", res["f1_low"], len(gold)),
+            ("event_f1_high", res["f1_high"], len(gold)),
+            ("event_precision", res["precision"], len(kept)),
+            ("event_recall", res["recall"], len(gold)),
+            ("status_accuracy", status, n_status),
+            ("quantity_exact", qty, n_qty),
+        ]
+        for m, v, n in metrics:
+            value = "" if v is None else round(v, 4)
+            rows.append({"split": split, "system": system, "metric": m, "value": value, "n": n})
+    return rows
+
+
+def fact_rows(facts: dict[str, dict[str, Any]], eur_per_usd: float, split: str) -> list[dict]:
+    """Measured cost, speed and rejection counts of the model systems, as result rows."""
+    rows = []
+    for system, f in facts.items():
+        usd = f["cost_usd_per_report"]
+        print(f"{system}: ${usd:.5f} = {usd * eur_per_usd:.5f} EUR per report, "
+              f"median {f['seconds_median']:.1f} s per report")  # fmt: skip
+        values = [
+            ("cost_usd_per_report", round(usd, 6), ""),
+            ("cost_eur_per_report", round(usd * eur_per_usd, 6), ""),
+            ("seconds_per_report_median", round(f["seconds_median"], 1), ""),
+        ]
+        for reason, n in f.get("rejected", {}).items():
+            values.append((f"rejected_{reason}", n, f["n_before"]))
+        if "rejected" in f:
+            print(f"  rejected of {f['n_before']}: {f['rejected']}")
+        rows += [
+            {"split": split, "system": system, "metric": m, "value": v, "n": n}
+            for m, v, n in values
+        ]
+    return rows
+
+
 def main(argv: list[str] | None = None) -> None:
     from src.baselines import b0_regex, b1_gliner
     from src.collect import DATA
@@ -223,6 +334,16 @@ def main(argv: list[str] | None = None) -> None:
             preds["B0"] += geocode(b0_regex.extract(texts[rid], rid, day), texts[rid], gaz, geo)
             b1 = b1_gliner.extract(gliner, texts[rid], rid, day, threshold)
             preds["B1"] += geocode(b1, texts[rid], gaz, geo)
+    facts: dict[str, dict[str, Any]] = {}
+    if args.split == "dev":  # model systems are run on test only in milestone 5
+        raw, facts = model_predictions(reports, texts)
+        for system, events in raw.items():
+            preds[system] = [
+                e for rid in texts
+                for e in geocode([x for x in events if x["report_id"] == rid], texts[rid], gaz, geo)
+            ]  # fmt: skip
+    order = ["B0", "B1", "B2", "S1", "S2", "S1-medium"]
+    preds = {s: preds[s] for s in order if s in preds}
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT
     ).stdout.strip()
@@ -233,40 +354,17 @@ def main(argv: list[str] | None = None) -> None:
     )
     located = sum(has_location(g) for g in gold)
     named = sum(bool(g.get("location_text")) for g in gold)
-    print(f"{args.split}: {len(gold)} gold events in {len(reports)} reports; "
-          f"{located} of {named} named places geocoded")  # fmt: skip
-    rows = []
-    k, d = ev["match_km"], ev["match_days"]
-    units = {(g["report_id"], g["sector"]) for g in gold}
-    for system, events in preds.items():
-        res = score(events, gold, k, d, ev["bootstrap_resamples"], ev["seed"])
-        kept = in_gold_units(events, units)
-        matches = []
-        for rid in texts:
-            mine = [p for p in kept if p["report_id"] == rid]
-            matches += match(mine, [g for g in gold if g["report_id"] == rid], k, d)
-        status, n_status = accuracy(matches, "epistemic_status")
-        qty, n_qty = accuracy(matches, "quantity", only_gold_set=True)
-        print(
-            f"{system}: P {res['precision']:.3f} R {res['recall']:.3f} F1 {res['f1']:.3f} "
-            f"[{res['f1_low']:.3f}, {res['f1_high']:.3f}] "
-            f"TP {res['tp']} FP {res['fp']} FN {res['fn']} | status acc {status} "
-            f"(n={n_status}) | quantity exact {qty} (n={n_qty})"
-        )
-        cells = grid(events, gold, ev["grid_km"], ev["grid_days"])
-        print("  F1 grid (km, days): " + ", ".join(f"{c}:{v:.3f}" for c, v in cells.items()))
-        base = {**stamp, "split": args.split, "system": system, "config": used}
-        metrics = [
-            ("event_f1", res["f1"], len(gold)),
-            ("event_f1_low", res["f1_low"], len(gold)),
-            ("event_f1_high", res["f1_high"], len(gold)),
-            ("event_precision", res["precision"], len(kept)),
-            ("event_recall", res["recall"], len(gold)),
-            ("status_accuracy", status, n_status),
-            ("quantity_exact", qty, n_qty),
-        ]
-        for m, v, n in metrics:
-            rows.append({**base, "metric": m, "value": "" if v is None else round(v, 4), "n": n})
+    print(f"{args.split}: {located} of {named} named gold places geocoded")
+    rows = metric_rows(preds, gold, ev, args.split)
+    example = f"gsu-{cfg['extract']['example_report']}"
+    if args.split == "dev" and facts:
+        # The prompt's worked examples come from one dev report; score without it too.
+        held = [g for g in gold if g["report_id"] != example]
+        rows += metric_rows(preds, held, ev, "dev-heldout")
+    rows += fact_rows(facts, cfg["cost"]["eur_per_usd"], args.split)
+    for row in rows:
+        extra = facts.get(row["system"], {}).get("model")
+        row.update(stamp, config=f"{used} {extra}" if extra else used)
     append_results(rows)
     print(f"{len(rows)} rows appended to {RESULTS.relative_to(ROOT)}")
 

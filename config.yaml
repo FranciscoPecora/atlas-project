@@ -38,6 +38,8 @@ models:
   # IDs before the first API call (milestone 3) and pin them here if listed.
   extraction: claude-haiku-5-5
   extraction_effort: low
+  # Second effort level tried on dev (PLAN section 5: test low against medium).
+  extraction_effort_alt: medium
   verifier: claude-haiku-5-5
   verifier_alt: claude-sonnet-5-5
   verifier_effort: low
@@ -75,8 +77,22 @@ link:
   report_windows_days: [7, 14, 30]
 
 cost:
-  # Set to the ECB reference rate on the day of each costed run.
-  eur_per_usd: null
+  # ECB reference rate of 2026-11-17 (latest published on 18 November): 1 EUR = 1.0989 USD.
+  eur_per_usd: 0.9100
+
+# USD per million tokens, checked 2026-11-16 (PLAN section 5). Cache write is
+# 1.25 times and cache read 0.1 times the input price.
+prices:
+  claude-haiku-5-5: {input: 0.10, output: 0.50, cache_write: 0.125, cache_read: 0.01}
+
+extract:
+  max_tokens: 32000
+  timeout_seconds: 900
+  # Worked examples in the extraction prompt: these paragraphs of this dev
+  # report, with the events the dev key holds for them. Paragraphs 3 and 17
+  # have no events. Dev scores are also reported without this report.
+  example_report: 2026-07-21
+  example_paragraphs: [3, 5, 6, 8, 17]
 
 audit:
   # Spot check of the machine-made GSU answer key (src/audit.py, amendment A1).

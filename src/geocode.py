@@ -22,8 +22,10 @@ from src.gazetteer import (
 from src.prelabel import paragraph_spans
 
 
-def paragraph_at(text: str, offset: int) -> str:
+def paragraph_at(text: str, offset: int | None) -> str:
     """The paragraph of `text` that contains character `offset` ("" if none)."""
+    if offset is None:  # a quote that was not found in the text has no offsets
+        return ""
     return next((text[a:b] for a, b in paragraph_spans(text) if a <= offset < b), "")
 
 

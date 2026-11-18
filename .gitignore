@@ -12,3 +12,4 @@ data/labelstudio/
 .ruff_cache/
 data/audit/
 .DS_Store
+data/pred/
