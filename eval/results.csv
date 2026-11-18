@@ -28,3 +28,17 @@ f725e3e,e9b1f958ae77,2026-11-17,dev,gold-reviewer-stability,kappa_epistemic_stat
 44ef32f,e9b1f958ae77,2026-11-18,test,gold-key-audit-round1,event_error_rate,0.107,28,"not accepted as answered; 2 of 30 not sure; wilson95=0.037-0.272; under re-read"
 44ef32f,e9b1f958ae77,2026-11-18,test,gold-key-audit-round1,paragraph_miss_rate,0.000,9,"1 of 10 not sure; wilson95=0.000-0.299"
 af04ba4,e9b1f958ae77,2026-11-18,test,gold-key-audit-round1-reread,event_error_rate,0.036,28,"accepted; auditor re-read 3 items under the clarified several-kinds rule, 2 changed to right, 1 confirmed wrong; wilson95=0.006-0.177"
+337d843,e9b1f958ae77,2026-11-18,dev,B0,event_f1,0.9745,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,event_f1_low,0.9464,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,event_f1_high,1.0,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,event_precision,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,event_recall,0.9503,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,status_accuracy,1.0,172,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B0,quantity_exact,1.0,5,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,event_f1,0.9226,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,event_f1_low,0.8889,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,event_f1_high,0.9545,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,event_precision,0.9583,168,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,event_recall,0.8895,181,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,status_accuracy,1.0,161,K=10km D=1d resamples=2000 seed=20261116
+337d843,e9b1f958ae77,2026-11-18,dev,B1,quantity_exact,0.0,2,K=10km D=1d resamples=2000 seed=20261116
