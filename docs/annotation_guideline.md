@@ -133,7 +133,7 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 | 10 | Front-wide totals with no place and no direction ("261 clashes over the past day", "60 air strikes", losses of personnel and equipment) | Not an event | No location to match on; it restates the per-direction paragraphs |
 | 11 | Ukrainian strikes on "areas of concentration" or "command posts" with a count but no place | One event per kind of target struck, type `other` when aviation, missiles and artillery are named together, actor UA, target RU, no location, with the count. Confirmed by the owner, 17 Nov 2026 | It is a distinct claimed event; it stays unmatched on location by design |
 | 12 | "In the area of", "towards", "near" a settlement | Precision 2 at the settlement (see 5). One event per settlement per paragraph per type | Same as hard case 4 |
-| 13 | | | |
+| 13 | A paragraph that opens with two directions and names no settlement ("On the North Slobozhanskyi and Kursk directions there was one clash, three air strikes, 66 shellings") | One event per kind for the two directions together: `location_text` is both directions as written, precision 2, with the count as `quantity`. Not one event per direction. Confirmed by the owner, 18 Nov 2026 | The count is stated for the pair. One event per direction would either lose the count (case 9) or count the same fighting twice |
 | 14 | | | |
 | 15 | | | |
 
@@ -145,3 +145,4 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 | 2026-11-17 | gsu-2026-07-29 FULL | 66 | machine-made (A1) | |
 | 2026-11-17 | gsu-2026-08-06 FULL | 56 | machine-made (A1) | |
 | 2026-11-17 | Spot check round 2 (30 events, 10 paragraphs) | 40 items | not logged | Count rule stated in 8.2 after void round 1 |
+| 2026-11-18 | Dev key, hard case 13 (21 July paragraph 6, 6 August paragraph 4) | 181 to 175 | src/keyfix.py | Hard case 13 ruled: two directions, one event per kind with the count |

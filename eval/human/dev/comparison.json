@@ -16,8 +16,8 @@
   "type_same": 170,
   "kappa_event_type": 0.9146280579131303,
   "actor_same": 171,
-  "pairs_with_a_count": 9,
-  "count_same": 3,
+  "pairs_with_a_count": 10,
+  "count_same": 6,
   "human_not_imported": 4
  },
  "disagreements": [
@@ -80,13 +80,24 @@
    "quantity": 2
   },
   {
+   "kind": "different quantity",
+   "report_id": "gsu-2026-07-21",
+   "paragraph": 6,
+   "event_type": "air_strike",
+   "actor": "RU",
+   "place": "(front direction)",
+   "quantity": null,
+   "human": null,
+   "key": 2
+  },
+  {
    "kind": "key only",
    "report_id": "gsu-2026-07-21",
    "paragraph": 6,
    "event_type": "ground_assault",
    "actor": "RU",
    "place": "(front direction)",
-   "quantity": null
+   "quantity": 1
   },
   {
    "kind": "key only",
@@ -95,7 +106,7 @@
    "event_type": "shelling",
    "actor": "RU",
    "place": "(front direction)",
-   "quantity": null
+   "quantity": 50
   },
   {
    "kind": "different quantity",
@@ -125,39 +136,6 @@
    "actor": null,
    "place": "(typed by hand)",
    "quantity": null
-  },
-  {
-   "kind": "different quantity",
-   "report_id": "gsu-2026-08-06",
-   "paragraph": 4,
-   "event_type": "ground_assault",
-   "actor": "RU",
-   "place": "(front direction)",
-   "quantity": 7,
-   "human": 7,
-   "key": null
-  },
-  {
-   "kind": "different quantity",
-   "report_id": "gsu-2026-08-06",
-   "paragraph": 4,
-   "event_type": "air_strike",
-   "actor": "RU",
-   "place": "(front direction)",
-   "quantity": 2,
-   "human": 2,
-   "key": null
-  },
-  {
-   "kind": "different quantity",
-   "report_id": "gsu-2026-08-06",
-   "paragraph": 4,
-   "event_type": "shelling",
-   "actor": "RU",
-   "place": "(front direction)",
-   "quantity": 75,
-   "human": 75,
-   "key": null
   },
   {
    "kind": "different quantity",
