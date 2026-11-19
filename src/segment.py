@@ -62,7 +62,7 @@ def _raw_sections(text: str) -> list[tuple[str | None, int, int, bool]]:
 
 def segment(text: str, source: str) -> list[Section]:
     """Return sector units in text order. GSU reports are one FULL unit."""
-    if source == "gsu":
+    if source in ("gsu", "af", "rumod"):  # whole-report sources (src/sources.py)
         return [Section("FULL", (), 0, len(text))]
     units: list[Section] = []
     for heading, start, end, has_body in _raw_sections(text):

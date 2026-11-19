@@ -28,6 +28,23 @@ collect:
     # Up to 8 words may stand between ("в оперативній інформації Генерального
     # штабу ЗС України станом на 8:00"). The 08:00 itself is required (SPEC 1).
     cutoff_pattern: "(?i)оперативн\\w*\\s+інформаці\\w*(?:\\s+[^\\s.]+){0,8}?\\s+станом\\s+на\\s+0?8[:.]00"
+  # SPEC amendment A2. Air Force overnight air-attack report, same ArmyInform sitemaps.
+  af:
+    enabled: true
+    slug_keyword_tiers:
+      - ["povitryani-syly", "povitryanyh-syl"]
+      - ["udarnyh-bpla", "bpla-zi-", "bpla-ta-", "-bpla", "bezpilotnykiv", "raket"]
+      - ["vnochi", "u-nich", "nichn"]
+    # The body must name the night and the Air Force (any inflection).
+    body_pattern: "(?is)(?=.*у\\s+ніч\\s+на\\s+\\d{1,2}\\s+\\w+)(?=.*повітрян\\w+\\s+сил)"
+  # SPEC amendment A2. Russian MoD public Telegram channel, read through its web preview.
+  rumod:
+    enabled: true
+    channel_url: "https://t.me/s/mod_russia"
+    post_url: "https://t.me/mod_russia/{id}"
+    utc_offset_hours: 3
+    # A post enters the day's report when its text matches (claims, not ceremonies).
+    claim_pattern: "(?i)освобод|под\\s+контроль|ПВО|перехвач|сбит|главное\\s+за\\s+день|нанес\\w*\\s+(?:массированн\\w+\\s+|групповой\\s+)?удар|поражени\\w+|группировк\\w+\\s+войск"
 
 models:
   # Baseline B1 entity models (SPEC.md section 6), run locally.

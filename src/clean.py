@@ -53,6 +53,19 @@ def clean_gsu(html: str) -> str:
     return (collapse(title.get_text(" ")) + "\n\n" if title else "") + body
 
 
+def clean_telegram_post(html: str) -> str:
+    """Text of one Telegram post: line breaks kept, spaces collapsed inside each line."""
+    soup = BeautifulSoup(html, "lxml")
+    for br in soup.find_all("br"):
+        br.replace_with("\n")
+    lines = [collapse(line) for line in soup.get_text("").split("\n")]
+    out: list[str] = []
+    for line in lines:
+        if line or (out and out[-1]):
+            out.append(line)
+    return "\n".join(out).strip()
+
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -69,5 +82,7 @@ def find_cutoff(text: str, source: str, gsu_pattern: str) -> str | None:
             return None
         t = GSU_TIME.search(text, m.start())
         return f"{int(t.group(1)):02d}:{t.group(2)} {t.group(3)}" if t else None
+    if source != "isw":
+        return None  # AF and RUMOD state no data cutoff (SPEC amendment A2)
     m = ISW_CUTOFF.search(text)
     return collapse(m.group(1)) if m else None

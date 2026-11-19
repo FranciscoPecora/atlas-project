@@ -2,6 +2,8 @@
 
     uv run python -m src.collect --source gsu --dates 2026-07-21,2026-07-29,2026-08-06
     uv run python -m src.collect --source gsu            # whole corpus window
+    uv run python -m src.collect --source af             # Air Force (SPEC amendment A2)
+    uv run python -m src.collect --source rumod          # Russian MoD Telegram (A2)
 
 Raw HTML goes to data/raw/<source>/<date>.html and cleaned text to
 data/text/<source>/<date>.txt (both git-ignored). data/manifest.csv records
@@ -17,13 +19,13 @@ import time
 import urllib.robotparser
 from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
 
-from src.clean import clean_gsu, clean_isw, find_cutoff, sha256_text
+from src.clean import clean_gsu, clean_isw, clean_telegram_post, find_cutoff, sha256_text
 from src.config import load_config
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -133,6 +135,53 @@ def is_gsu_morning(text: str, pattern: str) -> bool:
     return re.search(pattern, text) is not None
 
 
+def body_pattern(cfg: dict, source: str) -> str:
+    """The statement a candidate ArmyInform post must hold to be the day's report."""
+    scfg = cfg["collect"][source]
+    return scfg["cutoff_pattern"] if source == "gsu" else scfg["body_pattern"]
+
+
+@dataclass
+class Post:
+    """One Telegram channel post: id, local (channel time zone) timestamp, text, raw HTML."""
+
+    id: int
+    local: datetime
+    text: str
+    html: str
+
+
+def parse_channel_page(page: str, utc_offset_hours: int) -> list[Post]:
+    """Posts on one page of a public Telegram web preview, oldest first."""
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(page, "lxml")
+    tz = timezone(timedelta(hours=utc_offset_hours))
+    posts = []
+    for msg in soup.select("div.tgme_widget_message[data-post]"):
+        pid = int(msg["data-post"].rsplit("/", 1)[-1])
+        stamp = msg.select_one("time[datetime]")
+        body = msg.select_one("div.tgme_widget_message_text.js-message_text")
+        if stamp is None:
+            continue
+        when = datetime.fromisoformat(stamp["datetime"]).astimezone(tz)
+        text = clean_telegram_post(str(body)) if body is not None else ""
+        posts.append(Post(pid, when, text, str(msg)))
+    return sorted(posts, key=lambda p: p.id)
+
+
+def rumod_report(posts: list[Post], post_url: str, day: date) -> str:
+    """One day's report: a title line, then each post under a '## <url>' header line."""
+    parts = [f"Russian Ministry of Defence, Telegram channel, {day.isoformat()} (Moscow time)"]
+    for p in sorted(posts, key=lambda p: p.id):
+        parts.append(f"## {post_url.format(id=p.id)} · {p.local.strftime('%H:%M')}\n{p.text}")
+    return "\n\n".join(parts) + "\n"
+
+
+def claim_posts(posts: list[Post], pattern: str) -> list[Post]:
+    return [p for p in posts if p.text and re.search(pattern, p.text)]
+
+
 class Collector:
     def __init__(self, cfg: dict, fetcher: Fetcher, data_dir: Path = DATA) -> None:
         self.cfg = cfg
@@ -182,8 +231,13 @@ class Collector:
         return self._sitemaps[key]
 
     def collect_gsu(self, day: date) -> ManifestRow:
-        gcfg = self.cfg["collect"]["gsu"]
-        candidates = gsu_candidates(self._month_locs(day), day, gcfg["slug_keyword_tiers"])
+        return self.collect_armyinform("gsu", day)
+
+    def collect_armyinform(self, source: str, day: date) -> ManifestRow:
+        """GSU or AF: the first candidate post of the day whose body holds the statement."""
+        scfg = self.cfg["collect"][source]
+        pattern = body_pattern(self.cfg, source)
+        candidates = gsu_candidates(self._month_locs(day), day, scfg["slug_keyword_tiers"])
         errors = 0
         for url in candidates:
             try:
@@ -192,11 +246,46 @@ class Collector:
                 errors += 1
                 continue
             text = clean_gsu(html)
-            if is_gsu_morning(text, gcfg["cutoff_pattern"]):
-                self._save("gsu", day, html, text)
-                return self._row(day, "gsu", url, text, "ok")
+            if is_gsu_morning(text, pattern):
+                self._save(source, day, html, text)
+                return self._row(day, source, url, text, "ok")
         status = f"missing ({len(candidates)} candidates, {errors} http errors)"
-        return self._row(day, "gsu", "", "", status)
+        return self._row(day, source, "", "", status)
+
+    def crawl_channel(self, first: date, last: date) -> dict[date, list[Post]]:
+        """Page the channel's web preview back from the newest post to before `first`."""
+        rcfg = self.cfg["collect"]["rumod"]
+        by_day: dict[date, list[Post]] = {}
+        url = rcfg["channel_url"]
+        while True:
+            posts = parse_channel_page(self.fetcher.get_text(url), rcfg["utc_offset_hours"])
+            if not posts:
+                break
+            for p in posts:
+                if first <= p.local.date() <= last:
+                    by_day.setdefault(p.local.date(), []).append(p)
+            if posts[0].local.date() < first:
+                break
+            url = f"{rcfg['channel_url']}?before={posts[0].id}"
+        return by_day
+
+    def collect_rumod(self, days: list[date]) -> list[ManifestRow]:
+        rcfg = self.cfg["collect"]["rumod"]
+        if not days:
+            return []
+        by_day = self.crawl_channel(min(days), max(days))
+        rows = []
+        for day in days:
+            posts = claim_posts(by_day.get(day, []), rcfg["claim_pattern"])
+            if not posts:
+                rows.append(self._row(day, "rumod", "", "", "missing (no claim post)"))
+                continue
+            text = rumod_report(posts, rcfg["post_url"], day)
+            html = "\n".join(p.html for p in posts)
+            self._save("rumod", day, html, text)
+            url = rcfg["post_url"].format(id=posts[0].id)
+            rows.append(self._row(day, "rumod", url, text, "ok"))
+        return rows
 
     def _kept(self, source: str, day: date) -> ManifestRow | None:
         """The manifest row of a day that is already saved. Saved text is never fetched
@@ -211,12 +300,21 @@ class Collector:
         return None
 
     def collect(self, source: str, days: Iterable[date]) -> list[ManifestRow]:
-        fn = self.collect_isw if source == "isw" else self.collect_gsu
+        days = list(days)
+        kept = {d: self._kept(source, d) for d in days}
+        if source == "rumod":
+            fresh = {r.date: r for r in self.collect_rumod([d for d in days if not kept[d]])}
         rows = []
         for day in days:
-            kept = self._kept(source, day)
-            row = kept or fn(day)
-            print(f"{row.date} {row.source} {'kept' if kept else row.status} {row.url}")
+            if kept[day]:
+                row = kept[day]
+            elif source == "rumod":
+                row = fresh[day.isoformat()]
+            elif source == "isw":
+                row = self.collect_isw(day)
+            else:
+                row = self.collect_armyinform(source, day)
+            print(f"{row.date} {row.source} {'kept' if kept[day] else row.status} {row.url}")
             rows.append(row)
         return rows
 
@@ -260,7 +358,7 @@ def reindex(cfg: dict, path: Path = MANIFEST, data_dir: Path = DATA) -> list[dic
 
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--source", choices=["isw", "gsu"])
+    ap.add_argument("--source", choices=["isw", "gsu", "af", "rumod"])
     ap.add_argument("--dates", help="comma-separated ISO dates; default is the corpus window")
     ap.add_argument("--reindex", action="store_true", help="recompute hashes from saved text")
     args = ap.parse_args(argv)

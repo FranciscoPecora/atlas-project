@@ -686,3 +686,15 @@ English (case-insensitive, whole word): zero 0, one 1, two 2, three 3, four 4, f
 Ukrainian (case-insensitive, matched as word prefix to cover inflection): одн 1, дв 2, тр 3, чотир 4, п'ят 5, шіст/шест 6, сім/сем 7, вісім/восьм 8, дев'ят 9, десят 10, дванадцят 12, двадцят 20, тридцят 30, сорок 40, п'ятдесят 50, сто 100.
 
 Ukrainian stems are matched only against the stem table for the record's value (a quantity of 3 accepts a word starting "тр", not any number word). Short stems can match unrelated words; the unsupported-field audit (5.3) measures any false acceptance this causes. Anything else must appear as digits.
+
+### A2 (2026-11-19, approved by the project owner): sources AF and RUMOD
+
+Reason: the GSU reports hold no Russian claims and no missile or drone events, so those
+parts of the schema stay empty. A2 adds the Ukrainian Air Force overnight report (AF, via
+ArmyInform, CC BY 4.0) and the Russian Ministry of Defence public Telegram channel
+(RUMOD), defines their report date and default event date, lets `LedgerEvent.source`
+take `af` and `rumod`, and gives each a 15-report gold set on the GSU dates (3 dev, 12
+test) made by the A1 method without rule pre-fills. Systems B2, S1, S2 and S3-H are scored
+per source; each test split is scored once, never pooled with GSU. Metric definitions,
+targets, H1, H2 and the GSU results do not change. Full text:
+docs/spec_amendment_A2.md.
