@@ -1,0 +1,63 @@
+{
+  "built_at": "2026-11-19T21:04+00:00",
+  "delay_hours": 48,
+  "cutoff_date": "2026-11-16",
+  "first_report": "2026-07-19",
+  "last_report": "2026-11-15",
+  "n_events": 4550,
+  "n_located": 4448,
+  "n_withheld_delay": 0,
+  "n_reports": 108,
+  "by_type": {
+    "ground_assault": 4103,
+    "shelling": 289,
+    "air_strike": 94,
+    "other": 62,
+    "missile_strike": 2
+  },
+  "by_status": {
+    "ua_claimed": 4550
+  },
+  "systems": [
+    "S3-H"
+  ],
+  "n_pairs": 0,
+  "pairs_note": "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated confirmation of the same place. The General Staff reports carry neither: every event is a Ukrainian claim, and none is a territorial advance. Pairs need the ISW corpus, planned for version 2.",
+  "test_scores": {
+    "B0": {
+      "event_f1": 0.866,
+      "event_f1_low": 0.7997,
+      "event_f1_high": 0.9286
+    },
+    "B1": {
+      "event_f1": 0.8941,
+      "event_f1_low": 0.8487,
+      "event_f1_high": 0.9262
+    },
+    "B2": {
+      "event_f1": 0.9619,
+      "event_f1_low": 0.9513,
+      "event_f1_high": 0.9731
+    },
+    "S1": {
+      "event_f1": 0.9561,
+      "event_f1_low": 0.9444,
+      "event_f1_high": 0.9686
+    },
+    "S2": {
+      "event_f1": 0.9506,
+      "event_f1_low": 0.9316,
+      "event_f1_high": 0.9681
+    },
+    "S3-H": {
+      "event_f1": 0.8908,
+      "event_f1_low": 0.8689,
+      "event_f1_high": 0.917
+    },
+    "S3-S": {
+      "event_f1": 0.8855,
+      "event_f1_low": 0.8612,
+      "event_f1_high": 0.9137
+    }
+  }
+}
