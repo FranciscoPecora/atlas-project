@@ -1,9 +1,12 @@
-.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit handlabel mark-fields mark-places eval eval-test ledger link analysis site
+.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit handlabel mark-fields mark-places eval eval-test ledger link analysis release site pages fresh-clone
 
 UV ?= uv
 export LABEL_STUDIO_BASE_DATA_DIR := $(CURDIR)/.label-studio
 
-all: lint test data eval site
+# End to end on what a clone has: lint, tests, dev scores, site. Collecting the corpus
+# (make data) is slow and uses the network, so it is not part of `all`; `make eval`
+# needs the dev reports in data/text/ and data/gazetteer.parquet (see README).
+all: lint test eval site
 
 lint:
 	$(UV) run ruff check src tests eval notebooks
@@ -73,5 +76,22 @@ analysis:
 	PYTHONPATH=. $(UV) run python notebooks/01_claimed_vs_confirmed.py
 	PYTHONPATH=. $(UV) run python notebooks/02_viina.py
 
+# Public ledger without source text (release/), from the private ledger and link tables.
+release:
+	$(UV) run python -m src.release
+
+# Map data for the static demo, from the committed release (48-hour delay applied).
 site:
-	@echo "make site: arrives in milestone 6" && exit 1
+	$(UV) run python -m src.site_build
+
+# Publish site/ as committed at HEAD to the gh-pages branch that GitHub Pages serves.
+# Run after `make site` and a commit. Pages: Settings -> Pages -> Deploy from a branch,
+# gh-pages, / (root).
+pages:
+	@git diff --quiet HEAD -- site || (echo "commit site/ first" && exit 1)
+	git push origin "$$(git subtree split --prefix site HEAD)":refs/heads/gh-pages
+
+# Run `make all` in a fresh clone of HEAD with only the dev reports and the gazetteer
+# copied in as the private stub. Needs a clean, committed tree.
+fresh-clone:
+	bash scripts/fresh_clone.sh

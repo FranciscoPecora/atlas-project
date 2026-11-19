@@ -215,3 +215,6 @@ viina:
     Volyn: Volyn
     Zaporizhzhya: Zaporizhzhia
     Zhytomyr: Zhytomyr Oblast
+
+# Static demo (milestone 6). PLAN: 48-hour delay on any map of conflict events.
+site: {delay_hours: 48}

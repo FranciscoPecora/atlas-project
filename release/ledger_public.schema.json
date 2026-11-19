@@ -1,0 +1,295 @@
+{
+  "$defs": {
+    "EpistemicStatus": {
+      "enum": [
+        "ru_claimed",
+        "ua_claimed",
+        "third_party_claimed",
+        "geolocated_confirmed",
+        "analyst_assessed"
+      ],
+      "title": "EpistemicStatus",
+      "type": "string"
+    },
+    "EventType": {
+      "enum": [
+        "ground_assault",
+        "territorial_advance",
+        "withdrawal",
+        "missile_strike",
+        "drone_strike",
+        "air_strike",
+        "shelling",
+        "air_defence_interception",
+        "force_movement",
+        "logistics_or_infrastructure_strike",
+        "naval_event",
+        "other"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "Side": {
+      "enum": [
+        "RU",
+        "UA",
+        "other"
+      ],
+      "title": "Side",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One row of the public ledger. No field holds text copied from a report.",
+  "properties": {
+    "event_id": {
+      "description": "Stable id: report id, system, index in the report",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "report_id": {
+      "description": "Source and report date, e.g. gsu-2026-08-01",
+      "title": "Report Id",
+      "type": "string"
+    },
+    "source": {
+      "description": "gsu (Ukrainian General Staff via ArmyInform) or isw",
+      "title": "Source",
+      "type": "string"
+    },
+    "report_date": {
+      "description": "Publication date of the report",
+      "format": "date",
+      "title": "Report Date",
+      "type": "string"
+    },
+    "event_date": {
+      "description": "Date the event happened (default: report date - 1)",
+      "format": "date",
+      "title": "Event Date",
+      "type": "string"
+    },
+    "event_type": {
+      "$ref": "#/$defs/EventType",
+      "description": "One of 12 types (annotation guideline)"
+    },
+    "epistemic_status": {
+      "$ref": "#/$defs/EpistemicStatus",
+      "description": "Who asserts the event, and how"
+    },
+    "actor": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Side"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Side that acted: RU, UA or other"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Side"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Side acted upon"
+    },
+    "geo_precision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "1 settlement, 2 area/direction, 3 oblast",
+      "title": "Geo Precision"
+    },
+    "quantity": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Count stated in the report, if any",
+      "title": "Quantity"
+    },
+    "gazetteer_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "gn:<GeoNames id> or osm:<OSM node id>",
+      "title": "Gazetteer Id"
+    },
+    "place_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Standard name from the gazetteer (Latin)",
+      "title": "Place Name"
+    },
+    "oblast": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Oblast of the gazetteer place",
+      "title": "Oblast"
+    },
+    "lat": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Latitude from the gazetteer, never the model",
+      "title": "Lat"
+    },
+    "lon": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Longitude from the gazetteer, never the model",
+      "title": "Lon"
+    },
+    "cluster_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Rule 7a duplicate cluster",
+      "title": "Cluster Id"
+    },
+    "cluster_size": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Events in that cluster",
+      "title": "Cluster Size"
+    },
+    "confirmed_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Rule 7b: event_id of the confirmation",
+      "title": "Confirmed By"
+    },
+    "lag_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Rule 7b: report days from claim to confirm",
+      "title": "Lag Days"
+    },
+    "evidence_start": {
+      "description": "Start offset of the evidence in the cleaned text",
+      "title": "Evidence Start",
+      "type": "integer"
+    },
+    "evidence_end": {
+      "description": "End offset (exclusive)",
+      "title": "Evidence End",
+      "type": "integer"
+    },
+    "text_sha256": {
+      "description": "SHA-256 of the cleaned report text the offsets index",
+      "title": "Text Sha256",
+      "type": "string"
+    },
+    "source_url": {
+      "description": "URL of the report",
+      "title": "Source Url",
+      "type": "string"
+    },
+    "system": {
+      "description": "Pipeline version that produced the row, e.g. S3-H",
+      "title": "System",
+      "type": "string"
+    },
+    "run_id": {
+      "description": "Run that produced the row",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "report_id",
+    "source",
+    "report_date",
+    "event_date",
+    "event_type",
+    "epistemic_status",
+    "evidence_start",
+    "evidence_end",
+    "text_sha256",
+    "source_url",
+    "system",
+    "run_id"
+  ],
+  "title": "PublicEvent",
+  "type": "object"
+}

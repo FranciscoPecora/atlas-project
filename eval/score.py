@@ -221,6 +221,7 @@ def model_predictions(
     for system in MODEL_SYSTEMS:
         runs = {rid: read_pred(system, rid) for rid, _, _ in reports}
         if any(r is None for r in runs.values()):
+            print(f"skipped {system}: no saved run for every report (data/pred/ is private)")
             continue  # not run on every report of this split
         meta = {rid: {"report_id": rid, "source": src, "report_date": day, "sector": "FULL"}
                 for rid, src, day in reports}  # fmt: skip
@@ -270,6 +271,7 @@ def s3_predictions(
         try:
             done = {rid: verified(system, rid, texts[rid]) for rid, _, _ in reports}
         except FileNotFoundError:
+            print(f"skipped {system}: no saved verification for every report")
             continue  # not run on every report of this split
         meta = {rid: {"report_id": rid, "source": src, "report_date": day, "sector": "FULL"}
                 for rid, src, day in reports}  # fmt: skip
