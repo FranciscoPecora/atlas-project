@@ -29,10 +29,21 @@ SITE_DATA = ROOT / "site" / "data"
 RESULTS = ROOT / "eval" / "results.csv"
 PAIRS_NOTE = (
     "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated "
-    "confirmation of the same place. The General Staff reports carry neither: every event "
-    "is a Ukrainian claim, and none is a territorial advance. Pairs need the ISW corpus, "
-    "planned for version 2."
+    "confirmation of the same place. {claims} No source in the ledger reports geolocated "
+    "confirmations, so there is nothing to pair them with yet. Confirmations need the ISW "
+    "corpus, planned for a later version."
 )
+
+
+def pairs_note(frame: pl.DataFrame) -> str:
+    """The pairs panel's text, with the number of advance claims the ledger holds."""
+    adv = frame.filter(pl.col("event_type") == "territorial_advance")
+    ru = adv.filter(pl.col("epistemic_status") == "ru_claimed").height
+    if ru:
+        claims = f"The ledger holds {ru:,} Russian claims of captured settlements."
+    else:
+        claims = "The ledger holds no claim of an advance."
+    return PAIRS_NOTE.format(claims=claims)
 
 
 def cutoff_date(built: datetime, delay_hours: int) -> date:
@@ -49,7 +60,8 @@ def apply_delay(frame: pl.DataFrame, built: datetime, delay_hours: int) -> pl.Da
 def feature(row: dict[str, Any]) -> dict[str, Any]:
     """One GeoJSON point with short property names (keeps the file small)."""
     props = {
-        "id": row["event_id"], "t": row["event_type"], "s": row["epistemic_status"],
+        "id": row["event_id"], "x": row["source"], "t": row["event_type"],
+        "s": row["epistemic_status"],
         "a": row["actor"], "d": row["event_date"].isoformat(),
         "r": row["report_date"].isoformat(), "p": row["place_name"], "o": row["oblast"],
         "g": row["geo_precision"], "q": row["quantity"], "c": row["cluster_id"],
@@ -96,7 +108,8 @@ def meta(frame: pl.DataFrame, kept: pl.DataFrame, built: datetime, cfg: dict[str
         "by_status": dict(Counter(kept["epistemic_status"].to_list()).most_common()),
         "systems": sorted(kept["system"].unique().to_list()),
         "n_pairs": int(kept["confirmed_by"].is_not_null().sum()),
-        "pairs_note": PAIRS_NOTE,
+        "pairs_note": pairs_note(kept),
+        "by_source": dict(Counter(kept["source"].to_list()).most_common()),
         "test_scores": scores,
     }
 

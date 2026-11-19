@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Claimline map</title>
-<meta name="description" content="Events extracted from the Ukrainian General Staff's daily reports, with evidence offsets and claim status.">
+<meta name="description" content="Events extracted from Ukrainian and Russian official daily reports, with evidence offsets and claim status.">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
@@ -64,14 +64,18 @@
 <div class="app">
   <aside>
     <h1>Claimline</h1>
-    <p class="sub">Events extracted from the Ukrainian General Staff's daily reports by a
-      language-model pipeline, each tied to its evidence by character offsets.</p>
+    <p class="sub">Events extracted from Ukrainian and Russian official daily reports by a
+      language-model pipeline, each tied to its evidence by character offsets. Every event
+      is a claim by the side that reported it.</p>
     <div class="stats">
       <div class="stat"><b id="s-events">–</b><span>events shown</span></div>
       <div class="stat"><b id="s-reports">–</b><span>daily reports</span></div>
-      <div class="stat"><b id="s-f1">–</b><span>event F1, held-out test</span></div>
+      <div class="stat"><b id="s-f1">–</b><span>event F1, held-out test (General Staff)</span></div>
       <div class="stat"><b id="s-range">–</b><span>report dates</span></div>
     </div>
+
+    <h2>Source</h2>
+    <div id="f-source"></div>
 
     <h2>Claim status</h2>
     <div id="f-status"></div>
@@ -92,8 +96,9 @@
         the town that names a direction. Rows contain errors: about 1 in 6 places with a
         common name is put at the wrong namesake village. The map shows what the reports
         claim, not what happened.</p>
-      <p>Report text: General Staff via <a href="https://armyinform.com.ua/">ArmyInform</a>,
-        CC BY 4.0. Places: GeoNames (CC BY 4.0), OpenStreetMap (ODbL).
+      <p>Report text: General Staff and Air Force via <a href="https://armyinform.com.ua/">ArmyInform</a>,
+        CC BY 4.0. Russian Ministry of Defence: public Telegram channel; no text from it is
+        shown. Places: GeoNames (CC BY 4.0), OpenStreetMap (ODbL).
         <a href="https://github.com/FranciscoPecora/claimline">Code, method and limits</a> ·
         <a href="https://github.com/FranciscoPecora/claimline/blob/main/release/DATA_DICTIONARY.md">Data dictionary</a></p>
     </footer>
@@ -123,8 +128,13 @@ const STATUSES = {
   geolocated_confirmed: "Geolocated, confirmed",
   analyst_assessed: "Analyst assessment",
 };
+const SOURCES = {
+  gsu: "Ukrainian General Staff",
+  af: "Ukrainian Air Force",
+  rumod: "Russian Ministry of Defence",
+};
 const PRECISION = {1: "settlement", 2: "area or direction", 3: "oblast"};
-const state = { status: new Set(), type: new Set(), from: null, to: null };
+const state = { source: new Set(), status: new Set(), type: new Set(), from: null, to: null };
 let events = [], days = [];
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -149,6 +159,7 @@ function checkboxes(el, entries, counts, set) {
 
 function filterExpr() {
   const f = ["all",
+    ["in", ["get", "x"], ["literal", [...state.source]]],
     ["in", ["get", "s"], ["literal", [...state.status]]],
     ["in", ["get", "t"], ["literal", [...state.type]]]];
   if (state.from) f.push([">=", ["get", "r"], state.from], ["<=", ["get", "r"], state.to]);
@@ -156,7 +167,7 @@ function filterExpr() {
 }
 
 function visible() {
-  return events.filter((e) => state.status.has(e.s) && state.type.has(e.t) &&
+  return events.filter((e) => state.source.has(e.x) && state.status.has(e.s) && state.type.has(e.t) &&
     (!state.from || (e.r >= state.from && e.r <= state.to)));
 }
 
@@ -180,7 +191,7 @@ function drawTimeline() {
   ctx.scale(dpr, dpr);
   const counts = new Map(days.map((d) => [d, 0]));
   for (const e of events) {
-    if (state.status.has(e.s) && state.type.has(e.t)) counts.set(e.r, (counts.get(e.r) || 0) + 1);
+    if (state.source.has(e.x) && state.status.has(e.s) && state.type.has(e.t)) counts.set(e.r, (counts.get(e.r) || 0) + 1);
   }
   const max = Math.max(1, ...counts.values());
   const bw = w / Math.max(1, days.length);
@@ -225,6 +236,7 @@ function popupHtml(features) {
     const [label] = TYPES[p.t] || [p.t];
     const qty = p.q != null && p.q !== "null" ? ` · ${p.q}` : "";
     return `<div class="ev"><b>${esc(label)}</b>${esc(qty)} · ${esc(STATUSES[p.s] || p.s)}<br>
+      <span class="k">Source</span> ${esc(SOURCES[p.x] || p.x)}<br>
       <span class="k">Place</span> ${esc(p.p)}${p.o ? ", " + esc(p.o) : ""} (${esc(PRECISION[p.g] || "unknown precision")})<br>
       <span class="k">Event</span> ${esc(p.d)} · <span class="k">report</span> ${esc(p.r)}<br>
       <span class="k">Evidence</span> characters ${esc(p.es)}–${esc(p.ee)} of the
@@ -246,6 +258,7 @@ Promise.all([
     days.push(d.toISOString().slice(0, 10));
   }
   const by = (key) => events.reduce((m, e) => (m[e[key]] = (m[e[key]] || 0) + 1, m), {});
+  checkboxes(document.getElementById("f-source"), Object.entries(SOURCES).map(([k, v]) => [k, v]), by("x"), state.source);
   checkboxes(document.getElementById("f-status"), Object.entries(STATUSES).map(([k, v]) => [k, v]), by("s"), state.status);
   const typeEntries = Object.entries(TYPES).map(([k, [l, c]]) => [k, l, c])
     .sort((a, b) => (by("t")[b[0]] || 0) - (by("t")[a[0]] || 0));

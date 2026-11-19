@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-11-19T21:04+00:00",
+  "built_at": "2026-11-19T21:46+00:00",
   "delay_hours": 48,
   "cutoff_date": "2026-11-16",
   "first_report": "2026-07-19",
@@ -22,7 +22,10 @@
     "S3-H"
   ],
   "n_pairs": 0,
-  "pairs_note": "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated confirmation of the same place. The General Staff reports carry neither: every event is a Ukrainian claim, and none is a territorial advance. Pairs need the ISW corpus, planned for version 2.",
+  "pairs_note": "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated confirmation of the same place. The ledger holds no claim of an advance. No source in the ledger reports geolocated confirmations, so there is nothing to pair them with yet. Confirmations need the ISW corpus, planned for a later version.",
+  "by_source": {
+    "gsu": 4550
+  },
   "test_scores": {
     "B0": {
       "event_f1": 0.866,

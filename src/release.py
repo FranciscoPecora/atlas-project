@@ -47,7 +47,10 @@ class PublicEvent(BaseModel):
 
     event_id: str = Field(description="Stable id: report id, system, index in the report")
     report_id: str = Field(description="Source and report date, e.g. gsu-2026-08-01")
-    source: str = Field(description="gsu (Ukrainian General Staff via ArmyInform) or isw")
+    source: str = Field(
+        description="gsu (Ukrainian General Staff), af (Ukrainian Air Force), rumod (Russian "
+        "Ministry of Defence Telegram channel) or isw"
+    )
     report_date: date = Field(description="Publication date of the report")
     event_date: date = Field(description="Date the event happened (default: report date - 1)")
     event_type: EventType = Field(description="One of 12 types (annotation guideline)")
@@ -68,7 +71,7 @@ class PublicEvent(BaseModel):
     evidence_start: int = Field(description="Start offset of the evidence in the cleaned text")
     evidence_end: int = Field(description="End offset (exclusive)")
     text_sha256: str = Field(description="SHA-256 of the cleaned report text the offsets index")
-    source_url: str = Field(description="URL of the report")
+    source_url: str = Field(description="URL of the report (rumod: of the channel post)")
     system: str = Field(description="Pipeline version that produced the row, e.g. S3-H")
     run_id: str = Field(description="Run that produced the row")
 
@@ -164,8 +167,10 @@ def dictionary_markdown() -> str:
         "",
         "## Sources and licences",
         "",
-        "- Reports: Ukrainian General Staff operational updates as republished by",
-        "  ArmyInform (armyinform.com.ua), CC BY 4.0.",
+        "- Reports: Ukrainian General Staff operational updates and Ukrainian Air Force",
+        "  overnight reports as republished by ArmyInform (armyinform.com.ua), CC BY 4.0;",
+        "  Russian Ministry of Defence posts on its public Telegram channel (t.me/mod_russia),",
+        "  which states no licence: no text from it is published, only offsets and URLs.",
         "- Places: GeoNames (CC BY 4.0) and OpenStreetMap (ODbL), merged in",
         "  `src/gazetteer.py`.",
         "- Rows are produced by a language-model pipeline and contain errors; see",

@@ -34,7 +34,8 @@ collect:
     slug_keyword_tiers:
       - ["povitryani-syly", "povitryanyh-syl"]
       - ["udarnyh-bpla", "bpla-zi-", "bpla-ta-", "-bpla", "bezpilotnykiv", "raket"]
-      - ["vnochi", "u-nich", "nichn"]
+      - ["vnochi", "u-nich", "nichn", "povitryanymy-czilyamy", "atakuvala-ukrayinu",
+         "atakuvav-ukrayinu", "shahed"]
     # The body must name the night and the Air Force (any inflection).
     body_pattern: "(?is)(?=.*у\\s+ніч\\s+на\\s+\\d{1,2}\\s+\\w+)(?=.*повітрян\\w+\\s+сил)"
   # SPEC amendment A2. Russian MoD public Telegram channel, read through its web preview.

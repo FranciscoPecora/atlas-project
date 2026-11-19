@@ -43,6 +43,7 @@ def test_geojson_keeps_located_events_with_short_properties():
     (f,) = gj["features"]
     assert f["geometry"]["coordinates"] == [37.1235, 48.0]
     assert f["properties"]["t"] == "shelling" and f["properties"]["es"] == 3
+    assert f["properties"]["x"] == "gsu"
     assert "h" not in f["properties"]  # the hash stays in the release file
     assert "evidence_quote" not in f["properties"]
 
