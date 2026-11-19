@@ -197,6 +197,14 @@ def append_results(rows: list[dict[str, Any]], path: Path = RESULTS) -> None:
 MODEL_SYSTEMS = ("B2", "S1", "S1-medium")  # read from data/pred/ when present
 
 
+def live_median(seconds: Any) -> float | None:
+    """Median wall-clock seconds, or None if any run has none (batch runs are not timed)."""
+    from statistics import median
+
+    values = list(seconds)
+    return None if not values or any(v is None for v in values) else median(values)
+
+
 def model_predictions(
     reports: list[tuple[str, str, str]], texts: dict[str, str]
 ) -> tuple[dict[str, list[Event]], dict[str, dict[str, Any]]]:
@@ -204,7 +212,6 @@ def model_predictions(
 
     S2 is not a separate run: it is S1's output after deterministic verification.
     """
-    from statistics import median
 
     from src.extract import read_pred, to_records
     from src.verify_det import REASONS, verify
@@ -224,7 +231,7 @@ def model_predictions(
         first = next(iter(runs.values()))
         facts[system] = {
             "cost_usd_per_report": sum(r["cost_usd"] for r in runs.values()) / len(runs),
-            "seconds_median": median(r["seconds"] for r in runs.values()),
+            "seconds_median": live_median(r["seconds"] for r in runs.values()),
             "model": f"model={first['model']} effort={first['effort']}",
         }
         if system == "S1":
@@ -256,7 +263,6 @@ def s3_predictions(
     Cost and time per report are extraction plus verification plus geocoder model calls.
     """
     from collections import Counter
-    from statistics import median
 
     from src.s3 import SYSTEMS, verified
 
@@ -283,8 +289,11 @@ def s3_predictions(
         first = next(iter(done.values()))[1]
         facts[system] = {
             "cost_usd_per_report": sum(cost) / len(cost),
-            "seconds_median": median(
-                runs_s1[rid]["seconds"] + run["seconds"] for rid, (_, run) in done.items()
+            "seconds_median": live_median(
+                None
+                if None in (runs_s1[rid]["seconds"], run["seconds"])
+                else runs_s1[rid]["seconds"] + run["seconds"]
+                for rid, (_, run) in done.items()
             ),  # fmt: skip
             "model": f"model={runs_s1[reports[0][0]]['model']} verifier={first['model']} "
             f"effort={first['effort']}",
@@ -340,13 +349,15 @@ def fact_rows(facts: dict[str, dict[str, Any]], eur_per_usd: float, split: str) 
     rows = []
     for system, f in facts.items():
         usd = f["cost_usd_per_report"]
-        print(f"{system}: ${usd:.5f} = {usd * eur_per_usd:.5f} EUR per report, "
-              f"median {f['seconds_median']:.1f} s per report")  # fmt: skip
+        secs = f["seconds_median"]
+        took = "no live timing (batch run)" if secs is None else f"median {secs:.1f} s per report"
+        print(f"{system}: ${usd:.5f} = {usd * eur_per_usd:.5f} EUR per report, {took}")
         values = [
             ("cost_usd_per_report", round(usd, 6), ""),
             ("cost_eur_per_report", round(usd * eur_per_usd, 6), ""),
-            ("seconds_per_report_median", round(f["seconds_median"], 1), ""),
         ]
+        if secs is not None:  # speed is measured on live calls only (SPEC 5.3)
+            values.append(("seconds_per_report_median", round(secs, 1), ""))
         for reason, n in f.get("rejected", {}).items():
             values.append((f"rejected_{reason}", n, f["n_before"]))
         for kind in ("removed", "dropped"):
@@ -395,22 +406,21 @@ def main(argv: list[str] | None = None) -> None:
             preds["B0"] += geocode(b0_regex.extract(texts[rid], rid, day), texts[rid], gaz, geo)
             b1 = b1_gliner.extract(gliner, texts[rid], rid, day, threshold)
             preds["B1"] += geocode(b1, texts[rid], gaz, geo)
-    facts: dict[str, dict[str, Any]] = {}
-    if args.split == "dev":  # model systems are run on test only in milestone 5
-        from src.geocode import cached_chooser
-        from src.s3 import SYSTEMS, geocode_s3, load_choices
+    # Model systems: saved runs from data/pred/ (test-split runs come from src/ledger.py).
+    from src.geocode import cached_chooser
+    from src.s3 import SYSTEMS, geocode_s3, load_choices
 
-        raw, facts = model_predictions(reports, texts)
-        chooser = cached_chooser(load_choices())  # saved choices only: no API call here
-        day_of = {rid: day for rid, _, day in reports}
-        for system, events in raw.items():
-            preds[system] = []
-            for rid in texts:
-                mine = [x for x in events if x["report_id"] == rid]
-                if system in SYSTEMS:
-                    preds[system] += geocode_s3(mine, texts[rid], day_of[rid], gaz, geo, chooser)
-                else:
-                    preds[system] += geocode(mine, texts[rid], gaz, geo)
+    raw, facts = model_predictions(reports, texts)
+    chooser = cached_chooser(load_choices())  # saved choices only: no API call here
+    day_of = {rid: day for rid, _, day in reports}
+    for system, events in raw.items():
+        preds[system] = []
+        for rid in texts:
+            mine = [x for x in events if x["report_id"] == rid]
+            if system in SYSTEMS:
+                preds[system] += geocode_s3(mine, texts[rid], day_of[rid], gaz, geo, chooser)
+            else:
+                preds[system] += geocode(mine, texts[rid], gaz, geo)
     order = ["B0", "B1", "B2", "S1", "S2", "S3-H", "S3-S", "S1-medium"]
     preds = {s: preds[s] for s in order if s in preds}
     commit = subprocess.run(

@@ -166,3 +166,52 @@ geocode_check:
   # Hand check of the geocoder on dev places (src/geocode_check.py), not the SPEC metric.
   places: 50
   seed: 20261119
+
+batch:
+  # Message Batches API (src/batch.py): half the per-token price, results within 24 h.
+  price_factor: 0.5
+  poll_seconds: 60
+  retries: 2
+
+ledger:
+  # The system whose output is the published ledger (README: S3-H ships, SPEC section 6).
+  system: S3-H
+  # Run on the test reports only, so `make eval-test` can score every system.
+  test_only_systems: [B2, S3-S]
+
+viina:
+  # VIINA 2.0 (Zhukov and Ayers), Open Database License. One-event-per-place-per-day
+  # file, pinned to the Git LFS object fetched on 2026-11-19 (release bert_20261116).
+  repo: zhukovyuri/VIINA
+  file: event_1pd_latest_2026.zip
+  oid: 286f6ca641970ee2522436f808c7245715f194f27c9f5608b8e1e8ecb4c9b8ac
+  size: 763704
+  # VIINA ADM1_NAME -> gazetteer oblast (src/gazetteer.py, GeoNames admin1 names).
+  oblast_names:
+    Cherkasy: Cherkasy
+    Chernihiv: Chernihiv Oblast
+    Chernivtsi: Chernivtsi
+    Crimea: Crimea
+    "Dnipropetrovs'k": Dnipropetrovsk
+    "Donets'k": Donetsk
+    "Ivano-Frankivs'k": Ivano-Frankivsk
+    Kharkiv: Kharkiv
+    Kherson: Kherson
+    "Khmel'nyts'kyy": Khmelnytskyi
+    Kiev: Kyiv Oblast
+    Kiev City: Kyiv City
+    Kirovohrad: Kirovohrad
+    "L'viv": Lviv
+    "Luhans'k": Luhansk
+    Mykolayiv: Mykolaiv
+    Odessa: Odesa
+    Poltava: Poltava
+    Rivne: Rivne Oblast
+    "Sevastopol'": Sevastopol City
+    Sumy: Sumy
+    "Ternopil'": Ternopil
+    Transcarpathia: Zakarpattia
+    Vinnytsya: Vinnytsia
+    Volyn: Volyn
+    Zaporizhzhya: Zaporizhzhia
+    Zhytomyr: Zhytomyr Oblast

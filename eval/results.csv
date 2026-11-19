@@ -410,3 +410,16 @@ ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-S,verifier_removed_supported,
 63aeaae,59a1dc578b80,2026-11-19,dev-place-disagree,geocoder-rules,hand_median_error_km,18.0,12,"owner's picks among namesakes, judged by the paragraph's uniquely named villages (a proxy, not ground truth); SPEC 5.3 metric undefined on dev: n=0 precision-1"
 63aeaae,59a1dc578b80,2026-11-19,dev-place-disagree,geocoder-rules+previous_day,hand_accuracy_10km,0.4167,12,"owner's picks among namesakes, judged by the paragraph's uniquely named villages (a proxy, not ground truth); SPEC 5.3 metric undefined on dev: n=0 precision-1"
 63aeaae,59a1dc578b80,2026-11-19,dev-place-disagree,geocoder-rules+previous_day,hand_median_error_km,16.1,12,"owner's picks among namesakes, judged by the paragraph's uniquely named villages (a proxy, not ground truth); SPEC 5.3 metric undefined on dev: n=0 precision-1"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_claims,0,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_excluded_geo_precision,0,,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_7d,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_7d_low,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_7d_high,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_14d,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_14d_low,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_14d_high,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_30d,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_30d_low,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_30d_high,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,viina_spearman_t_mil,0.3905,2889,VIINA event_1pd_latest_2026.zip oid 286f6ca64197; 107 days
+c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,viina_spearman_all,0.3374,2889,VIINA event_1pd_latest_2026.zip oid 286f6ca64197; 107 days

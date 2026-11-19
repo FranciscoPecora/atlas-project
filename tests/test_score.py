@@ -123,3 +123,18 @@ def test_geocode_tolerates_a_record_without_offsets():
     from src.geocode import paragraph_at
 
     assert paragraph_at("One.\n\nTwo.", None) == ""
+
+
+def test_live_median_is_undefined_for_batch_runs():
+    from eval.score import live_median
+
+    assert live_median([3.0, 1.0, 2.0]) == 2.0
+    assert live_median([3.0, None]) is None  # a batch run has no wall-clock time
+    assert live_median([]) is None
+
+
+def test_fact_rows_skip_speed_without_live_timing():
+    from eval.score import fact_rows
+
+    rows = fact_rows({"S1": {"cost_usd_per_report": 0.01, "seconds_median": None}}, 0.9, "test")
+    assert [r["metric"] for r in rows] == ["cost_usd_per_report", "cost_eur_per_report"]
