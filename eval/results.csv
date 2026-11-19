@@ -423,3 +423,79 @@ c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_30d_low,,0,"7b; windows
 c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,h2_confirmed_30d_high,,0,"7b; windows [7, 14, 30]; sources gsu; resamples=2000 seed=20261116"
 c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,viina_spearman_t_mil,0.3905,2889,VIINA event_1pd_latest_2026.zip oid 286f6ca64197; 107 days
 c248a9a,3e5cc21ab07a,2026-11-19,corpus,S3-H,viina_spearman_all,0.3374,2889,VIINA event_1pd_latest_2026.zip oid 286f6ca64197; 107 days
+280376d,3e5cc21ab07a,2026-11-19,test,B0,event_f1,0.866,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,event_f1_low,0.7997,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,event_f1_high,0.9286,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,event_precision,0.9979,476,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,event_recall,0.7649,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,status_accuracy,1.0,475,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B0,quantity_exact,0.9444,18,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,event_f1,0.8941,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,event_f1_low,0.8487,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,event_f1_high,0.9262,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,event_precision,0.9611,540,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,event_recall,0.8357,621,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,status_accuracy,1.0,519,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B1,quantity_exact,0.0,19,K=10km D=1d resamples=2000 seed=20261116
+280376d,3e5cc21ab07a,2026-11-19,test,B2,event_f1,0.9619,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,event_f1_low,0.9513,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,event_f1_high,0.9731,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,event_precision,0.9915,585,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,event_recall,0.934,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,status_accuracy,1.0,580,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,quantity_exact,0.9583,24,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,event_f1,0.9561,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,event_f1_low,0.9444,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,event_f1_high,0.9686,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,event_precision,0.9846,586,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,event_recall,0.9291,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,status_accuracy,1.0,577,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,quantity_exact,0.9643,28,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,event_f1,0.9506,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,event_f1_low,0.9316,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,event_f1_high,0.9681,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,event_precision,0.9895,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,event_recall,0.9147,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,status_accuracy,1.0,568,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,quantity_exact,0.963,27,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,event_f1,0.8908,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,event_f1_low,0.8689,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,event_f1_high,0.917,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,event_precision,0.9393,560,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,event_recall,0.847,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,status_accuracy,1.0,526,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,quantity_exact,0.96,25,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,event_f1,0.8855,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,event_f1_low,0.8612,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,event_f1_high,0.9137,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,event_precision,0.9435,549,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,event_recall,0.8341,621,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,status_accuracy,1.0,518,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,quantity_exact,0.96,25,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,cost_usd_per_report,0.002999,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,B2,cost_eur_per_report,0.002729,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,cost_usd_per_report,0.003424,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S1,cost_eur_per_report,0.003116,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,cost_usd_per_report,0.003424,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,cost_eur_per_report,0.003116,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,rejected_quote_missing,4,586,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,rejected_location_not_in_quote,4,586,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S2,rejected_quantity_not_in_quote,4,586,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,cost_usd_per_report,0.015642,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,cost_eur_per_report,0.014234,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_removed_actor,30,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_removed_equipment,1,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_removed_event_type,14,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_removed_geo_precision,31,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_removed_target,24,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-H,verifier_dropped_event_type,14,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-haiku-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,cost_usd_per_report,0.046084,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,cost_eur_per_report,0.041937,,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_actor,8,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_equipment,1,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_event_type,16,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_geo_precision,31,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_location_text,9,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_removed_target,16,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_dropped_event_type,16,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+280376d,3e5cc21ab07a,2026-11-19,test,S3-S,verifier_dropped_location_text,9,574,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low

@@ -1,0 +1,298 @@
+{
+ "status": "finished",
+ "commit": "280376dbb51b9f9a5628ea1612e2b5a54c88dd57",
+ "config_hash": "3e5cc21ab07a",
+ "config": {
+  "corpus": {
+   "start": "2026-07-19",
+   "end": "2026-11-15",
+   "analysis_end": "2026-10-16"
+  },
+  "collect": {
+   "delay_seconds": 3,
+   "timeout_seconds": 30,
+   "user_agent": "claimline-research/0.1 (non-commercial research)",
+   "isw": {
+    "enabled": false,
+    "url_template": "https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-{month}-{day}-{year}/"
+   },
+   "gsu": {
+    "enabled": true,
+    "sitemap_template": "https://armyinform.com.ua/sitemap-posttype-post.{yyyymm}.xml",
+    "slug_keyword_tiers": [
+     [
+      "zitkn",
+      "boyezitkn",
+      "boyiv",
+      "za-dobu-na-fronti",
+      "za-mynulu-dobu"
+     ],
+     [
+      "genshtab"
+     ],
+     [
+      "atak",
+      "napryamk"
+     ]
+    ],
+    "cutoff_pattern": "(?i)оперативн\\w*\\s+інформаці\\w*(?:\\s+[^\\s.]+){0,8}?\\s+станом\\s+на\\s+0?8[:.]00"
+   }
+  },
+  "models": {
+   "b1_gliner_en": "fastino/gliner2-base-v1",
+   "b1_gliner_uk": "fastino/gliner2-multi-v1",
+   "b1_threshold": 0.5,
+   "extraction": "claude-haiku-5-5",
+   "extraction_effort": "low",
+   "extraction_effort_alt": "medium",
+   "verifier": "claude-haiku-5-5",
+   "verifier_alt": "claude-sonnet-5-5",
+   "verifier_effort": "low",
+   "geocode_disambiguation": "claude-sonnet-5-5",
+   "translation": "claude-opus-5-5",
+   "translation_effort": "medium",
+   "gold_review": "claude-opus-5-5",
+   "gold_review_effort": "high"
+  },
+  "eval": {
+   "match_km": 10,
+   "match_days": 1,
+   "grid_km": [
+    5,
+    10,
+    25
+   ],
+   "grid_days": [
+    0,
+    1,
+    2
+   ],
+   "bootstrap_resamples": 2000,
+   "seed": 20261116
+  },
+  "prelabel": {
+   "control_report": "2026-08-06",
+   "control_paragraphs": [
+    6,
+    7
+   ],
+   "agreement_target": 0.9
+  },
+  "link": {
+   "duplicate_km": 5,
+   "duplicate_days": 3,
+   "confirmation_days": 30,
+   "report_windows_days": [
+    7,
+    14,
+    30
+   ]
+  },
+  "cost": {
+   "eur_per_usd": 0.91
+  },
+  "prices": {
+   "claude-haiku-5-5": {
+    "input": 0.1,
+    "output": 0.5,
+    "cache_write": 0.125,
+    "cache_read": 0.01
+   },
+   "claude-sonnet-5-5": {
+    "input": 2.0,
+    "output": 10.0,
+    "cache_write": 2.5,
+    "cache_read": 0.1
+   },
+   "claude-opus-5-5": {
+    "input": 4.0,
+    "output": 20.0,
+    "cache_write": 5.0,
+    "cache_read": 0.2
+   }
+  },
+  "verify": {
+   "max_tokens": 8000,
+   "timeout_seconds": 300
+  },
+  "extract": {
+   "max_tokens": 32000,
+   "timeout_seconds": 900,
+   "example_report": "2026-07-21",
+   "example_paragraphs": [
+    3,
+    5,
+    6,
+    8,
+    17
+   ]
+  },
+  "audit": {
+   "events": 30,
+   "paragraphs": 10,
+   "max_error_rate": 0.05,
+   "round": 3,
+   "test_round": 1,
+   "extra_rounds": {
+    "3": {
+     "events": 100,
+     "paragraphs": 20,
+     "skip_rounds": [
+      2
+     ]
+    }
+   }
+  },
+  "geocode": {
+   "direction_anchors": {
+    "Північно-Слобожанський": [
+     "Суми",
+     "Sumy"
+    ],
+    "Курський": [
+     "Суми",
+     "Sumy"
+    ],
+    "Південно-Слобожанський": [
+     "Харків",
+     "Kharkiv"
+    ],
+    "Куп’янський": [
+     "Куп’янськ",
+     "Kharkiv"
+    ],
+    "Лиманський": [
+     "Лиман",
+     "Donetsk"
+    ],
+    "Слов’янський": [
+     "Слов’янськ",
+     "Donetsk"
+    ],
+    "Сіверський": [
+     "Сіверськ",
+     "Donetsk"
+    ],
+    "Краматорський": [
+     "Краматорськ",
+     "Donetsk"
+    ],
+    "Костянтинівський": [
+     "Костянтинівка",
+     "Donetsk"
+    ],
+    "Торецький": [
+     "Торецьк",
+     "Donetsk"
+    ],
+    "Покровський": [
+     "Покровськ",
+     "Donetsk"
+    ],
+    "Новопавлівський": [
+     "Новопавлівка",
+     "Dnipropetrovsk"
+    ],
+    "Олександрівський": [
+     "Олександроград",
+     "Donetsk"
+    ],
+    "Гуляйпільський": [
+     "Гуляйполе",
+     "Zaporizhzhia"
+    ],
+    "Оріхівський": [
+     "Оріхів",
+     "Zaporizhzhia"
+    ],
+    "Придніпровський": [
+     "Херсон",
+     "Kherson"
+    ]
+   },
+   "max_anchor_km": 120
+  },
+  "gold": {
+   "substitutions": {
+    "gsu-2026-08-22": "2026-08-25",
+    "gsu-2026-08-30": "2026-08-31"
+   }
+  },
+  "field_audit": {
+   "records": 200,
+   "seed": 20261119,
+   "translate_chunk": 40
+  },
+  "units": {
+   "fuzzy_min": 85
+  },
+  "geocode_check": {
+   "places": 50,
+   "seed": 20261119
+  },
+  "batch": {
+   "price_factor": 0.5,
+   "poll_seconds": 60,
+   "retries": 2
+  },
+  "ledger": {
+   "system": "S3-H",
+   "test_only_systems": [
+    "B2",
+    "S3-S"
+   ]
+  },
+  "viina": {
+   "repo": "zhukovyuri/VIINA",
+   "file": "event_1pd_latest_2026.zip",
+   "oid": "286f6ca641970ee2522436f808c7245715f194f27c9f5608b8e1e8ecb4c9b8ac",
+   "size": 763704,
+   "oblast_names": {
+    "Cherkasy": "Cherkasy",
+    "Chernihiv": "Chernihiv Oblast",
+    "Chernivtsi": "Chernivtsi",
+    "Crimea": "Crimea",
+    "Dnipropetrovs'k": "Dnipropetrovsk",
+    "Donets'k": "Donetsk",
+    "Ivano-Frankivs'k": "Ivano-Frankivsk",
+    "Kharkiv": "Kharkiv",
+    "Kherson": "Kherson",
+    "Khmel'nyts'kyy": "Khmelnytskyi",
+    "Kiev": "Kyiv Oblast",
+    "Kiev City": "Kyiv City",
+    "Kirovohrad": "Kirovohrad",
+    "L'viv": "Lviv",
+    "Luhans'k": "Luhansk",
+    "Mykolayiv": "Mykolaiv",
+    "Odessa": "Odesa",
+    "Poltava": "Poltava",
+    "Rivne": "Rivne Oblast",
+    "Sevastopol'": "Sevastopol City",
+    "Sumy": "Sumy",
+    "Ternopil'": "Ternopil",
+    "Transcarpathia": "Zakarpattia",
+    "Vinnytsya": "Vinnytsia",
+    "Volyn": "Volyn",
+    "Zaporizhzhya": "Zaporizhzhia",
+    "Zhytomyr": "Zhytomyr Oblast"
+   }
+  }
+ },
+ "test_reports": [
+  "gsu-2026-08-14",
+  "gsu-2026-08-25",
+  "gsu-2026-08-31",
+  "gsu-2026-09-07",
+  "gsu-2026-09-15",
+  "gsu-2026-09-23",
+  "gsu-2026-10-01",
+  "gsu-2026-10-09",
+  "gsu-2026-10-17",
+  "gsu-2026-10-25",
+  "gsu-2026-11-02",
+  "gsu-2026-11-10"
+ ],
+ "started": "2026-11-19T19:45:03.781594+00:00",
+ "finished": "2026-11-19T19:45:54.126154+00:00",
+ "rows_appended": 76
+}

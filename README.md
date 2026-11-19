@@ -2,7 +2,7 @@
 
 Turns daily war reporting into a queryable ledger of events in which every record keeps who claimed it, the exact words it rests on (as character offsets, not text), and whether it was later confirmed.
 
-**Status: milestone 1 (spec, guideline, collector).** No results yet. Metric definitions and targets were frozen in [SPEC.md](SPEC.md) before any pipeline code.
+**Status: milestone 5 (test split scored once, 2026-11-19).** Metric definitions and targets were frozen in [SPEC.md](SPEC.md) before any pipeline code. General Staff reports only: ISW permission is still pending.
 
 ## Question
 
@@ -19,7 +19,56 @@ Source text is stored locally and never committed or published.
 
 This measures confirmation inside the sources' own reporting, not ground truth. There is one annotator; agreement figures measure self-consistency only. The annotator reads no Ukrainian: General Staff dev reports were labelled with a Claude translation shown beside the original, which may bias those labels toward Claude's reading. General Staff dev labels are machine-made: rule-based pre-fills, revised by a reviewer model (a larger Claude model than the extractor), then spot-checked by the annotator on a random sample of 30 events and 10 paragraphs read in translation. They are not a human key: the reviewer and the evaluated systems are models of one family, so shared mistakes can raise measured scores, and the spot check cannot catch translation errors. On the dev key the spot check found 1 of 30 sampled events wrong (3.3%, 95% interval 0.6% to 16.7%) and 0 of 9 judged paragraphs incomplete (interval 0% to 29.9%). A second, larger sample with no item in common found 1 of 100 events wrong and 0 of 20 paragraphs incomplete; together, 2 of 130 events wrong (1.5%, 95% interval 0.4% to 5.4%) and 0 of 29 paragraphs incomplete (interval 0% to 11.7%). Both samples were drawn before hard case 13 changed two paragraphs of the key. The one event marked wrong in the second sample is a shelling count that the English reading aid rendered as "attacks with fire": the audit can fail a correct event, or pass a wrong one, because of the translation. The General Staff test key (12 reports, 621 events) was made once on 2026-11-17 and locked in commit 9da84a1, before any evaluated system ran on those reports; its spot check found 1 of 28 judged events wrong (3.6%, 95% interval 0.6% to 17.7%) and 0 of 9 judged paragraphs incomplete, after the annotator re-read three items he had first marked wrong under an instruction the page had left out (as first answered: 3 of 28, 10.7%, above the 5% limit). The annotator also labelled the three dev reports by hand from the translation, without seeing the key (51 paragraphs, 30 minutes): 171 of his 177 events and of the key's 175 pair up (F1 0.972), with the same type on 170 pairs (kappa 0.915); all 163 events at named villages are in both. The differences are in headline and total paragraphs, where he departed from the guideline five times. The pass also showed that the key wrote two-direction paragraphs in two different ways, which was then fixed in the dev key (hard case 13). He asked about five paragraphs while labelling, so this pass is not fully independent. Reviewer stability on two dev reports: 125 of 125 events matched between two runs, kappa 1.0 on type and status. SPEC amendment A1 (docs/spec_amendment_A1.md) allows the General Staff test labels to be made the same way, once, before any evaluated system runs on those reports.
 
-## Results so far
+## Release results (test split, scored once)
+
+`make eval-test` ran once on 2026-11-19 at commit 280376d (config 3e5cc21ab07a; [eval/test_run.json](eval/test_run.json)): 12 General Staff test reports, 621 key events, none of them seen while building. Event F1 as in SPEC 5.1 at 10 km and 1 day; 95% intervals resample whole reports (2,000 resamples, seed 20261116). Model systems ran through the Message Batches API.
+
+| System | Precision | Recall | F1 | 95% interval | Quantity exact (n) | USD per report |
+| --- | --- | --- | --- | --- | --- | --- |
+| B0, rules and gazetteer | 0.998 | 0.765 | 0.866 | 0.800 to 0.929 | 0.944 (18) | 0 |
+| B1, GLiNER2 and rules | 0.961 | 0.836 | 0.894 | 0.849 to 0.926 | 0.000 (19) | 0 |
+| B2, one free-form prompt | 0.991 | 0.934 | **0.962** | 0.951 to 0.973 | 0.958 (24) | 0.0030 |
+| S1, schema-constrained extraction | 0.985 | 0.929 | 0.956 | 0.944 to 0.969 | 0.964 (28) | 0.0034 |
+| S2, S1 plus deterministic verification | 0.990 | 0.915 | 0.951 | 0.932 to 0.968 | 0.963 (27) | 0.0034 |
+| S3-H, S2 plus Haiku verifier and geocoder (shipped) | 0.939 | 0.847 | 0.891 | 0.869 to 0.917 | 0.960 (25) | 0.0156 |
+| S3-S, S2 plus Sonnet verifier and geocoder | 0.944 | 0.834 | 0.885 | 0.861 to 0.914 | 0.960 (25) | 0.0461 |
+
+Cost is batch price (half the live price). Epistemic status accuracy is 1.000 for every system and says nothing here: every General Staff event is `ua_claimed`.
+
+**F1 sensitivity (SPEC 5.3), K km x D days.** Almost flat: the day window changes nothing, and widening to 25 km adds 0.002 for B1 and 0.015 to 0.018 for the two S3 variants, whose previous-day geocoding rule puts some events 10 to 25 km from where the key's rules put them:
+
+| System | 5 km, 0 to 2 d | 10 km, 0 to 2 d | 25 km, 0 to 2 d |
+| --- | --- | --- | --- |
+| B0 | 0.866 | 0.866 | 0.866 |
+| B1 | 0.894 | 0.894 | 0.896 |
+| B2 | 0.962 | 0.962 | 0.962 |
+| S1 | 0.956 | 0.956 | 0.956 |
+| S2 | 0.951 | 0.951 | 0.951 |
+| S3-H | 0.889 | 0.891 | 0.906 |
+| S3-S | 0.884 | 0.885 | 0.903 |
+
+Within each K the three day settings give the same F1 to three decimals.
+
+**H1, not supported.** S3-H event F1 is 0.891 (0.869 to 0.917), above the 0.80 target, but S3-H minus B2 is -0.071, not +0.08: B2 scores 0.962 (0.951 to 0.973), and the two intervals do not overlap. Each verification layer cost recall and bought little precision on these reports: S2 rejected 12 of S1's 586 events, and the S3 verifier and geocoder took F1 from 0.951 to 0.891. General Staff reports follow one sentence pattern that a single free-form prompt already handles; whether the layers pay off on varied text (ISW) is untested.
+
+**H2, unanswered.** Rule 7b found 0 eligible claims in the 120-day ledger, so the confirmed shares at 7, 14 and 30 days and the median lag are undefined. The ledger holds 4,550 events from 108 reports and every one is `ua_claimed`: the General Staff does not report Russian claims or geolocated confirmations. H2 needs the ISW reports.
+
+**The ledger.** 4,550 events, 4,448 located; rule 7a puts 3,852 of them in 436 duplicate clusters of two or more. The widest cluster is 22.5 km across and the longest spans 82 days: a village named in most daily reports chains into one cluster (single linkage, SPEC 5.2). Against VIINA 2.0, daily event counts by oblast correlate at Spearman 0.391 over 2,889 oblast-days (military-operations events; 0.337 for all VIINA events). Most of that comes from which oblasts are active at all: within Donetsk oblast, day to day, it is 0.37, and between -0.19 and 0.11 in the other front oblasts.
+
+**Targets missed or not measured** (SPEC 5.3):
+
+- **H1, S3 minus B2 >= 0.08:** missed, -0.071 (above).
+- **H2:** not answerable on General Staff text (above).
+- **Speed below 60 s per report:** missed on live calls, S3-H median 112 s on dev, because the verifier calls the API once per quote in sequence. The test run used batches and has no timing.
+- **Geocoding accuracy@10 km >= 0.90:** not measured. On dev every located key event is precision 2 (n = 0); the scorer does not compute it on test, and the test key is not opened outside the scorer. A hand check of 50 dev places found 0.828 within 10 km.
+- **Unsupported-field rate below 2%:** met on the point estimate only, S3-H 1.43% (95% interval 0.00% to 3.68%), dev-period audit.
+- **Quantity exact match >= 0.95:** met by every model system (0.958 to 0.964), missed by the baselines B0 (0.944) and B1 (0.000).
+
+Met: event F1 >= 0.80 for every system; cost below 0.10 EUR per report (S3-H 0.014 EUR at batch price, 0.016 EUR live); reviewer stability kappa 1.0 (SPEC amendment A1). The five worst error patterns are in [FAILURES.md](FAILURES.md).
+
+Test-split limits: the General Staff test key is machine-made (amendment A1) and was made before hard case 13, so it may write two-direction paragraphs inconsistently; B0 shares the key's pre-fill rules; scores on these reports are high for every system, and the release says nothing yet about ISW text.
+
+## Dev results
 
 Dev split only: 3 General Staff reports, 175 gold events (2026-11-18, after hard case 13 was applied to the key; see below). Event F1 as in SPEC.md 5.1 at 10 km and 1 day; intervals resample whole reports. "Held-out" leaves out the report of 21 July, whose paragraphs are the worked examples in the extraction prompt (2 reports, 119 events).
 
@@ -55,7 +104,7 @@ Milestone 4 (model verifier, geocoder rules, 2026-11-19):
 - **Units:** the General Staff reports name no units, so the alias table is empty until ISW text is collected.
 - The S3 rows in eval/results.csv carry commit 81f9780, but were produced with a scorer fix committed in ada8847 (S3 records lacked report fields); rerun at ada8847 or later to reproduce them.
 
-Limits that apply to every number above. The General Staff key is machine-made and audited by sample (SPEC amendment A1). The extractor and the key's reviewer are models of one family reading the same guideline, so agreement is easier than with a human key. B0 is circular: the key started from the same rules. The key's coordinates come from the same geocoder rules as the systems', and in the hand check 10 of 58 located events (about 1 in 6) sit at the wrong namesake, all at names shared by several villages, for every system alike. General Staff reports follow one sentence pattern, so every system already passes the 0.80 target and hypothesis H1 (S3 beats B2 by 0.08) cannot be shown on these reports; it needs the ISW reports. No ISW report is collected yet (permission pending). 108 of the 120 General Staff days are collected; the other 12 have no post that states the 08:00 cutoff. Test-split scores are not computed until the release.
+Limits that apply to every number above. The General Staff key is machine-made and audited by sample (SPEC amendment A1). The extractor and the key's reviewer are models of one family reading the same guideline, so agreement is easier than with a human key. B0 is circular: the key started from the same rules. The key's coordinates come from the same geocoder rules as the systems', and in the hand check 10 of 58 located events (about 1 in 6) sit at the wrong namesake, all at names shared by several villages, for every system alike. General Staff reports follow one sentence pattern, so every system already passes the 0.80 target and hypothesis H1 (S3 beats B2 by 0.08) cannot be shown on these reports; it needs the ISW reports. No ISW report is collected yet (permission pending). 108 of the 120 General Staff days are collected; the other 12 have no post that states the 08:00 cutoff. Test-split scores are in the release section above.
 
 ## Intended use
 
