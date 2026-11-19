@@ -265,8 +265,10 @@ def s3_predictions(
             done = {rid: verified(system, rid, texts[rid]) for rid, _, _ in reports}
         except FileNotFoundError:
             continue  # not run on every report of this split
+        meta = {rid: {"report_id": rid, "source": src, "report_date": day, "sector": "FULL"}
+                for rid, src, day in reports}  # fmt: skip
         preds[system] = [
-            {**r, "id": f"{rid}:{system}:{i}", "system": system}
+            {**r, **meta[rid], "id": f"{rid}:{system}:{i}", "system": system}
             for rid, (kept, _) in done.items() for i, r in enumerate(kept)
         ]  # fmt: skip
         removed: Counter[str] = Counter()

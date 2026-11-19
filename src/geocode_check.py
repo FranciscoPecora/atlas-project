@@ -192,11 +192,38 @@ def gold_items() -> list[dict[str, Any]]:
     return items
 
 
+def pid(item: dict[str, Any]) -> str:
+    return f"{item['name']}|{item['direction'] or ''}"
+
+
+def locate(
+    items: list[dict[str, Any]], gaz: Gazetteer, geo: dict[str, Any], with_previous: bool
+) -> list[dict[str, Any]]:
+    """Each item's gold record geocoded by the rules alone, or with the previous-day rule."""
+    from src.geocode import geocode
+    from src.s3 import previous_events
+
+    out = []
+    for day in sorted({i["record"]["report_date"] for i in items}):
+        text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+        mine = [i for i in items if i["record"]["report_date"] == day]
+        prev = previous_events(day, gaz, geo) if with_previous else None
+        done = geocode([i["record"] for i in mine], text, gaz, geo, previous=prev)
+        out += [{**e, "place_id": pid(i)} for i, e in zip(mine, done, strict=True)]
+    return out
+
+
+def disagreements(items: list[dict[str, Any]], gaz: Gazetteer, geo: dict[str, Any]) -> set[str]:
+    """Places where the previous-day rule picks a different row than the rules alone."""
+    a, b = locate(items, gaz, geo, False), locate(items, gaz, geo, True)
+    return {
+        x["place_id"] for x, y in zip(a, b, strict=True) if x["gazetteer_id"] != y["gazetteer_id"]
+    }
+
+
 def main(argv: list[str] | None = None) -> None:
     from src.config import load_config
     from src.gazetteer import read_table
-    from src.geocode import geocode
-    from src.s3 import previous_events
 
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("step", choices=["build", "page", "score"])
@@ -208,12 +235,16 @@ def main(argv: list[str] | None = None) -> None:
     gaz = Gazetteer(read_table())
     items = gold_items()
     sample = sample_places(items, cfg["geocode_check"]["places"], cfg["geocode_check"]["seed"])
+    in_sample = {pid(i) for i in sample}
+    differ = disagreements(items, gaz, geo)
+    extra = [i for i in {pid(i): i for i in items}.values() if pid(i) in differ - in_sample]
     if args.step == "page":
-        items = []
-        for item in sample:
+        shown = []
+        for item in sample + sorted(extra, key=pid):
             town = direction_place(gaz, item["direction"], geo["direction_anchors"])
             cands = candidates(gaz, item["name"], town, geo["max_anchor_km"])
-            items.append(page_item(item, cands, town))
+            shown.append({**page_item(item, cands, town), "extra": pid(item) not in in_sample})
+        items = shown
         blob = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
         PAGE.parent.mkdir(parents=True, exist_ok=True)
         PAGE.write_text(TEMPLATE.read_text(encoding="utf-8").replace("/*ITEMS*/[]", blob), "utf-8")
@@ -240,23 +271,20 @@ def main(argv: list[str] | None = None) -> None:
     truth = {pid: by_id[g] for pid, g in picks.items() if g is not None}
     print(f"{len(picks)} places judged; {len(picks) - len(truth)} have no right row in the "
           "gazetteer (counted as misses for every variant)")  # fmt: skip
-    checked = [i for i in items if f"{i['name']}|{i['direction'] or ''}" in picks]
-    for variant in ("rules", "rules+previous_day"):
-        located = []
-        for day in sorted({i["record"]["report_date"] for i in checked}):
-            text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
-            mine = [i for i in checked if i["record"]["report_date"] == day]
-            prev = previous_events(day, gaz, geo) if variant != "rules" else None
-            done = geocode([i["record"] for i in mine], text, gaz, geo, previous=prev)
-            located += [{**e, "place_id": f"{i['name']}|{i['direction'] or ''}"}
-                        for i, e in zip(mine, done, strict=True)]  # fmt: skip
-        missing = {pid for pid, g in picks.items() if g is None}
-        errs = errors_km(located, truth) + [float("inf")] * sum(
-            e["place_id"] in missing for e in located
-        )
-        acc, med, n = summary(errs)
-        print(f"{variant}: accuracy@10km {acc:.3f} over {n} gold events, median error "
-              f"{med:.1f} km")  # fmt: skip
+    missing = {k for k, g in picks.items() if g is None}
+    groups = {"random sample": in_sample, "places where the two rules disagree": differ}
+    for label, ids in groups.items():
+        checked = [i for i in items if pid(i) in ids and pid(i) in picks]
+        print(f"-- {label}: {len({pid(i) for i in checked})} places judged")
+        for variant, prev in (("rules", False), ("rules+previous_day", True)):
+            located = locate(checked, gaz, geo, prev)
+            errs = errors_km(located, truth) + [float("inf")] * sum(
+                e["place_id"] in missing for e in located
+            )
+            acc, med, n = summary(errs)
+            if n:
+                print(f"{variant}: accuracy@10km {acc:.3f} over {n} gold events, median error "
+                      f"{med:.1f} km")  # fmt: skip
 
 
 if __name__ == "__main__":
