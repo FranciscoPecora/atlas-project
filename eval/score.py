@@ -238,7 +238,58 @@ def model_predictions(
                     rejected[reason] += n
             preds["S2"] = kept
             facts["S2"] = {**facts["S1"], "rejected": rejected, "n_before": len(preds["S1"])}
+    if "S1" in preds:
+        s3_predictions(reports, texts, runs_s1={rid: read_pred("S1", rid) for rid, _, _ in reports},
+                       preds=preds, facts=facts)  # fmt: skip
     return preds, facts
+
+
+def s3_predictions(
+    reports: list[tuple[str, str, str]],
+    texts: dict[str, str],
+    runs_s1: dict[str, Any],
+    preds: dict[str, list[Event]],
+    facts: dict[str, dict[str, Any]],
+) -> None:
+    """Add S3-H and S3-S (ungeocoded) and their facts, for variants verified on every report.
+
+    Cost and time per report are extraction plus verification plus geocoder model calls.
+    """
+    from collections import Counter
+    from statistics import median
+
+    from src.s3 import SYSTEMS, verified
+
+    for system in SYSTEMS:
+        try:
+            done = {rid: verified(system, rid, texts[rid]) for rid, _, _ in reports}
+        except FileNotFoundError:
+            continue  # not run on every report of this split
+        preds[system] = [
+            {**r, "id": f"{rid}:{system}:{i}", "system": system}
+            for rid, (kept, _) in done.items() for i, r in enumerate(kept)
+        ]  # fmt: skip
+        removed: Counter[str] = Counter()
+        dropped: Counter[str] = Counter()
+        for _, run in done.values():
+            removed.update(run["counts"]["removed"])
+            dropped.update(run["counts"]["dropped"])
+        cost = [
+            runs_s1[rid]["cost_usd"] + run["cost_usd"] + run.get("geocode_cost_usd", 0.0)
+            for rid, (_, run) in done.items()
+        ]  # fmt: skip
+        first = next(iter(done.values()))[1]
+        facts[system] = {
+            "cost_usd_per_report": sum(cost) / len(cost),
+            "seconds_median": median(
+                runs_s1[rid]["seconds"] + run["seconds"] for rid, (_, run) in done.items()
+            ),  # fmt: skip
+            "model": f"model={runs_s1[reports[0][0]]['model']} verifier={first['model']} "
+            f"effort={first['effort']}",
+            "removed": dict(removed),
+            "dropped": dict(dropped),
+            "n_before": sum(run["n_records"] for _, run in done.values()),
+        }
 
 
 def metric_rows(
@@ -296,8 +347,16 @@ def fact_rows(facts: dict[str, dict[str, Any]], eur_per_usd: float, split: str) 
         ]
         for reason, n in f.get("rejected", {}).items():
             values.append((f"rejected_{reason}", n, f["n_before"]))
+        for kind in ("removed", "dropped"):
+            for field, n in sorted(f.get(kind, {}).items()):
+                values.append((f"verifier_{kind}_{field}", n, f["n_before"]))
         if "rejected" in f:
             print(f"  rejected of {f['n_before']}: {f['rejected']}")
+        if "removed" in f:
+            print(
+                f"  verifier, of {f['n_before']}: fields removed {f['removed']}, "
+                f"records dropped for {f['dropped']}"
+            )
         rows += [
             {"split": split, "system": system, "metric": m, "value": v, "n": n}
             for m, v, n in values
@@ -336,13 +395,21 @@ def main(argv: list[str] | None = None) -> None:
             preds["B1"] += geocode(b1, texts[rid], gaz, geo)
     facts: dict[str, dict[str, Any]] = {}
     if args.split == "dev":  # model systems are run on test only in milestone 5
+        from src.geocode import cached_chooser
+        from src.s3 import SYSTEMS, geocode_s3, load_choices
+
         raw, facts = model_predictions(reports, texts)
+        chooser = cached_chooser(load_choices())  # saved choices only: no API call here
+        day_of = {rid: day for rid, _, day in reports}
         for system, events in raw.items():
-            preds[system] = [
-                e for rid in texts
-                for e in geocode([x for x in events if x["report_id"] == rid], texts[rid], gaz, geo)
-            ]  # fmt: skip
-    order = ["B0", "B1", "B2", "S1", "S2", "S1-medium"]
+            preds[system] = []
+            for rid in texts:
+                mine = [x for x in events if x["report_id"] == rid]
+                if system in SYSTEMS:
+                    preds[system] += geocode_s3(mine, texts[rid], day_of[rid], gaz, geo, chooser)
+                else:
+                    preds[system] += geocode(mine, texts[rid], gaz, geo)
+    order = ["B0", "B1", "B2", "S1", "S2", "S3-H", "S3-S", "S1-medium"]
     preds = {s: preds[s] for s in order if s in preds}
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT

@@ -84,6 +84,15 @@ cost:
 # 1.25 times and cache read 0.1 times the input price.
 prices:
   claude-haiku-5-5: {input: 0.10, output: 0.50, cache_write: 0.125, cache_read: 0.01}
+  # Added 2026-11-19 from the claude-api model table: Sonnet 5.5 cache reads are 0.10
+  # (not 0.1 times input), Opus 5.5 cache reads 0.20.
+  claude-sonnet-5-5: {input: 2.00, output: 10.00, cache_write: 2.50, cache_read: 0.10}
+  claude-opus-5-5: {input: 4.00, output: 20.00, cache_write: 5.00, cache_read: 0.20}
+
+verify:
+  # Model field verifier (src/verify_model.py): one call per distinct evidence quote.
+  max_tokens: 8000
+  timeout_seconds: 300
 
 extract:
   max_tokens: 32000
@@ -141,3 +150,19 @@ gold:
   substitutions:
     gsu-2026-08-22: 2026-08-25
     gsu-2026-08-30: 2026-08-31
+
+field_audit:
+  # Unsupported-field audit (SPEC 5.3, src/audit_fields.py): records drawn from S2
+  # output of the dev-period General Staff reports that are not gold units.
+  records: 200
+  seed: 20261119
+  translate_chunk: 40
+
+units:
+  # Unit alias matching (src/units.py): rapidfuzz token_set_ratio threshold.
+  fuzzy_min: 85
+
+geocode_check:
+  # Hand check of the geocoder on dev places (src/geocode_check.py), not the SPEC metric.
+  places: 50
+  seed: 20261119

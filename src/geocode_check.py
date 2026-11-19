@@ -1,0 +1,220 @@
+"""Hand check of the geocoder on dev places (owner's choice, 19 Nov: not the SPEC metric).
+
+    uv run python -m src.geocode_check build    # write data/audit/geocode_check.csv
+    uv run python -m src.geocode_check score    # once `pick` is filled in
+
+SPEC 5.3 "Geocoding accuracy@10 km" counts matched pairs whose gold event has
+geo_precision 1. Every located dev gold event is precision 2, so that metric has
+n = 0 on dev, and gold coordinates come from this same geocoder, so it would be
+circular anyway. This check is separate and labelled as such.
+
+Sample: `geocode_check.places` distinct (place as written, front direction) pairs
+from the dev key, seeded. Each row lists the gazetteer rows the name could be
+(namesakes within `max_anchor_km` of the direction's town, or the 10 largest when
+the paragraph names no direction), in id order so the list does not hint at the
+geocoder's choice, with a map link each. The geocoder's choice is not shown. The
+owner writes the letter of the right row in `pick`, `none` if no row is right, or
+`?` if unsure. The CSV holds English text of the reports, so it stays local
+(git-ignored); `pick` and the ids are copied to eval/audit/ to commit.
+
+Score: each geocoder variant is run on the dev gold events at the checked places;
+an event is right when its point is within 10 km of the picked row. Accuracy and
+median error are reported over events and over places.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import random
+import re
+import string
+from pathlib import Path
+from statistics import median
+from typing import Any
+
+from eval.score import haversine_km
+from src.collect import DATA, ROOT
+from src.gazetteer import Gazetteer, Place, direction_place, paragraph_direction
+
+LOCAL = DATA / "audit" / "geocode_check.csv"
+ANSWERS = ROOT / "eval" / "audit" / "geocode_check_answers.csv"
+MAX_ROWS = 12
+LETTERS = string.ascii_uppercase
+
+
+def english_paragraph(translation: str, n: int) -> str:
+    """Paragraph `n` (1-based) of a stored translation ("[n] starts: ...\\nEnglish")."""
+    for block in re.split(r"\n\n(?=\[\d+\] )", translation.strip()):
+        head, _, body = block.partition("\n")
+        if head.startswith(f"[{n}] "):
+            return body.strip()
+    return ""
+
+
+def candidates(gaz: Gazetteer, name: str, town: Place | None, max_km: float) -> list[Place]:
+    """Rows the name could be: namesakes near the town, else the largest; in id order."""
+    _, rows = gaz.lookup(name, limit=100_000)
+    if town is not None:
+        rows = [r for r in rows if haversine_km(r.lat, r.lon, town.lat, town.lon) <= max_km]
+    else:
+        rows = sorted(rows, key=lambda r: -r.population)[:10]
+    return sorted(rows[:MAX_ROWS], key=lambda r: r.gazetteer_id)
+
+
+def osm_link(p: Place) -> str:
+    return f"https://www.openstreetmap.org/?mlat={p.lat:.5f}&mlon={p.lon:.5f}#map=12/{p.lat:.5f}/{p.lon:.5f}"
+
+
+def describe(p: Place, town: Place | None) -> str:
+    km = (
+        f", {haversine_km(p.lat, p.lon, town.lat, town.lon):.0f} km from {town.name}"
+        if town
+        else ""
+    )
+    return f"{p.name} ({p.oblast or 'oblast unknown'}, pop. {p.population}{km}) {osm_link(p)}"
+
+
+def sample_places(items: list[dict[str, Any]], n: int, seed: int) -> list[dict[str, Any]]:
+    """`n` distinct (name, direction) items, seeded, in name order."""
+    distinct = {(i["name"], i["direction"] or ""): i for i in items}
+    keys = sorted(distinct)
+    picked = random.Random(seed).sample(keys, min(n, len(keys)))
+    return [distinct[k] for k in sorted(picked)]
+
+
+def row(item: dict[str, Any], cands: list[Place], town: Place | None) -> dict[str, str]:
+    out = {
+        "place_id": f"{item['name']}|{item['direction'] or ''}",
+        "place_uk": item["name"],
+        "place_en": item.get("english", ""),
+        "direction_town": town.name if town else "",
+        "paragraph_en": item.get("paragraph_en", ""),
+        "n_rows": str(len(cands)),
+    }
+    for letter, p in zip(LETTERS, cands, strict=False):
+        out[f"row_{letter}"] = describe(p, town)
+    out["ids"] = " ".join(p.gazetteer_id for p in cands)
+    return {**out, "pick": ""}
+
+
+def read_picks(path: Path) -> dict[str, str | None]:
+    """{place_id: picked gazetteer_id or None for 'none'}; unsure and blank rows are skipped."""
+    picks: dict[str, str | None] = {}
+    with path.open(encoding="utf-8", newline="") as f:
+        for r in csv.DictReader(f):
+            pick = r["pick"].strip().upper()
+            if pick in ("", "?"):
+                continue
+            ids = r["ids"].split()
+            if pick == "NONE":
+                picks[r["place_id"]] = None
+            elif len(pick) == 1 and LETTERS.index(pick) < len(ids):
+                picks[r["place_id"]] = ids[LETTERS.index(pick)]
+            else:
+                raise ValueError(f"{r['place_id']}: pick {pick!r} is not a listed letter")
+    return picks
+
+
+def errors_km(events: list[dict[str, Any]], truth: dict[str, Place]) -> list[float]:
+    """Error in km per geocoded event whose place has a hand-picked row (inf if no point)."""
+    out = []
+    for e in events:
+        right = truth.get(e["place_id"])
+        if right is None:
+            continue
+        if e.get("lat") is None:
+            out.append(float("inf"))
+        else:
+            out.append(haversine_km(e["lat"], e["lon"], right.lat, right.lon))
+    return out
+
+
+def summary(errors: list[float], km: float = 10.0) -> tuple[float | None, float | None, int]:
+    """(share within km, median error, n)."""
+    if not errors:
+        return None, None, 0
+    return sum(x <= km for x in errors) / len(errors), median(errors), len(errors)
+
+
+def gold_items() -> list[dict[str, Any]]:
+    """Every located dev gold event as a check item: name, direction, English context."""
+    import json
+
+    from src.audit import glossary, paragraph_of, read_key
+    from src.prelabel import paragraph_spans
+
+    items = []
+    for r in read_key():
+        if not r.get("location_text"):
+            continue
+        day = r["report_date"]
+        text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+        spans = paragraph_spans(text)
+        n = paragraph_of(spans, r["evidence_start"])
+        a, b = spans[n - 1]
+        en_path = DATA / "text" / "gsu_en" / f"{day}.json"
+        en = json.loads(en_path.read_text(encoding="utf-8")) if en_path.exists() else {}
+        items.append({
+            "name": r["location_text"], "direction": paragraph_direction(text[a:b]),
+            "english": glossary(en.get("places", "")).get(r["location_text"], ""),
+            "paragraph_en": english_paragraph(en.get("translation", ""), n), "record": r,
+        })  # fmt: skip
+    return items
+
+
+def main(argv: list[str] | None = None) -> None:
+    from src.config import load_config
+    from src.gazetteer import read_table
+    from src.geocode import geocode
+    from src.s3 import previous_events
+
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("step", choices=["build", "score"])
+    args = ap.parse_args(argv)
+    cfg = load_config()
+    geo = cfg["geocode"]
+    gaz = Gazetteer(read_table())
+    items = gold_items()
+    sample = sample_places(items, cfg["geocode_check"]["places"], cfg["geocode_check"]["seed"])
+    if args.step == "build":
+        rows = []
+        for item in sample:
+            town = direction_place(gaz, item["direction"], geo["direction_anchors"])
+            rows.append(row(item, candidates(gaz, item["name"], town, geo["max_anchor_km"]), town))
+        fields = list(dict.fromkeys(k for r in rows for k in r))
+        fields.remove("pick")
+        LOCAL.parent.mkdir(parents=True, exist_ok=True)
+        with LOCAL.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=[*fields, "pick"], restval="")
+            writer.writeheader()
+            writer.writerows(rows)
+        print(f"{len(rows)} places ({len(items)} located dev gold events) -> "
+              f"{LOCAL.relative_to(ROOT)}")  # fmt: skip
+        return
+    picks = read_picks(LOCAL)
+    by_id = {p.gazetteer_id: p for p in gaz.places}
+    truth = {pid: by_id[g] for pid, g in picks.items() if g is not None}
+    print(f"{len(picks)} places judged; {len(picks) - len(truth)} have no right row in the "
+          "gazetteer (counted as misses for every variant)")  # fmt: skip
+    checked = [i for i in items if f"{i['name']}|{i['direction'] or ''}" in picks]
+    for variant in ("rules", "rules+previous_day"):
+        located = []
+        for day in sorted({i["record"]["report_date"] for i in checked}):
+            text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+            mine = [i for i in checked if i["record"]["report_date"] == day]
+            prev = previous_events(day, gaz, geo) if variant != "rules" else None
+            done = geocode([i["record"] for i in mine], text, gaz, geo, previous=prev)
+            located += [{**e, "place_id": f"{i['name']}|{i['direction'] or ''}"}
+                        for i, e in zip(mine, done, strict=True)]  # fmt: skip
+        missing = {pid for pid, g in picks.items() if g is None}
+        errs = errors_km(located, truth) + [float("inf")] * sum(
+            e["place_id"] in missing for e in located
+        )
+        acc, med, n = summary(errs)
+        print(f"{variant}: accuracy@10km {acc:.3f} over {n} gold events, median error "
+              f"{med:.1f} km")  # fmt: skip
+
+
+if __name__ == "__main__":
+    main()

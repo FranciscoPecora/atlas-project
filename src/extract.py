@@ -2,6 +2,7 @@
 
     uv run python -m src.extract            # dev General Staff reports, config effort
     uv run python -m src.extract --alt      # same, with models.extraction_effort_alt
+    uv run python -m src.extract --set audit  # dev-period reports that are not gold units
 
 One call per section. The prompt holds fixed instructions and worked examples
 first (so the API can cache them), then the report date, section name and
@@ -207,9 +208,15 @@ def dev_gsu_dates(spec_text: str, data_dir: Path = DATA) -> list[str]:
     return [d for d in days if (data_dir / "text" / "gsu" / f"{d}.txt").exists()]
 
 
+def report_data(day: str) -> dict[str, Any]:
+    """Task data for a GSU report that is not a gold unit (one unit, sector FULL)."""
+    return {"report_id": f"gsu-{day}", "source": "gsu", "report_date": day, "sector": "FULL"}
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--alt", action="store_true", help="use models.extraction_effort_alt")
+    ap.add_argument("--set", choices=["dev", "audit"], default="dev")
     args = ap.parse_args(argv)
 
     load_dotenv(ROOT / ".env")
@@ -221,8 +228,19 @@ def main(argv: list[str] | None = None) -> None:
     system = instructions(GUIDELINE.read_text(encoding="utf-8")) + "\n\n" + load_examples(cfg)
     client = anthropic.Anthropic()
     price = cfg["prices"][models["extraction"]]
-    for day in dev_gsu_dates(spec_text):
-        data = unit_task_data(day, spec_text)  # refuses test-split reports
+    if args.set == "audit":
+        from src.audit_fields import audit_dates
+
+        days = audit_dates(spec_text)
+    else:
+        days = dev_gsu_dates(spec_text)
+    for day in days:
+        if args.set == "audit":
+            if read_pred(name, f"gsu-{day}") is not None:
+                continue  # already extracted
+            data = report_data(day)
+        else:
+            data = unit_task_data(day, spec_text)  # refuses test-split reports
         text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
         user = user_prompt(day, default_date(data), data["sector"], text)
         result, usage, seconds = with_retries(
