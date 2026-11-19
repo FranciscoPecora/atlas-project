@@ -30,6 +30,8 @@ Dev split only: 3 General Staff reports, 175 gold events (2026-11-18, after hard
 | B2, one free-form prompt | 1.000 | 0.989 | 0.994 | 0.981 to 1.000 | 0.992 |
 | S1, schema-constrained extraction | 0.983 | 0.983 | 0.983 | 0.946 to 1.000 | 1.000 |
 | S2, S1 plus deterministic verification | 0.983 | 0.971 | 0.977 | 0.946 to 1.000 | 0.992 |
+| S3-H, S2 plus Haiku field verifier and geocoder rules (shipped) | 0.930 | 0.914 | 0.922 | 0.904 to 0.937 | 0.915 |
+| S3-S, S2 plus Sonnet field verifier and geocoder rules | 0.947 | 0.914 | 0.930 | 0.904 to 0.963 | 0.915 |
 
 B2, S1 and S2 use `claude-haiku-5-5` at effort low. S1 at effort medium scores 0.997 (held-out 0.996, against 1.000 for low). Each system was run once, so differences of this size are within run-to-run variation; low stays.
 
@@ -43,7 +45,17 @@ What the table does and does not show:
 - **Epistemic status accuracy is 1.000 for every system**, which says little: every General Staff event is `ua_claimed`.
 - **Cost and speed, measured from API usage:** S1 costs 0.0081 USD (0.0073 EUR) per report, B2 0.0072 USD; target below 0.10 EUR. Median time per report is 42.9 s for S1 and 41.0 s for B2; target below 60 s (the earlier run measured 57.8 s for S1, so the margin varies).
 
-Limits that apply to every number above. The General Staff key is machine-made and audited by sample (SPEC amendment A1). The extractor and the key's reviewer are models of one family reading the same guideline, so agreement is easier than with a human key. B0 is circular: the key started from the same rules. General Staff reports follow one sentence pattern, so every system already passes the 0.80 target and hypothesis H1 (S3 beats B2 by 0.08) cannot be shown on these reports; it needs the ISW reports. No ISW report is collected yet (permission pending). 108 of the 120 General Staff days are collected; the other 12 have no post that states the 08:00 cutoff. Test-split scores are not computed until the release.
+Milestone 4 (model verifier, geocoder rules, 2026-11-19):
+
+- **S3 scores lower than S2 on dev, and the drop is geocoding, not verification.** The verifiers dropped 1 (Haiku) and 4 (Sonnet) of 173 records. The geocoder's new previous-day rule moved 11 events to another village of the same name, and the key is placed by the rules without it, so each move counts as a miss whether or not it is right. On the places where the two disagree, the hand check below finds the previous-day rule right slightly more often (5 of 12 events against 4 of 12).
+- **Unsupported-field rate (target below 2%)**, 200 records drawn from 20 dev-period General Staff reports that are not gold, every field judged by the annotator from a machine translation: S2 4.04% (95% interval 0.65% to 9.01%), S3-H 1.43% (0.00% to 3.68%), S3-S 1.68% (0.27% to 3.94%). S3-H meets the target on the point estimate only. Haiku ships, by SPEC section 6: Sonnet does not lower the rate by 1 point and costs six times as much.
+- **The verifier's value is in dropping whole records, not in correcting fields.** It drops records whose quote is a bare list of places with no verb (Haiku dropped 11 of the 12 such records in the sample, plus 4 correct ones). Every field it set to null alone (25) was judged supported, and it kept 18 actor or target fields judged unsupported. The bare-list quotes are an extractor fault: on 9 August and 23 July most quotes lack the verb, so the verifiers dropped most records of those reports.
+- **Geocoding accuracy@10 km (SPEC 5.3) is undefined on dev:** every located dev gold event is precision 2, so n = 0, and gold coordinates come from the same geocoder. In its place, a hand check of 50 random dev places: 0.828 of 58 events within 10 km of the place the annotator picked, median error 0 km. The annotator picked the namesake that lies among the other, uniquely named villages of the same paragraph, so this measures agreement with that clue, not ground truth. Every miss is a common name decided by a weak rule (nearest to the direction's town, or the previous day).
+- **Cost and speed:** S3-H 0.018 USD (0.016 EUR) per report, S3-S 0.106 USD (0.097 EUR). Median 112 s and 91 s per report: both miss the 60 s target, because the verifier makes one call per quote in sequence.
+- **Units:** the General Staff reports name no units, so the alias table is empty until ISW text is collected.
+- The S3 rows in eval/results.csv carry commit 81f9780, but were produced with a scorer fix committed in ada8847 (S3 records lacked report fields); rerun at ada8847 or later to reproduce them.
+
+Limits that apply to every number above. The General Staff key is machine-made and audited by sample (SPEC amendment A1). The extractor and the key's reviewer are models of one family reading the same guideline, so agreement is easier than with a human key. B0 is circular: the key started from the same rules. The key's coordinates come from the same geocoder rules as the systems', and in the hand check 10 of 58 located events (about 1 in 6) sit at the wrong namesake, all at names shared by several villages, for every system alike. General Staff reports follow one sentence pattern, so every system already passes the 0.80 target and hypothesis H1 (S3 beats B2 by 0.08) cannot be shown on these reports; it needs the ISW reports. No ISW report is collected yet (permission pending). 108 of the 120 General Staff days are collected; the other 12 have no post that states the 08:00 cutoff. Test-split scores are not computed until the release.
 
 ## Intended use
 
