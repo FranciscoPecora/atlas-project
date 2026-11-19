@@ -86,3 +86,12 @@ def test_crash_while_scoring_still_counts(tmp_path):
 def test_missing_runs_lists_each_gap():
     got = test_run.missing_runs(["d1", "d2"], ("S1", "B2"), lambda s, r: r != "gsu-d2")
     assert got == ["S1 gsu-d2", "B2 gsu-d2"]
+
+
+def test_a2_sources_have_their_own_marker_and_systems():
+    from eval import run_test_split as r
+
+    assert r.marker_path("gsu").name == "test_run.json"
+    assert r.marker_path("af").name == "test_run_af.json"
+    gaps = r.missing_runs(["2026-08-14"], r.A2_SYSTEMS, lambda s, rid: s == "S1", "rumod")
+    assert gaps == ["B2 rumod-2026-08-14", "S3-H rumod-2026-08-14"]

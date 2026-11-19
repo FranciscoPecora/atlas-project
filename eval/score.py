@@ -172,13 +172,14 @@ def accuracy(matches: list[tuple[Event, Event]], field: str, only_gold_set: bool
     return sum(p.get(field) == g.get(field) for p, g in pairs) / len(pairs), len(pairs)
 
 
-def load_gold(split: str, gold_dir: Path | None = None) -> list[Event]:
-    """Gold events of a split. The test split opens only under `make eval-test`."""
+def load_gold(split: str, gold_dir: Path | None = None, source: str = "gsu") -> list[Event]:
+    """Gold events of one source's split (never pooled across sources, amendment A2).
+    The test split opens only under `make eval-test`."""
     if split == "test" and os.environ.get("CLAIMLINE_EVAL_TEST") != "1":
         raise PermissionError("the test split is scored only through `make eval-test`")
     folder = (gold_dir or ROOT / "eval" / "gold") / split
     events: list[Event] = []
-    for path in sorted(folder.glob("*__pass1.jsonl")):
+    for path in sorted(folder.glob(f"{source}-*__pass1.jsonl")):
         for i, line in enumerate(filter(str.strip, path.read_text(encoding="utf-8").splitlines())):
             events.append({**json.loads(line), "id": f"{path.stem}:gold:{i}"})
     return events
@@ -388,19 +389,26 @@ def main(argv: list[str] | None = None) -> None:
 
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--split", choices=["dev", "test"], default="dev")
+    ap.add_argument("--source", choices=["gsu", "af", "rumod"], default="gsu")
     args = ap.parse_args(argv)
     cfg = load_config()
     ev, geo = cfg["eval"], cfg["geocode"]
     gaz = Gazetteer(read_table())
-    gold_raw = load_gold(args.split)
+    gold_raw = load_gold(args.split, source=args.source)
+    if not gold_raw:
+        raise SystemExit(f"no {args.source} {args.split} key in eval/gold/{args.split}/")
+    # GSU rows keep their split names; A2 sources are labelled so they are never pooled.
+    label = args.split if args.source == "gsu" else f"{args.split}-{args.source}"
     reports = sorted({(g["report_id"], g["source"], g["report_date"]) for g in gold_raw})
     texts = {
         rid: (DATA / "text" / src / f"{day}.txt").read_text(encoding="utf-8")
         for rid, src, day in reports
     }
     gold: list[Event] = []
-    preds: dict[str, list[Event]] = {b0_regex.SYSTEM: [], b1_gliner.SYSTEM: []}
-    gliner = b1_gliner.load_model(cfg["models"], "gsu")
+    preds: dict[str, list[Event]] = {}
+    if args.source == "gsu":  # B0 and B1 are General Staff rules (amendment A2)
+        preds = {b0_regex.SYSTEM: [], b1_gliner.SYSTEM: []}
+    gliner = b1_gliner.load_model(cfg["models"], "gsu") if args.source == "gsu" else None
     threshold = cfg["models"]["b1_threshold"]
     for rid, src, day in reports:
         gold += geocode([g for g in gold_raw if g["report_id"] == rid], texts[rid], gaz, geo)
@@ -420,7 +428,8 @@ def main(argv: list[str] | None = None) -> None:
         for rid in texts:
             mine = [x for x in events if x["report_id"] == rid]
             if system in SYSTEMS:
-                preds[system] += geocode_s3(mine, texts[rid], day_of[rid], gaz, geo, chooser)
+                preds[system] += geocode_s3(mine, texts[rid], day_of[rid], gaz, geo, chooser,
+                                            args.source)  # fmt: skip
             else:
                 preds[system] += geocode(mine, texts[rid], gaz, geo)
     order = ["B0", "B1", "B2", "S1", "S2", "S3-H", "S3-S", "S1-medium"]
@@ -435,14 +444,14 @@ def main(argv: list[str] | None = None) -> None:
     )
     located = sum(has_location(g) for g in gold)
     named = sum(bool(g.get("location_text")) for g in gold)
-    print(f"{args.split}: {located} of {named} named gold places geocoded")
-    rows = metric_rows(preds, gold, ev, args.split)
+    print(f"{label}: {located} of {named} named gold places geocoded")
+    rows = metric_rows(preds, gold, ev, label)
     example = f"gsu-{cfg['extract']['example_report']}"
-    if args.split == "dev" and facts:
+    if args.split == "dev" and facts and args.source == "gsu":
         # The prompt's worked examples come from one dev report; score without it too.
         held = [g for g in gold if g["report_id"] != example]
         rows += metric_rows(preds, held, ev, "dev-heldout")
-    rows += fact_rows(facts, cfg["cost"]["eur_per_usd"], args.split)
+    rows += fact_rows(facts, cfg["cost"]["eur_per_usd"], label)
     for row in rows:
         extra = facts.get(row["system"], {}).get("model")
         row.update(stamp, config=f"{used} {extra}" if extra else used)

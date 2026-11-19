@@ -138,3 +138,14 @@ def test_fact_rows_skip_speed_without_live_timing():
 
     rows = fact_rows({"S1": {"cost_usd_per_report": 0.01, "seconds_median": None}}, 0.9, "test")
     assert [r["metric"] for r in rows] == ["cost_usd_per_report", "cost_eur_per_report"]
+
+
+def test_load_gold_reads_one_source_only(tmp_path):
+    from eval.score import load_gold
+
+    dev = tmp_path / "dev"
+    dev.mkdir()
+    (dev / "gsu-2026-07-21__FULL__pass1.jsonl").write_text('{"a": 1}\n')
+    (dev / "af-2026-07-21__FULL__pass1.jsonl").write_text('{"b": 2}\n{"b": 3}\n')
+    assert len(load_gold("dev", tmp_path)) == 1
+    assert len(load_gold("dev", tmp_path, source="af")) == 2

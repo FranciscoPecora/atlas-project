@@ -58,8 +58,9 @@ eval:
 
 # Scores the TEST split once per release (eval/run_test_split.py). Refuses if
 # eval/test_run.json exists, on uncommitted changes, or if a saved run is missing.
+SOURCE ?= gsu
 eval-test:
-	$(UV) run python -m eval.run_test_split
+	$(UV) run python -m eval.run_test_split --source $(SOURCE)
 
 # Full-corpus run through the Message Batches API, then data/ledger.parquet (paid, slow).
 ledger:
