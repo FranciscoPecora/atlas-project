@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claimline place check</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
+          --good:#1f7a4d; --bad:#b3372e; --mid:#8a6d1a; --accent:#27457a; --mark:#fff1a8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font: 17px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .soft { color: var(--soft); font-size: 15px; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; margin: 14px 0 22px; }
+  .bar > div { height: 100%; background: var(--accent); border-radius: 3px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+          padding: 16px 18px; margin-bottom: 14px; }
+  .label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+           color: var(--soft); margin-bottom: 6px; }
+  mark { background: var(--mark); padding: 0 2px; border-radius: 3px; font-weight: 600; }
+  .big { font-size: 24px; font-weight: 700; }
+  #map { height: 380px; border-radius: 8px; border: 1px solid var(--line); }
+  .pin { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+         font: 700 15px/28px -apple-system, Arial, sans-serif; text-align: center;
+         border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+  .pin.town { background: #1c1c1a; width: auto; padding: 0 8px; border-radius: 14px; font-size: 13px; }
+  .pin.on { background: var(--good); }
+  .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .choice { text-align: left; font: inherit; padding: 10px 12px; border-radius: 8px; cursor: pointer;
+            border: 2px solid var(--line); background: var(--card); color: var(--ink); }
+  .choice b { font-size: 18px; }
+  .choice small { display: block; color: var(--soft); font-size: 13px; }
+  .choice.on { border-color: var(--good); background: #e8f3ec; }
+  .buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  button.btn { font: inherit; font-weight: 600; padding: 12px 20px; border-radius: 8px;
+               border: 2px solid var(--line); background: var(--card); color: var(--ink);
+               cursor: pointer; flex: 1 1 160px; }
+  button.main { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.bad { border-color: var(--bad); color: var(--bad); }
+  button.bad.on { background: var(--bad); color: #fff; }
+  button.mid { border-color: var(--mid); color: var(--mid); }
+  button.mid.on { background: var(--mid); color: #fff; }
+  button.plain { flex: 0 0 auto; }
+  .nav { display: flex; justify-content: space-between; margin-top: 14px; gap: 10px; }
+  ul { padding-left: 20px; } li { margin-bottom: 4px; }
+  kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 5px; font-size: 14px; background: #fff; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script id="items" type="application/json">/*ITEMS*/[]</script>
+<script>
+const ITEMS = JSON.parse(document.getElementById("items").textContent);
+const KEY = "claimline-places-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const LETTERS = "ABCDEFGHIJKL";
+let answers = {};
+let pos = -1;
+let map = null;
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) { answers = s.answers || {}; pos = s.pos ?? -1; } } catch (e) {}
+function keep() { try { localStorage.setItem(KEY, JSON.stringify({ answers, pos })); } catch (e) {} }
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const kid of kids) if (kid != null) n.append(kid);
+  return n;
+}
+function highlight(text, word) {
+  if (!word) return [text];
+  const i = text.toLowerCase().indexOf(word.toLowerCase());
+  if (i < 0) return [text];
+  return [text.slice(0, i), el("mark", {}, text.slice(i, i + word.length)), text.slice(i + word.length)];
+}
+function go(n) { pos = Math.max(-1, Math.min(ITEMS.length, n)); keep(); draw(); }
+function pick(value) { answers[ITEMS[pos].id] = value; keep(); draw(); setTimeout(() => go(pos + 1), 250); }
+function firstOpen() { const i = ITEMS.findIndex(it => !answers[it.id]); return i < 0 ? ITEMS.length : i; }
+function intro() {
+  return [
+    el("h1", {}, "Claimline place check"),
+    el("p", {}, "The reports name villages, and many Ukrainian villages share a name. For " + ITEMS.length +
+      " places you pick which one on the map the report means. The program's own choice is not shown."),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "How it works"),
+      el("ul", {},
+        el("li", {}, "Read the sentence. The place is highlighted. The report says which front direction it is on; the black label on the map is the town that direction is named after."),
+        el("li", {}, "The blue lettered pins are every village with that name within 120 km of that town."),
+        el("li", {}, "Click the pin's card (or press its letter key) for the village the report means: the one on the front line in that direction."),
+        el("li", {}, "Only one pin? Check it is in the right area and press ", el("kbd", {}, "A"), "."),
+        el("li", {}, "'None of these' (", el("kbd", {}, "N"), ") if no pin can be the place. 'Not sure' (", el("kbd", {}, "U"), ") if you cannot tell."),
+        el("li", {}, el("kbd", {}, "←"), " goes back. Progress is kept if you close the page."))),
+    el("p", { class: "soft" }, "About 10 to 15 minutes. 29 of the places have only one pin."),
+    el("button", { class: "btn main", onclick: () => go(Object.keys(answers).length ? firstOpen() : 0) },
+      Object.keys(answers).length ? "Continue" : "Start")
+  ];
+}
+function drawMap(it) {
+  if (map) { map.remove(); map = null; }
+  if (typeof L === "undefined") { document.getElementById("map").textContent = "Map could not load (no internet?). Use the cards and their map links."; return; }
+  map = L.map("map", { scrollWheelZoom: false });
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "Tiles © Esri", maxZoom: 16 }).addTo(map);
+  const pts = [];
+  it.cands.forEach((c, i) => {
+    const on = answers[it.id] === c.id;
+    L.marker([c.lat, c.lon], { icon: L.divIcon({ className: "", html: '<div class="pin' + (on ? " on" : "") + '">' + LETTERS[i] + "</div>", iconSize: [28, 28], iconAnchor: [14, 14] }) })
+      .addTo(map).on("click", () => pick(c.id));
+    pts.push([c.lat, c.lon]);
+  });
+  if (it.town) {
+    L.marker([it.town.lat, it.town.lon], { icon: L.divIcon({ className: "", html: '<div class="pin town">' + it.town.name + "</div>", iconSize: null, iconAnchor: [20, 14] }), zIndexOffset: -1000, opacity: 0.75 }).addTo(map);
+    pts.push([it.town.lat, it.town.lon]);
+  }
+  if (pts.length === 1) map.setView(pts[0], 10); else map.fitBounds(pts, { padding: [40, 40], maxZoom: 11 });
+}
+function screen() {
+  const it = ITEMS[pos];
+  const a = answers[it.id];
+  const cards = it.cands.map((c, i) =>
+    el("button", { class: "choice" + (a === c.id ? " on" : ""), onclick: () => pick(c.id) },
+      el("b", {}, LETTERS[i] + "  " + c.name),
+      el("small", {}, (c.oblast || "oblast unknown") + " oblast · " + (c.population ? "population " + c.population : "population not recorded")),
+      el("small", {}, it.town ? c.km + " km from " + it.town.name : "")));
+  return [
+    el("div", { class: "soft" }, "Place " + (pos + 1) + " of " + ITEMS.length + (a ? " · answered" : "")),
+    el("div", { class: "bar" }, el("div", { style: "width:" + (100 * Object.keys(answers).length / ITEMS.length) + "%" })),
+    el("div", { class: "card" },
+      el("div", { class: "big" }, it.place_en || it.place_uk, el("span", { class: "soft" }, "  (" + it.place_uk + ")")),
+      el("div", { class: "soft" }, it.town ? "Front direction named after " + it.town.name : "The paragraph names no front direction"),
+      el("p", {}, ...highlight(it.paragraph_en, it.place_en))),
+    el("div", { class: "card" }, el("div", { id: "map" })),
+    el("div", { class: "label" }, "Which one does the report mean?"),
+    el("div", { class: "choices" }, ...cards),
+    el("div", { class: "buttons" },
+      el("button", { class: "btn bad" + (a === "none" ? " on" : ""), onclick: () => pick("none") }, "None of these (N)"),
+      el("button", { class: "btn mid" + (a === "unsure" ? " on" : ""), onclick: () => pick("unsure") }, "Not sure (U)")),
+    el("div", { class: "nav" },
+      el("button", { class: "btn plain", onclick: () => go(pos - 1) }, "← Back"),
+      a ? el("button", { class: "btn plain", onclick: () => go(pos + 1) }, "Next →") : null)
+  ];
+}
+function save() {
+  const blob = new Blob([JSON.stringify({ version: 1, kind: "places", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-places-answers.json" });
+  document.body.append(a); a.click(); a.remove();
+}
+function done() {
+  const left = ITEMS.filter(i => !answers[i.id]).length;
+  return [
+    el("h1", {}, left ? left + " places have no answer yet" : "All " + ITEMS.length + " places answered"),
+    el("p", {}, "Click Save. A file named claimline-places-answers.json goes to your Downloads folder. Then tell Claude: places done."),
+    el("div", { class: "buttons" },
+      el("button", { class: "btn plain", onclick: () => go(left ? firstOpen() : ITEMS.length - 1) }, left ? "Answer the rest" : "← Back"),
+      el("button", { class: "btn main", onclick: save }, "Save answers"))
+  ];
+}
+function draw() {
+  const app = document.getElementById("app");
+  if (map) { map.remove(); map = null; }
+  app.replaceChildren(...(pos < 0 ? intro() : pos >= ITEMS.length ? done() : screen()));
+  if (pos >= 0 && pos < ITEMS.length) drawMap(ITEMS[pos]);
+}
+document.addEventListener("keydown", e => {
+  if (pos < 0 || pos >= ITEMS.length || e.metaKey || e.ctrlKey) return;
+  const it = ITEMS[pos], k = e.key.toUpperCase();
+  if (k === "N") pick("none");
+  else if (k === "U") pick("unsure");
+  else if (e.key === "ArrowLeft") go(pos - 1);
+  else if (e.key === "ArrowRight" && answers[it.id]) go(pos + 1);
+  else { const i = LETTERS.indexOf(k); if (i >= 0 && i < it.cands.length && k.length === 1) pick(it.cands[i].id); }
+});
+draw();
+</script>
+</body>
+</html>

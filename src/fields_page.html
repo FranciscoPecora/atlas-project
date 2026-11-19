@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claimline field check</title>
+<style>
+  :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
+          --good:#1f7a4d; --bad:#b3372e; --mid:#8a6d1a; --accent:#27457a; --mark:#fff1a8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font: 17px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 780px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .soft { color: var(--soft); font-size: 15px; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; margin: 14px 0 22px; }
+  .bar > div { height: 100%; background: var(--accent); border-radius: 3px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+          padding: 16px 18px; margin-bottom: 14px; }
+  .label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+           color: var(--soft); margin-bottom: 6px; }
+  .quote { font-size: 20px; line-height: 1.45; }
+  .uk { color: var(--soft); font-size: 14px; margin-top: 10px; overflow-wrap: anywhere; }
+  mark { background: var(--mark); padding: 0 2px; border-radius: 3px; }
+  .field { display: flex; align-items: center; gap: 12px; padding: 10px 8px;
+           border-bottom: 1px solid var(--line); cursor: pointer; border-radius: 6px; }
+  .field:last-child { border-bottom: 0; }
+  .field:hover { background: #f1efe8; }
+  .key { flex: 0 0 26px; height: 26px; border: 1px solid var(--line); border-radius: 5px;
+         text-align: center; font-size: 14px; line-height: 24px; color: var(--soft); }
+  .what { flex: 1; }
+  .what b { font-weight: 600; }
+  .hint { display: block; font-size: 13px; color: var(--soft); }
+  .tag { flex: 0 0 auto; font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: 12px;
+         border: 1.5px solid var(--good); color: var(--good); }
+  .field.no { background: #fbeceb; }
+  .field.no .tag { border-color: var(--bad); background: var(--bad); color: #fff; }
+  .buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  button { font: inherit; font-weight: 600; padding: 12px 20px; border-radius: 8px;
+           border: 2px solid var(--line); background: var(--card); color: var(--ink);
+           cursor: pointer; flex: 1 1 160px; }
+  button.main { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.good { background: var(--good); border-color: var(--good); color: #fff; }
+  button.mid { border-color: var(--mid); color: var(--mid); }
+  button.mid.on { background: var(--mid); color: #fff; }
+  button.plain { flex: 0 0 auto; }
+  .nav { display: flex; justify-content: space-between; margin-top: 14px; gap: 10px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px;
+        padding: 0 5px; font-size: 14px; background: #fff; }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script id="items" type="application/json">/*ITEMS*/[]</script>
+<script>
+const ITEMS = JSON.parse(document.getElementById("items").textContent);
+const KEY = "claimline-fields-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const TYPES = {
+  ground_assault: "Ground attack", territorial_advance: "Advance (ground taken)",
+  withdrawal: "Withdrawal", missile_strike: "Missile strike", drone_strike: "Drone strike",
+  air_strike: "Air strike (aircraft, guided bombs)", shelling: "Shelling (artillery)",
+  air_defence_interception: "Air defence shot something down", force_movement: "Troop movement",
+  logistics_or_infrastructure_strike: "Strike on logistics or infrastructure",
+  naval_event: "Naval event", other: "Other (e.g. Ukrainian strikes on several kinds of target)"
+};
+const STATUS = { ua_claimed: "claimed by Ukraine", ru_claimed: "claimed by Russia",
+  third_party_claimed: "claimed by a third party", geolocated_confirmed: "confirmed by geolocated footage",
+  analyst_assessed: "assessed by analysts" };
+const SIDE = { RU: "Russia", UA: "Ukraine", other: "someone else" };
+const PRECISION = { "1": "an exact village or town", "2": "near / towards / in the area of a place, or a whole direction", "3": "a whole oblast only" };
+function day(iso) { const d = new Date(iso + "T12:00:00"); return d.toLocaleDateString("en-GB", { day: "numeric", month: "long" }); }
+// One line per field the record has: plain English, plus what to check.
+function lines(it) {
+  const out = [];
+  const add = (field, text, hint) => { if (it[field] !== "") out.push({ field, text, hint }); };
+  add("event_type", ["What happened: ", TYPES[it.event_type] || it.event_type], "Does the quote describe this kind of event?");
+  add("location_text", ["Where: ", it.location_latin + " (" + it.location_text + ")"], "Yellow in the quote. Is this a place where THIS event happened?");
+  add("geo_precision", ["How exact the place is: ", PRECISION[it.geo_precision] || it.geo_precision], "'Towards' or 'in the area of' a village = the middle option.");
+  add("quantity", ["How many: ", it.quantity], "Must count THIS event at THIS place. A total shared by several places is wrong here.");
+  add("event_date", ["When: ", day(it.event_date)], "No date in the quote? Then " + day(it.default_date) + " (day before the report) is right.");
+  add("actor", ["Who did it: ", SIDE[it.actor] || it.actor], "'The enemy' means Russia; 'our units' / 'defenders' means Ukraine.");
+  add("actor_text", ["Doer, in words: ", it.actor_text], "");
+  add("target", ["Who it was done to: ", SIDE[it.target] || it.target], "'The enemy' means Russia; 'our units' / 'defenders' means Ukraine.");
+  add("target_text", ["Target, in words: ", it.target_text], "");
+  add("epistemic_status", ["Status: ", STATUS[it.epistemic_status] || it.epistemic_status], "The whole report is the Ukrainian General Staff speaking, so 'claimed by Ukraine' is right unless the quote names another source.");
+  add("claim_source", ["Source: ", it.claim_source], "Same: the report is the Ukrainian General Staff's.");
+  add("units", ["Units: ", it.units], "Must be named in the quote.");
+  add("equipment", ["Equipment: ", it.equipment], "Must be named in the quote.");
+  return out;
+}
+let answers = {};
+let pos = -1;
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) { answers = s.answers || {}; pos = s.pos ?? -1; } } catch (e) {}
+// Per record, fields marked "not supported" before the record is answered.
+let pending = new Set();
+function keep() { try { localStorage.setItem(KEY, JSON.stringify({ answers, pos })); } catch (e) {} }
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const kid of kids) if (kid != null) n.append(kid);
+  return n;
+}
+function highlight(text, word) {
+  if (!word || !text.includes(word)) return [text];
+  const i = text.indexOf(word);
+  return [text.slice(0, i), el("mark", {}, word), text.slice(i + word.length)];
+}
+function go(n) { pos = Math.max(-1, Math.min(ITEMS.length, n)); pending = new Set((answers[ITEMS[pos]?.id] || {}).unsupported || []); keep(); draw(); }
+function answer(unsure) {
+  const it = ITEMS[pos];
+  answers[it.id] = unsure ? { unsure: true, unsupported: [] } : { unsure: false, unsupported: [...pending] };
+  go(pos + 1);
+}
+function toggle(field) { pending.has(field) ? pending.delete(field) : pending.add(field); draw(); }
+function intro() {
+  return [
+    el("h1", {}, "Claimline field check"),
+    el("p", {}, "A program read " + ITEMS.length + " short quotes from Ukrainian General Staff reports and filled in a record for each event. " +
+      "You check one thing: does the quote say what the record says?"),
+    el("div", { class: "card" },
+      el("div", { class: "label" }, "How it works"),
+      el("ul", {},
+        el("li", {}, "Each screen shows one quote in English (the Ukrainian original is underneath) and the record's fields as plain sentences."),
+        el("li", {}, "If every line is right, press the green button (or ", el("kbd", {}, "Enter"), "). Most records are like this."),
+        el("li", {}, "If a line is NOT supported by the quote, click it (or press its number key). It turns red. Then press the button."),
+        el("li", {}, "Judge only from the quote. Something true in real life but not in the quote is still 'not supported'."),
+        el("li", {}, "Several records often share one quote, one per village. Judge each record for its own village."),
+        el("li", {}, "'Attacked 10 times towards A, B and C' is one record per village, and none should have 'How many: 10', because the 10 is shared."),
+        el("li", {}, "Unsure? Press 'Not sure' (", el("kbd", {}, "U"), "). It is left out of the count."),
+        el("li", {}, el("kbd", {}, "←"), " goes back. Progress is kept if you close the page."))),
+    el("p", { class: "soft" }, "About " + Math.round(ITEMS.length * 12 / 60) + " to " + Math.round(ITEMS.length * 20 / 60) + " minutes."),
+    el("button", { class: "main", onclick: () => go(Object.keys(answers).length ? firstOpen() : 0) },
+      Object.keys(answers).length ? "Continue" : "Start")
+  ];
+}
+function firstOpen() { const i = ITEMS.findIndex(it => !answers[it.id]); return i < 0 ? ITEMS.length : i; }
+function screen() {
+  const it = ITEMS[pos];
+  const prev = ITEMS[pos - 1];
+  const sameQuote = prev && prev.quote_uk === it.quote_uk;
+  const a = answers[it.id];
+  const rows = lines(it).map((l, i) =>
+    el("div", { class: "field" + (pending.has(l.field) ? " no" : ""), onclick: () => toggle(l.field) },
+      el("span", { class: "key" }, String(i + 1)),
+      el("span", { class: "what" }, l.text[0], el("b", {}, String(l.text[1])), l.hint ? el("span", { class: "hint" }, l.hint) : null),
+      el("span", { class: "tag" }, pending.has(l.field) ? "Not supported" : "OK")));
+  return [
+    el("div", { class: "soft" }, "Record " + (pos + 1) + " of " + ITEMS.length + " · report of " + day(it.report_date) +
+      (sameQuote ? " · same quote as the previous record" : "") + (a ? " · answered" : "")),
+    el("div", { class: "bar" }, el("div", { style: "width:" + (100 * Object.keys(answers).length / ITEMS.length) + "%" })),
+    el("div", { class: "card" }, el("div", { class: "label" }, "The quote"),
+      el("div", { class: "quote" }, it.quote_en),
+      el("div", { class: "uk" }, ...highlight(it.quote_uk, it.location_text))),
+    el("div", { class: "card" }, el("div", { class: "label" }, "The record says. Click any line the quote does NOT support"), ...rows),
+    el("div", { class: "buttons" },
+      el("button", { class: pending.size ? "main" : "good", onclick: () => answer(false) },
+        pending.size ? "Save: " + pending.size + " not supported  ⏎" : "All supported  ⏎"),
+      el("button", { class: "mid plain" + (a && a.unsure ? " on" : ""), onclick: () => answer(true) }, "Not sure (U)")),
+    el("div", { class: "nav" },
+      el("button", { class: "plain", onclick: () => go(pos - 1) }, "← Back"),
+      a ? el("button", { class: "plain", onclick: () => go(pos + 1) }, "Skip ahead →") : null)
+  ];
+}
+function save() {
+  const blob = new Blob([JSON.stringify({ version: 1, kind: "fields", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-fields-answers.json" });
+  document.body.append(a); a.click(); a.remove();
+}
+function done() {
+  const left = ITEMS.filter(i => !answers[i.id]).length;
+  const flagged = Object.values(answers).filter(a => a.unsupported.length).length;
+  return [
+    el("h1", {}, left ? left + " records have no answer yet" : "All " + ITEMS.length + " records answered"),
+    el("p", {}, flagged + " records have at least one line marked not supported."),
+    el("p", {}, "Click Save. A file named claimline-fields-answers.json goes to your Downloads folder. Then tell Claude: fields done."),
+    el("div", { class: "buttons" },
+      el("button", { class: "plain", onclick: () => go(left ? firstOpen() : ITEMS.length - 1) }, left ? "Answer the rest" : "← Back"),
+      el("button", { class: "main", onclick: save }, "Save answers"))
+  ];
+}
+function draw() {
+  const app = document.getElementById("app");
+  app.replaceChildren(...(pos < 0 ? intro() : pos >= ITEMS.length ? done() : screen()));
+}
+document.addEventListener("keydown", e => {
+  if (pos < 0 || pos >= ITEMS.length || e.metaKey || e.ctrlKey) return;
+  const ls = lines(ITEMS[pos]);
+  if (e.key === "Enter") { e.preventDefault(); answer(false); }
+  else if (e.key === "u" || e.key === "U") answer(true);
+  else if (e.key === "ArrowLeft") go(pos - 1);
+  else if (e.key === "ArrowRight" && answers[ITEMS[pos].id]) go(pos + 1);
+  else if (/^[1-9]$/.test(e.key) && ls[+e.key - 1]) toggle(ls[+e.key - 1].field);
+});
+go(pos);
+</script>
+</body>
+</html>

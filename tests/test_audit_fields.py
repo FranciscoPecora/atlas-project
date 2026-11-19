@@ -88,3 +88,38 @@ def test_translate_quotes_checks_the_count():
     assert translate_quotes(client, models, ["a"]) == ["one"]
     with pytest.raises(ValueError):
         translate_quotes(client, models, ["a", "b"])
+
+
+def test_latin_spelling_lets_a_reader_find_the_name():
+    from src.audit_fields import latin
+
+    assert latin("Ізбицького") == "Izbytskoho"
+    assert latin("Юнаківка та Яблунівка") == "Yunakivka ta Yablunivka"
+    assert latin("Слов’янськ") == "Sloviansk"
+
+
+def test_page_answers_skip_unsure_and_reject_unknown_fields(tmp_path):
+    import json
+
+    from src.audit_fields import read_answers
+
+    path = tmp_path / "a.json"
+    answers = {"a:1": {"unsure": False, "unsupported": ["quantity"]},
+               "a:2": {"unsure": False, "unsupported": []},
+               "a:3": {"unsure": True, "unsupported": []}}  # fmt: skip
+    path.write_text(json.dumps({"kind": "fields", "answers": answers}))
+    assert read_answers(path) == {"a:1": {"quantity"}, "a:2": set()}
+    path.write_text(json.dumps({"kind": "places", "answers": {}}))
+    with pytest.raises(ValueError):
+        read_answers(path)
+    answers["a:1"]["unsupported"] = ["colour"]
+    path.write_text(json.dumps({"kind": "fields", "answers": answers}))
+    with pytest.raises(ValueError):
+        read_answers(path)
+
+
+def test_page_holds_the_items_and_cannot_be_broken_by_text():
+    from src.audit_fields import render_page
+
+    html = render_page([{"id": "a", "quote_en": "x </script> y"}], "<p>/*ITEMS*/[]</p>")
+    assert "</script>" not in html and '"id": "a"' in html

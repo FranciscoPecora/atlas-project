@@ -1,7 +1,8 @@
 """Hand check of the geocoder on dev places (owner's choice, 19 Nov: not the SPEC metric).
 
     uv run python -m src.geocode_check build    # write data/audit/geocode_check.csv
-    uv run python -m src.geocode_check score    # once `pick` is filled in
+    uv run python -m src.geocode_check page     # the marking page (make mark-places)
+    uv run python -m src.geocode_check score [ANSWERS]   # from the page's saved file
 
 SPEC 5.3 "Geocoding accuracy@10 km" counts matched pairs whose gold event has
 geo_precision 1. Every located dev gold event is precision 2, so that metric has
@@ -26,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import random
 import re
 import string
@@ -38,7 +40,10 @@ from src.collect import DATA, ROOT
 from src.gazetteer import Gazetteer, Place, direction_place, paragraph_direction
 
 LOCAL = DATA / "audit" / "geocode_check.csv"
-ANSWERS = ROOT / "eval" / "audit" / "geocode_check_answers.csv"
+ANSWERS_JSON = ROOT / "eval" / "audit" / "geocode_check_answers.json"  # ids and picks only
+PAGE = DATA / "audit" / "places_check.html"
+TEMPLATE = Path(__file__).with_name("geocode_page.html")
+DOWNLOADS = Path.home() / "Downloads" / "claimline-places-answers.json"
 MAX_ROWS = 12
 LETTERS = string.ascii_uppercase
 
@@ -98,6 +103,31 @@ def row(item: dict[str, Any], cands: list[Place], town: Place | None) -> dict[st
     return {**out, "pick": ""}
 
 
+def page_item(item: dict[str, Any], cands: list[Place], town: Place | None) -> dict[str, Any]:
+    """One screen of the marking page: the sentence, the town and every candidate with its point."""
+    return {
+        "id": f"{item['name']}|{item['direction'] or ''}",
+        "place_uk": item["name"],
+        "place_en": item.get("english", ""),
+        "paragraph_en": item.get("paragraph_en", ""),
+        "town": {"name": town.name, "lat": town.lat, "lon": town.lon} if town else None,
+        "cands": [
+            {"id": p.gazetteer_id, "name": p.name, "oblast": p.oblast, "population": p.population,
+             "lat": p.lat, "lon": p.lon,
+             "km": round(haversine_km(p.lat, p.lon, town.lat, town.lon)) if town else None}
+            for p in cands
+        ],
+    }  # fmt: skip
+
+
+def read_answers(path: Path) -> dict[str, str | None]:
+    """The page's saved file as {place_id: gazetteer_id, or None for 'none'}; unsure left out."""
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if raw.get("kind") != "places":
+        raise ValueError(f"{path} is not a place-check answers file")
+    return {k: (None if v == "none" else v) for k, v in raw["answers"].items() if v != "unsure"}
+
+
 def read_picks(path: Path) -> dict[str, str | None]:
     """{place_id: picked gazetteer_id or None for 'none'}; unsure and blank rows are skipped."""
     picks: dict[str, str | None] = {}
@@ -139,7 +169,6 @@ def summary(errors: list[float], km: float = 10.0) -> tuple[float | None, float 
 
 def gold_items() -> list[dict[str, Any]]:
     """Every located dev gold event as a check item: name, direction, English context."""
-    import json
 
     from src.audit import glossary, paragraph_of, read_key
     from src.prelabel import paragraph_spans
@@ -170,13 +199,26 @@ def main(argv: list[str] | None = None) -> None:
     from src.s3 import previous_events
 
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("step", choices=["build", "score"])
+    ap.add_argument("step", choices=["build", "page", "score"])
+    ap.add_argument("answers", nargs="?", type=Path, default=DOWNLOADS,
+                    help="the file the page saved (score step)")  # fmt: skip
     args = ap.parse_args(argv)
     cfg = load_config()
     geo = cfg["geocode"]
     gaz = Gazetteer(read_table())
     items = gold_items()
     sample = sample_places(items, cfg["geocode_check"]["places"], cfg["geocode_check"]["seed"])
+    if args.step == "page":
+        items = []
+        for item in sample:
+            town = direction_place(gaz, item["direction"], geo["direction_anchors"])
+            cands = candidates(gaz, item["name"], town, geo["max_anchor_km"])
+            items.append(page_item(item, cands, town))
+        blob = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
+        PAGE.parent.mkdir(parents=True, exist_ok=True)
+        PAGE.write_text(TEMPLATE.read_text(encoding="utf-8").replace("/*ITEMS*/[]", blob), "utf-8")
+        print(f"{len(items)} places -> {PAGE.relative_to(ROOT)}")
+        return
     if args.step == "build":
         rows = []
         for item in sample:
@@ -192,7 +234,8 @@ def main(argv: list[str] | None = None) -> None:
         print(f"{len(rows)} places ({len(items)} located dev gold events) -> "
               f"{LOCAL.relative_to(ROOT)}")  # fmt: skip
         return
-    picks = read_picks(LOCAL)
+    picks = read_answers(args.answers)
+    ANSWERS_JSON.write_text(args.answers.read_text(encoding="utf-8"), encoding="utf-8")
     by_id = {p.gazetteer_id: p for p in gaz.places}
     truth = {pid: by_id[g] for pid, g in picks.items() if g is not None}
     print(f"{len(picks)} places judged; {len(picks) - len(truth)} have no right row in the "

@@ -2,7 +2,8 @@
 
     uv run python -m src.audit_fields dates      # list the reports the sample is drawn from
     uv run python -m src.audit_fields build      # draw the sample, translate, write the CSV
-    uv run python -m src.audit_fields score      # rates once the CSV is marked
+    uv run python -m src.audit_fields page       # the marking page (make mark-fields)
+    uv run python -m src.audit_fields score [ANSWERS]   # rates from the page's saved file
 
 The sample is drawn from S2 output (extraction plus deterministic checks), before
 any model verifier, so one marked file gives the rate of every system: S2 is
@@ -15,9 +16,10 @@ The annotator reads no Ukrainian, so every quote gets an English reading aid fro
 the same limit amendment A1 states for the key audit.
 
 data/audit/fields_sample.csv holds quotes and stays local (git-ignored). The
-annotator fills two columns per row: `checked` (x once read) and
-`unsupported_fields` (field names separated by spaces; empty when every field is
-supported). Only ids and those two columns are copied to eval/audit/ to commit.
+annotator marks it on a local page (`make mark-fields`): one record per screen,
+each field as a plain sentence; click the lines the quote does not support, Enter
+for the next. The page saves claimline-fields-answers.json to Downloads; `score`
+copies it (ids, field names, unsure flags: no text) to eval/audit/ to commit.
 """
 
 from __future__ import annotations
@@ -38,7 +40,10 @@ from src.labels import SPEC, gold_units
 from src.verify_model import JUDGED, judged_fields
 
 LOCAL = DATA / "audit" / "fields_sample.csv"
-ANSWERS = ROOT / "eval" / "audit" / "fields_answers.csv"
+ANSWERS_JSON = ROOT / "eval" / "audit" / "fields_answers.json"
+PAGE = DATA / "audit" / "fields_check.html"
+TEMPLATE = Path(__file__).with_name("fields_page.html")
+DOWNLOADS = Path.home() / "Downloads" / "claimline-fields-answers.json"
 VALUE_COLUMNS = list(JUDGED)
 MARK_COLUMNS = ["checked", "unsupported_fields"]
 
@@ -65,6 +70,28 @@ def draw(records: list[dict[str, Any]], n: int, seed: int) -> list[dict[str, Any
     return sorted(picked, key=lambda r: (r["report_id"], r["position"]))
 
 
+# Ukrainian national transliteration (2010), word-initial forms for є ї й ю я.
+LATIN = {
+    "а": "a", "б": "b", "в": "v", "г": "h", "ґ": "g", "д": "d", "е": "e", "є": "ie",
+    "ж": "zh", "з": "z", "и": "y", "і": "i", "ї": "i", "й": "i", "к": "k", "л": "l",
+    "м": "m", "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u",
+    "ф": "f", "х": "kh", "ц": "ts", "ч": "ch", "ш": "sh", "щ": "shch", "ь": "", "ю": "iu",
+    "я": "ia", "’": "", "'": "", "ʼ": "",
+}  # fmt: skip
+INITIAL = {"є": "ye", "ї": "yi", "й": "y", "ю": "yu", "я": "ya"}
+
+
+def latin(text: str) -> str:
+    """Letter-by-letter Latin spelling of Ukrainian, so a reader can find the name in English."""
+    out, start = [], True
+    for ch in text:
+        low = ch.lower()
+        rep = (INITIAL.get(low) if start else None) or LATIN.get(low, ch)
+        out.append(rep.capitalize() if ch != low and rep else rep)
+        start = not ch.isalpha() and ch not in "’'ʼ"
+    return "".join(out)
+
+
 def rows(sample: list[dict[str, Any]], english: dict[str, str]) -> list[dict[str, str]]:
     """CSV rows: id, quote, English aid, the record's non-empty fields, two empty mark columns."""
     out = []
@@ -80,6 +107,7 @@ def rows(sample: list[dict[str, Any]], english: dict[str, str]) -> list[dict[str
         for f in VALUE_COLUMNS:
             v = fields.get(f)
             row[f] = "" if v is None else json.dumps(v, ensure_ascii=False).strip('"')
+        row["location_latin"] = latin(row["location_text"])
         out.append({**row, "checked": "", "unsupported_fields": ""})
     return out
 
@@ -105,6 +133,36 @@ def read_marks(path: Path) -> dict[str, set[str]]:
                 raise ValueError(f"{row['record_id']}: unknown field names {sorted(unknown)}")
             marks[row["record_id"]] = names
     return marks
+
+
+def read_answers(path: Path) -> dict[str, set[str]]:
+    """Marks from the page's saved file: {record_id: unsupported fields}; unsure ones left out."""
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if raw.get("kind") != "fields":
+        raise ValueError(f"{path} is not a field-check answers file")
+    marks: dict[str, set[str]] = {}
+    for rid, a in raw["answers"].items():
+        if a.get("unsure"):
+            continue
+        names = set(a.get("unsupported", []))
+        unknown = names - set(JUDGED)
+        if unknown:
+            raise ValueError(f"{rid}: unknown field names {sorted(unknown)}")
+        marks[rid] = names
+    return marks
+
+
+def page_items(path: Path = LOCAL) -> list[dict[str, str]]:
+    """The sample rows the marking page shows (read from the local CSV, no new calls)."""
+    with path.open(encoding="utf-8", newline="") as f:
+        table = list(csv.DictReader(f))
+    return [{"id": r["record_id"], **{k: v for k, v in r.items() if k not in MARK_COLUMNS}}
+            for r in table]  # fmt: skip
+
+
+def render_page(items: list[dict[str, Any]], template: str) -> str:
+    blob = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
+    return template.replace("/*ITEMS*/[]", blob)
 
 
 def unsupported_rate(
@@ -188,8 +246,15 @@ def main(argv: list[str] | None = None) -> None:
     from src.review import with_retries
 
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("step", choices=["dates", "build", "score"])
+    ap.add_argument("step", choices=["dates", "build", "page", "score"])
+    ap.add_argument("answers", nargs="?", type=Path, default=DOWNLOADS,
+                    help="the file the page saved (score step)")  # fmt: skip
     args = ap.parse_args(argv)
+    if args.step == "page":
+        template = TEMPLATE.read_text(encoding="utf-8")
+        PAGE.write_text(render_page(page_items(), template), encoding="utf-8")
+        print(f"{len(page_items())} records -> {PAGE.relative_to(ROOT)}")
+        return
     cfg = load_config()
     spec_text = SPEC.read_text(encoding="utf-8")
     days = audit_dates(spec_text)
@@ -212,8 +277,15 @@ def main(argv: list[str] | None = None) -> None:
         print(f"{len(sample)} of {len(records)} records from {len(days)} reports, "
               f"{len(quotes)} quotes -> {LOCAL.relative_to(ROOT)}")  # fmt: skip
         return
-    marks = read_marks(LOCAL)
-    print(f"{len(marks)} of {len(sample)} records checked")
+    marks = read_answers(args.answers)
+    ANSWERS_JSON.write_text(
+        json.dumps(  # ids, field names and unsure flags only: no text
+            json.loads(args.answers.read_text(encoding="utf-8")), indent=1
+        ),
+        encoding="utf-8",
+    )
+    print(f"{len(marks)} of {len(sample)} records judged (unsure left out); "
+          f"answers copied to {ANSWERS_JSON.relative_to(ROOT)}")  # fmt: skip
     for system in ("S2", "S3-H", "S3-S"):
         bad, total = unsupported_rate(marks, system_fields(system, sample))
         rate = bad / total if total else float("nan")

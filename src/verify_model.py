@@ -74,9 +74,12 @@ TASK = (
     "itself names no other source.\n"
     "- location_text must be the place the event happened at, as the quote writes it.\n"
     "- quantity must count this one event, not a total shared with other places.\n"
-    "- actor and target are the sides (RU, UA, other) the quote makes clear.\n"
-    "Answer for every listed field of every record, and give a short reason when a field "
-    "is not supported."
+    "- actor and target are the sides (RU, UA, other). The report's author is one side: "
+    "in its words 'the enemy' or 'the occupiers' is the other side, and 'our units' or "
+    "'the defenders' is the author's side. The guideline's rules on actor and target for "
+    "this kind of report apply.\n"
+    "Answer for exactly the fields listed under each record, no others. Give a reason "
+    "only when a field is not supported, in under 20 words."
 )
 
 
@@ -244,6 +247,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--set", choices=["dev", "audit"], default="dev")
     ap.add_argument("--alt", action="store_true", help="use models.verifier_alt")
     ap.add_argument("--force", action="store_true", help="redo reports already verified")
+    ap.add_argument("--day", action="append", help="only this report date (repeatable)")
     args = ap.parse_args(argv)
 
     load_dotenv(ROOT / ".env")
@@ -253,6 +257,7 @@ def main(argv: list[str] | None = None) -> None:
     name = system_name(args.alt)
     spec_text = SPEC.read_text(encoding="utf-8")
     days = dev_gsu_dates(spec_text) if args.set == "dev" else audit_dates(spec_text)
+    days = [d for d in days if not args.day or d in args.day]
     system = instructions(GUIDELINE.read_text(encoding="utf-8"))
     client = anthropic.Anthropic()
     price = cfg["prices"][model]

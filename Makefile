@@ -1,4 +1,4 @@
-.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit handlabel eval eval-test site
+.PHONY: all lint test data data-gsu data-isw schema tasks labelstudio audit handlabel mark-fields mark-places eval eval-test site
 
 UV ?= uv
 export LABEL_STUDIO_BASE_DATA_DIR := $(CURDIR)/.label-studio
@@ -40,6 +40,15 @@ audit:
 handlabel:
 	$(UV) run python -m src.handlabel build
 	open data/handlabel/label.html
+
+# Milestone 4 hand checks: build and open the marking pages (local, hold report text).
+mark-fields:
+	$(UV) run python -m src.audit_fields page
+	open data/audit/fields_check.html
+
+mark-places:
+	$(UV) run python -m src.geocode_check page
+	open data/audit/places_check.html
 
 eval:
 	$(UV) run python -m eval.score --split dev

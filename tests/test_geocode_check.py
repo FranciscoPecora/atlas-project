@@ -84,3 +84,17 @@ def test_sample_is_seeded_distinct_and_sorted():
     assert s == sample_places(items, 4, 1) and len(s) == 4
     keys = [(i["name"], i["direction"] or "") for i in s]
     assert keys == sorted(set(keys))
+
+
+def test_page_item_and_saved_answers(tmp_path):
+    import json
+
+    from src.geocode_check import page_item, read_answers
+
+    item = page_item({"name": "Альфа", "direction": "x", "english": "Alfa"}, [A2], TOWN)
+    assert item["id"] == "Альфа|x" and item["cands"][0]["km"] == 11
+    assert item["town"]["name"] == "Town"
+    path = tmp_path / "p.json"
+    path.write_text(json.dumps({"kind": "places", "answers": {"a": "gn:1", "b": "none",
+                                                              "c": "unsure"}}))  # fmt: skip
+    assert read_answers(path) == {"a": "gn:1", "b": None}
