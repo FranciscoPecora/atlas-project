@@ -37,7 +37,8 @@ collect:
       - ["vnochi", "u-nich", "nichn", "povitryanymy-czilyamy", "atakuvala-ukrayinu",
          "atakuvav-ukrayinu", "shahed"]
     # The body must name the night and the Air Force (any inflection).
-    body_pattern: "(?is)(?=.*у\\s+ніч\\s+на\\s+\\d{1,2}\\s+\\w+)(?=.*повітрян\\w+\\s+сил)"
+    # A weekday may stand before the date ("У ніч на суботу, 22 серпня").
+    body_pattern: "(?is)(?=.*у\\s+ніч\\s+на\\s+(?:\\w+,?\\s+)?\\d{1,2}\\s+\\w+)(?=.*повітрян\\w+\\s+сил)"
   # SPEC amendment A2. Russian MoD public Telegram channel, read through its web preview.
   rumod:
     enabled: true

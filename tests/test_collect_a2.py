@@ -28,6 +28,7 @@ def test_af_body_pattern_needs_night_and_air_force():
     ok = "У ніч на 3 серпня противник атакував.\n\nПро це повідомили Повітряні Сили ЗСУ."
     assert re.search(pat, ok)
     assert not re.search(pat, "Повітряні сили отримали нові літаки.")
+    assert re.search(pat, "У ніч на суботу, 22 серпня, противник атакував. У Повітряних Силах.")
     assert not re.search(pat, "У ніч на 3 серпня ворог атакував Харків.")
 
 

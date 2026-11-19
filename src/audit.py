@@ -155,9 +155,36 @@ def build_items(
     return items
 
 
-def render_page(items: list[dict[str, Any]], template: str) -> str:
+PAGE_TEXT = {
+    "af": {
+        "reports": "3 Ukrainian Air Force reports on overnight air attacks",
+        "date": "The date is the report's day (the night ends on it). You do not need to "
+        "check it.",
+        "extra": [
+            "One event for the drones launched, one per missile kind, and one for those "
+            "shot down. Launch areas (Bryansk, Kursk, Crimea) are not event places.",
+            "A place is given only when an oblast or town is named; 'north, south and east "
+            "of the country' is no place, and an empty place is correct then.",
+        ],
+    },
+    "rumod": {
+        "reports": "3 days of Russian Ministry of Defence Telegram posts (in Russian)",
+        "date": "The date is the day of the posts. You do not need to check it.",
+        "extra": [
+            "Every event is a Russian claim. Judge only whether the post says it, not "
+            "whether it is true.",
+            "'Liberated' or 'took control of' a village is a territorial advance at that "
+            "village. The evening digest repeats earlier posts: a claim counts once, at its "
+            "first post, so a missing box in the digest is correct.",
+        ],
+    },
+}
+
+
+def render_page(items: list[dict[str, Any]], template: str, source: str = "gsu") -> str:
     blob = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
-    return template.replace("/*ITEMS*/[]", blob)
+    page = json.dumps(PAGE_TEXT.get(source, {}), ensure_ascii=False).replace("</", "<\\/")
+    return template.replace("/*ITEMS*/[]", blob).replace("/*PAGE*/{}", page)
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
@@ -301,7 +328,8 @@ def build_page(
     page = page_path(split, source)
     page.parent.mkdir(parents=True, exist_ok=True)
     items = build_items(sample, records, texts, aids)
-    page.write_text(render_page(items, TEMPLATE.read_text(encoding="utf-8")), encoding="utf-8")
+    html = render_page(items, TEMPLATE.read_text(encoding="utf-8"), source)
+    page.write_text(html, encoding="utf-8")
     AUDIT_DIR.mkdir(parents=True, exist_ok=True)
     if split == "dev":
         public = [committable(s, records) for s in sample]

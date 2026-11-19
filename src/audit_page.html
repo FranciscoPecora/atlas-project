@@ -47,6 +47,8 @@
 <script id="items" type="application/json">/*ITEMS*/[]</script>
 <script>
 const ITEMS = JSON.parse(document.getElementById("items").textContent);
+const PAGE = Object.assign({ reports: "3 Ukrainian reports",
+  date: "The date is always the day before the report. You do not need to check it." }, /*PAGE*/{});
 const KEY = "claimline-audit-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
 const TYPES = {
   ground_assault: "Ground attack", territorial_advance: "Advance (ground taken)",
@@ -95,7 +97,7 @@ function choice(item, verdict, text, cls) {
 function intro() {
   return [
     el("h1", {}, "Claimline spot check"),
-    el("p", {}, "A program built the answer key for 3 Ukrainian reports. You check a random sample: " +
+    el("p", {}, "A program built the answer key for " + PAGE.reports + ". You check a random sample: " +
       ITEMS.filter(i => i.kind === "event").length + " single events and " +
       ITEMS.filter(i => i.kind === "paragraph").length + " whole paragraphs. About " + Math.ceil(ITEMS.length * 0.3) + " to " + Math.ceil(ITEMS.length * 0.45) + " minutes. You can stop at any time and continue later."),
     el("div", { class: "card" },
@@ -109,7 +111,8 @@ function intro() {
         el("li", {}, "One paragraph can hold several kinds of event. 'Shelled A and B; air strikes hit C' gives shelling boxes for A and B and an air strike box for C. Judge the box against the part of the paragraph about its own place. Do not mark an air strike box wrong because the paragraph also mentions shelling."),
         el("li", {}, "Wrong: the place is not in the paragraph, the kind is wrong (for example it says shelling but the box says ground attack), or a number shown in the box is wrong."),
         el("li", {}, "A place counts once per paragraph. 'Near', 'towards' and 'in the area of' a village all count as that village."),
-        el("li", {}, "The date is always the day before the report. You do not need to check it."))),
+        el("li", {}, PAGE.date),
+        ...(PAGE.extra || []).map(t => el("li", {}, t)))),
     el("div", { class: "card" },
       el("div", { class: "label" }, "How to judge a paragraph"),
       el("ul", {},

@@ -1,121 +1,361 @@
 date,source,url,sha256,cutoff,status,fetched_at
+2026-07-19,af,https://armyinform.com.ua/2026/07/19/pid-chas-nichnoyi-rosijskoyi-ataky-bulo-zneshkodzheno-18-raket-ta-108-bpla-voroga-povitryani-syly/,162ffc10db995f0de64575b5fd79887811b7220e117bd1a0c04da608eed58365,,ok,2026-11-19T21:38:52+00:00
 2026-07-19,gsu,https://armyinform.com.ua/2026/07/19/za-mynulu-dobu-na-fronti-vidbulasya-majzhe-chvert-tysyachi-boyiv-genshtab-zsu/,756f68f5759cbe6728b23a3e08aaaa9e815ff978be915bd9281cc87a75b75970,08:00 19 липня,ok,2026-11-17T13:07:41+00:00
+2026-07-19,rumod,https://t.me/mod_russia/65737,1b9674ef6f41678819b853eee1ffbd42fadda3ee32ed43820683674f3892cbb8,,ok,2026-11-19T22:10:32+00:00
+2026-07-20,af,https://armyinform.com.ua/2026/07/20/vorog-zapustyv-po-ukrayini-dvi-rakety-ta-94-bpla-povitryani-syly/,92c7392970a7714588b94cea03d931782cc4a05514ce4f3f4fbf52bdd1b2b567,,ok,2026-11-19T21:38:55+00:00
 2026-07-20,gsu,https://armyinform.com.ua/2026/07/20/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-slov%e2%80%99yanskomu-ta-lymanskomu-napryamkah/,40ea5ab4d34ef28515f78baf9b4c2f241136cedfd55d7bf0f7bd12c311633f66,08:00 20 липня,ok,2026-11-17T13:08:05+00:00
+2026-07-20,rumod,https://t.me/mod_russia/65749,0549901035a94c572105478d5cac660a4bac00f5d897cdc8be5cbe4921d47095,,ok,2026-11-19T22:10:32+00:00
+2026-07-21,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:39:13+00:00
 2026-07-21,gsu,https://armyinform.com.ua/2026/07/21/najbilshe-vorozhyh-atak-zafiksovano-na-slovyanskomu-ta-pokrovskomu-napryamkah/,9dc594f01e3991a4c46c8d1727ef9d11a957db79d7ebc69710fbd293c0e45987,08:00 21 липня,ok,2026-11-16T18:12:45+00:00
+2026-07-21,rumod,https://t.me/mod_russia/65796,bf1def8372125ff328b5fb6645b7bc5596d822af7e2eff3738cd579ebac41435,,ok,2026-11-19T22:10:32+00:00
+2026-07-22,af,,,,"missing (3 candidates, 0 http errors)",2026-11-19T21:39:22+00:00
 2026-07-22,gsu,https://armyinform.com.ua/2026/07/22/najbilshe-vorozhyh-atak-zafiksovano-na-slovyanskomu-pokrovskomu-ta-kostyantynivskomu-napryamkah-genshtab-zsu/,e6744cb27015bd529ef4b6a8e0d77cb3a462a6bfa24eec90ea8709210f73737d,08:00 22 липня,ok,2026-11-17T13:08:20+00:00
+2026-07-22,rumod,https://t.me/mod_russia/65836,0b17fd05a0f310a2f00016386b6b2c6a360fea74a2f88c87af0c38a4dade7a93,,ok,2026-11-19T22:10:32+00:00
+2026-07-23,af,https://armyinform.com.ua/2026/07/23/balistyka-rakety-h-59-69-ta-168-bpla-rosiyany-vnochi-atakuvaly-ukrayinu/,a47bce0b8b28d5ab4204a6e6513fb91a9c114984c82998d4643c1ade056c6e09,,ok,2026-11-19T21:39:31+00:00
 2026-07-23,gsu,https://armyinform.com.ua/2026/07/23/na-pokrovskomu-napryamku-za-dobu-zafiksovano-42-vorozhi-ataky-genshtab-zsu/,f84db50446f781207c92d053a12472979a3a11fdbcfeaa65f25d90b05daacc0b,08:00 23 липня,ok,2026-11-17T13:08:26+00:00
+2026-07-23,rumod,https://t.me/mod_russia/65856,0522eb6435fb6ab4d0619b11b2467b8842c5451ca58e8a96ab44562e95f07e29,,ok,2026-11-19T22:10:32+00:00
+2026-07-24,af,,,,"missing (7 candidates, 0 http errors)",2026-11-19T21:39:52+00:00
 2026-07-24,gsu,https://armyinform.com.ua/2026/07/24/najbilshu-vorozhu-aktyvnist-zafiksovano-na-pokrovskomu-slovyanskomu-ta-gulyajpilskomu-napryamkah/,a56ebec4c68b985ba8829832ea5e2b932c441143e9c9fb3ea22ad57eaea20a66,08:00 24 липня,ok,2026-11-17T13:08:59+00:00
+2026-07-24,rumod,https://t.me/mod_russia/65901,5fe15b6979be294e354b1806e8619394d852686c47d761af33aef896cef7b261,,ok,2026-11-19T22:10:32+00:00
+2026-07-25,af,https://armyinform.com.ua/2026/07/25/vorog-zapustyv-po-ukrayini-dvi-rakety-ta-157-bpla-povitryani-syly/,0780c6143f524d4a8bc8ccc56be520af1f3c9ed078a1beba92b6357c2864ec24,,ok,2026-11-19T21:39:55+00:00
 2026-07-25,gsu,https://armyinform.com.ua/2026/07/25/na-slovyanskomu-napryamku-za-dobu-zafiksovano-23-vorozhi-ataky-genshtab-zsu/,c1c3dc8bb3cf90a890b49f59d947cdcd54190a1dc562612b41826c6d31147ee9,08:00 25 липня,ok,2026-11-17T13:09:05+00:00
+2026-07-25,rumod,https://t.me/mod_russia/65935,2ed67054b934815f60eb192833f684b2e319acdc1f12a815a5d4a084ccb36ca4,,ok,2026-11-19T22:10:32+00:00
+2026-07-26,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:40:13+00:00
 2026-07-26,gsu,https://armyinform.com.ua/2026/07/26/u-genshtabi-zsu-nazvaly-chotyry-najgaryachishi-napryamky-na-fronti/,c80582b27dd5f1b54f540d30ad0fa3d292cb6ddfed3eff553ea3093e18aa10c4,08:00 26 липня,ok,2026-11-17T13:09:14+00:00
+2026-07-26,rumod,https://t.me/mod_russia/65984,f23ba55ac644cced51c7cfaf31860b3d0c858ee1389d123835c496fe5f9c8eb8,,ok,2026-11-19T22:10:32+00:00
+2026-07-27,af,https://armyinform.com.ua/2026/07/27/vorog-vnochi-atakuvav-147-udarnymy-bpla-bilshist-zneshkodyly-syly-ppo/,8bdf576639afd00628f61c61f4c28bcf43125a15c6d44a351e878e77abc28b4a,,ok,2026-11-19T21:40:31+00:00
 2026-07-27,gsu,https://armyinform.com.ua/2026/07/27/na-lymanskomu-napryamku-za-dobu-zafiksovano-20-vorozhyh-atak-genshtab-zsu/,d689f77084df3ee78ae39deaeb73facddbc4d0824b8db8326915888ea998e866,08:00 27 липня,ok,2026-11-17T13:09:20+00:00
+2026-07-27,rumod,https://t.me/mod_russia/66026,2558e9a441dbe3c7cdeddc54d374818661cebb9bf5227de489dc703803e0a3dd,,ok,2026-11-19T22:10:32+00:00
+2026-07-28,af,https://armyinform.com.ua/2026/07/28/protyvnyk-atakuvav-ukrayinu-131-udarnym-bpla-107-z-yakyh-vdalosya-perehopyty/,2b1c84e23d205df41438342017f2916a5599aeaff71b11d9f6658b5acc44d85a,,ok,2026-11-19T21:40:37+00:00
 2026-07-28,gsu,https://armyinform.com.ua/2026/07/28/najbilshe-boyezitknen-za-dobu-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,d68ed478a237f388695dd1bcf21ca6e2456557d3d58c13cfa0576b49b5f8be58,08:00 28 липня,ok,2026-11-17T13:09:23+00:00
+2026-07-28,rumod,https://t.me/mod_russia/66062,0bb6c62b83a692b38d136815e60ba4641c24969871a78739c9deafb740279a90,,ok,2026-11-19T22:10:32+00:00
+2026-07-29,af,https://armyinform.com.ua/2026/07/29/vorog-zapustyv-po-ukrayini-80-bpla-%e2%80%94-povitryani-syly/,f350fbb0f51746be581376f8bf37425e5a697c26b4cf0012dbbd68f17738d93a,,ok,2026-11-19T21:40:40+00:00
 2026-07-29,gsu,https://armyinform.com.ua/2026/07/29/na-fronti-zafiksovano-272-boyezitknen-najbilshe-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,7b72531c9ebc2670bef2d82d6c9c1c7e008767ac1c5cb5fb45e69b75877f0562,08:00 29 липня,ok,2026-11-16T18:12:48+00:00
+2026-07-29,rumod,https://t.me/mod_russia/66085,995ed29f0a2f56f9aabc0a170b446c15c951b3440d0d2dc753d9d3fbe5a611bf,,ok,2026-11-19T22:10:32+00:00
+2026-07-30,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:40:58+00:00
 2026-07-30,gsu,https://armyinform.com.ua/2026/07/30/najbilshe-vorozhyh-atak-zafiksovano-na-kostyantynivskomu-ta-pokrovskomu-napryamkah/,92a57f4bc358a931b18c61272dbcabfce584a22005697d148d015bc874268d40,08:00 30 липня,ok,2026-11-17T13:09:41+00:00
+2026-07-30,rumod,https://t.me/mod_russia/66126,b06ae10513afa290f0ba211b6541236b4502c9d1a1dbcce2896ca936ee277645,,ok,2026-11-19T22:10:32+00:00
+2026-07-31,af,https://armyinform.com.ua/2026/07/31/protyvnyk-atakuvav-ukrayinu-255-udarnymy-bpla-195-z-yakyh-vdalosya-perehopyty/,e4f39951cf89ab040ac9f9452660015d914ef23e5af94c38f009d46d070e6fc1,,ok,2026-11-19T21:41:10+00:00
 2026-07-31,gsu,https://armyinform.com.ua/2026/07/31/najbilshe-vorog-atakuvav-na-kostyantynivskomu-napryamku-genshtab-zsu/,3b849ee52bc92f6821d6417b21194f1ffb5167f133a3d5d4d61bd88ce443a26f,08:00 31 липня,ok,2026-11-17T13:09:50+00:00
+2026-07-31,rumod,https://t.me/mod_russia/66149,d4df715b3833777feb5c969f71baf51deb4d043c44e7a2ded7d5ccc507e9200c,,ok,2026-11-19T22:10:32+00:00
+2026-08-01,af,https://armyinform.com.ua/2026/08/01/vorog-vdaryv-po-ukrayini-33-raketamy-ta-185-bpla-povitryani-syly-zsu/,48faca403e27433d357a30a6aeb6f8fd3a99a56830b9f6ec5d05275000ea3f45,,ok,2026-11-19T21:41:17+00:00
 2026-08-01,gsu,https://armyinform.com.ua/2026/08/01/vorog-17-raziv-atakuvav-na-pivdenno-slobozhanskomu-napryamku-genshtab-zsu/,c4ac66f42079d97dea7ed2e0c56e504917e1cbb420b234d5a77dd32bb70a7916,08:00 1 серпня,ok,2026-11-17T13:10:06+00:00
+2026-08-01,rumod,https://t.me/mod_russia/66170,84a02d813c4c93991bb208ce610c5ef9af9e352a6fd049dea1222e284ce43012,,ok,2026-11-19T22:10:32+00:00
+2026-08-02,af,https://armyinform.com.ua/2026/08/02/syly-oborony-zbyly-109-vorozhyh-udarnyh-bpla/,3ea10bab9053a9acfa1baef71fe41dd129921f77aef6790dae56420cd97cc226,,ok,2026-11-19T21:41:35+00:00
 2026-08-02,gsu,,,,"missing (5 candidates, 0 http errors)",2026-11-17T13:41:36+00:00
+2026-08-02,rumod,https://t.me/mod_russia/66221,eec614d3695b42d959313f0e8ded377bfbcf30bcef954da04499c0386270f4f1,,ok,2026-11-19T22:10:32+00:00
+2026-08-03,af,https://armyinform.com.ua/2026/08/03/zneshkodzheni-163-zi-181-udarnyh-bpla-voroga-povitryani-syly/,b1da5a4f431fd9abe0cb880b22f679151c1396bd083c9d6be72001f914451374,,ok,2026-11-19T21:41:37+00:00
 2026-08-03,gsu,,,,"missing (5 candidates, 0 http errors)",2026-11-17T13:41:51+00:00
+2026-08-03,rumod,https://t.me/mod_russia/66236,f7710920bcb8f9e6eb4b3083b45ffafd3a3c47b1f32fdb49e12c7ef26544d570,,ok,2026-11-19T22:10:32+00:00
+2026-08-04,af,,,,"missing (1 candidates, 0 http errors)",2026-11-19T21:41:41+00:00
 2026-08-04,gsu,https://armyinform.com.ua/2026/08/04/najbilshe-vorozhyh-atak-zafiksovano-na-kostyantynivskomu-pokrovskomu-ta-slov%e2%80%99yanskomu-napryamkah/,7b00237fd148db4d66f03975776ab0e351dc6dde0216c08c933a18e3fae8477b,08:00 4 серпня,ok,2026-11-17T13:11:03+00:00
+2026-08-04,rumod,https://t.me/mod_russia/66263,c75bcf1998c4d974b2f764a20da833bc7915bee5cdce7eceba05f0f14dd3550c,,ok,2026-11-19T22:10:32+00:00
+2026-08-05,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T21:41:53+00:00
 2026-08-05,gsu,https://armyinform.com.ua/2026/08/05/najbilshe-vorozhyh-shturmiv-za-dobu-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-3/,895e9fbe231a18918c7dfbe89bd2fbecbb2cf02a1bc6db0fcf309c97cc378cb4,08:00 5 серпня,ok,2026-11-17T13:11:30+00:00
+2026-08-05,rumod,https://t.me/mod_russia/66277,bba4ed2d6884f0ac807f6976d2bfd48b6f29037467215c8a1393a35661a8f0c0,,ok,2026-11-19T22:10:32+00:00
+2026-08-06,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T21:42:05+00:00
 2026-08-06,gsu,https://armyinform.com.ua/2026/08/06/na-fronti-zafiksovano-261-boyezitknennya-najbilshe-%e2%80%94-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,f72b637e7abb08f9a221fffedd29ef3f1f1a3caaec2605ae59503e08ccd0bda8,08:00 6 серпня,ok,2026-11-16T18:12:54+00:00
+2026-08-06,rumod,https://t.me/mod_russia/66320,a6e7e4abb820cba9a153e2dfb23abd8a87fa8c3bc1294e61a45f5ff67f5a8e71,,ok,2026-11-19T22:10:32+00:00
+2026-08-07,af,https://armyinform.com.ua/2026/08/07/pid-chas-nichnoyi-ataky-zneshkodzheno-114-udarnyh-bpla-zi-147-povitryani-syly/,732aaa57cdc7e48d597c6d5d0761877cb2e1116a431314269d0611062b54dc7c,,ok,2026-11-19T21:42:11+00:00
 2026-08-07,gsu,https://armyinform.com.ua/2026/08/07/vorog-najbilshe-atakuvav-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-genshtab-zsu/,69099bf5ce4dd8ac546a0567a433b7cfce8db14937cdb4fde16a469fc5703af0,08:00 7 серпня,ok,2026-11-17T13:11:36+00:00
+2026-08-07,rumod,https://t.me/mod_russia/66343,9dc6c2699b9a992be531737fde875a55eea4ff5a0b31164164c7c74277ed798c,,ok,2026-11-19T22:10:32+00:00
+2026-08-08,af,https://armyinform.com.ua/2026/08/08/vorog-atakuvav-vnochi-shistma-raketamy-ta-ponad-150-bpla-%e2%80%94-povitryani-syly-zsu/,876847a80523682c5a64a12b4e6ae9e9e9eb8acd4bb307aed0e9154deb46fc8d,,ok,2026-11-19T21:42:13+00:00
 2026-08-08,gsu,https://armyinform.com.ua/2026/08/08/najbilshe-vorozhyh-atak-za-dobu-vidbyto-na-pokrovskomu-napryamku-genshtab-zsu/,f15d14a6971e74394572e8c9e1210687e4c8473c833cf14ba69b904d03e2b36a,08:00 8 серпня,ok,2026-11-17T13:11:45+00:00
+2026-08-08,rumod,https://t.me/mod_russia/66360,7b388d29d0b1661fe0049811536b88a03e118a636800dbd9745236649b8fe3da,,ok,2026-11-19T22:10:32+00:00
+2026-08-09,af,https://armyinform.com.ua/2026/08/09/nichnyj-udar-po-odeshhyni-vorog-zapustyv-po-mistu-11-raket-riznyh-typiv/,48e23980287e18ec05a1926509644188207913ce32b0cec40275885403c51c08,,ok,2026-11-19T21:42:17+00:00
 2026-08-09,gsu,https://armyinform.com.ua/2026/08/09/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-%e2%80%94-genshtab-zsu/,15944bb4d302ccd2ef4141e99452b940ca7035fa586680f5d6961ec13d670461,08:00 9 серпня,ok,2026-11-17T13:11:54+00:00
+2026-08-09,rumod,https://t.me/mod_russia/66393,5063f1f5145609a69a3e757463363a59cec6d20340f974f5c0655cb8f7bb103a,,ok,2026-11-19T22:10:32+00:00
+2026-08-10,af,https://armyinform.com.ua/2026/08/10/vorog-zavdav-udaru-kerovanoyu-raketoyu-ta-ponad-120-bpla-povitryani-syly-zsu/,981698c6d62cc1f4e0aec5e76ccccbe247705c5bbed195e247ee53c5dfce0e2b,,ok,2026-11-19T21:42:20+00:00
 2026-08-10,gsu,https://armyinform.com.ua/2026/08/10/na-kostyantynivskomu-napryamku-ukrayinski-zahysnyky-vidbyly-31-ataku-voroga-generalnyj-shtab-zsu/,64161c1aaa16cd3c16b3798f2d02b2c75acbe3781c60eb11ae365cd18198456d,08:00 10 серпня,ok,2026-11-17T13:12:09+00:00
+2026-08-10,rumod,https://t.me/mod_russia/66403,6eb9de46dc8b568beb9cffe7f892c7e9be83ffbbe42bc921a4c91ca521d0ff89,,ok,2026-11-19T22:10:32+00:00
+2026-08-11,af,,,,"missing (7 candidates, 0 http errors)",2026-11-19T21:42:41+00:00
 2026-08-11,gsu,https://armyinform.com.ua/2026/08/11/na-kostyantynivskomu-ta-pokrovskomu-napryamkah-zafiksovano-najbilshe-vorozhyh-atak-za-dobu/,33b81ac792bf5af044e2db1102582136d6f5bdfd1a6560e35a11fe0506710a53,08:00 11 серпня,ok,2026-11-17T13:12:27+00:00
+2026-08-11,rumod,https://t.me/mod_russia/66421,88d8ef54b4247c56bd99e9f41d69fe4466eb47787fba34b04d77dbc76246562f,,ok,2026-11-19T22:10:32+00:00
+2026-08-12,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:42:59+00:00
 2026-08-12,gsu,https://armyinform.com.ua/2026/08/12/vorog-zoseredyv-svoyi-ataky-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,e92002cecf118f789cdf3d5b1e007a9d4149ac68dfc45345e66cec627cfce32e,08:00 12 серпня,ok,2026-11-17T13:13:06+00:00
+2026-08-12,rumod,https://t.me/mod_russia/66468,b87db73f71a96906756cb296c14975fe3abe8accfc2297807d98a483df84e97a,,ok,2026-11-19T22:10:32+00:00
+2026-08-13,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T21:43:11+00:00
 2026-08-13,gsu,https://armyinform.com.ua/2026/08/13/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-ta-slovyanskomu-napryamkah/,af01f960e17c1bb84632a4bdc66a8f06f5ba13aab7c08a4282fbd8c0a215729d,08:00 13 серпня,ok,2026-11-17T13:13:24+00:00
+2026-08-13,rumod,https://t.me/mod_russia/66488,4214e8020a304a8a0c9dcabb882c0172dd024eba75763f2a76ea620c648a4983,,ok,2026-11-19T22:10:32+00:00
+2026-08-14,af,https://armyinform.com.ua/2026/08/14/cziyeyi-nochi-vdalosya-zneshkodyty-90-zi-112-vorozhyh-udarnyh-droniv-povitryani-syly/,dcfb948b0129ee4d4b58d0a5df05f680b72ad87a3a2ffd45e8341b269ff2ec79,,ok,2026-11-19T21:43:14+00:00
 2026-08-14,gsu,https://armyinform.com.ua/2026/08/14/za-dobu-na-fronti-vidbulosya-ponad-200-boyiv-najbilshe-na-kostyantynivskomu-napryamku/,ee6cd3e5ea6e3282432cd4b40e7d386ed7fc35aec1e5aa45a417497bd3bb6b14,08:00 14 серпня,ok,2026-11-17T13:13:28+00:00
+2026-08-14,rumod,https://t.me/mod_russia/66508,2b5d91eff2641bd97e636d52b1a9853473827573e2387e2fb107c63102801846,,ok,2026-11-19T22:10:32+00:00
+2026-08-15,af,,,,"missing (2 candidates, 0 http errors)",2026-11-19T21:43:20+00:00
 2026-08-15,gsu,https://armyinform.com.ua/2026/08/15/kostyantynivskyj-pokrovskyj-i-slovyanskyj-napryamky-de-vorog-atakuvav-najaktyvnishe/,1922a4ca5702072ed1704dc2a6ff58d49208b86dd70599dc73bfe1f3bbaebecf,08:00 15 серпня,ok,2026-11-17T13:13:55+00:00
+2026-08-15,rumod,https://t.me/mod_russia/66529,0fbd07533c13fadf5db17c61cf6904a3ec38302ae9d4ec74d51b9a2b74e221cb,,ok,2026-11-19T22:10:32+00:00
+2026-08-16,af,https://armyinform.com.ua/2026/08/16/vorog-atakuvav-ukrayinu-protykorabelnymy-balistychnymy-raketamy-ta-106-udarnymy-bpla/,300213a53450d10005a191dca3bcfa4b81e7a8225ba8cb361c9d10e6ad3680b1,,ok,2026-11-19T21:43:29+00:00
 2026-08-16,gsu,,,,"missing (6 candidates, 0 http errors)",2026-11-17T13:42:09+00:00
+2026-08-16,rumod,https://t.me/mod_russia/66557,c06bbd9eb6022b23975187464e8cfb53618dfb341607f32536c341372b19f551,,ok,2026-11-19T22:10:32+00:00
+2026-08-17,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T21:43:41+00:00
 2026-08-17,gsu,https://armyinform.com.ua/2026/08/17/najbilshe-rosijskyh-atak-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,6595f36068ac37b496d8bcab3cf42115a31bebf56f306ded5bf90d3a3932b594,08:00 17 серпня,ok,2026-11-17T13:14:49+00:00
+2026-08-17,rumod,https://t.me/mod_russia/66576,abdd532b0c21cb1f778598711d90795ab18e63e5dc3fa9a616d20d5697566808,,ok,2026-11-19T22:10:32+00:00
+2026-08-18,af,https://armyinform.com.ua/2026/08/18/majzhe-150-bezpilotnykiv-z-kilkoh-napryamkiv-podrobyczi-nichnoyi-ataky-voroga/,484d9ec90f75b6c6457650a93951a4e5503cc8ea658bc43ac1248ca7a04a75d6,,ok,2026-11-19T21:43:53+00:00
 2026-08-18,gsu,https://armyinform.com.ua/2026/08/18/sytuacziya-na-fronti-244-bojovyh-zitknennya-za-dobu-najbilshe-na-pokrovskomu-napryamku/,a9443ed5cb71f825883347d9625eb3c4288361748b9c348e85d56612fec567ba,08:00 18 серпня,ok,2026-11-17T13:42:12+00:00
+2026-08-18,rumod,https://t.me/mod_russia/66591,f1300a38752dc0833e2c902ed6f2577c4c338222d3830131df747714483bbe9d,,ok,2026-11-19T22:10:32+00:00
+2026-08-19,af,https://armyinform.com.ua/2026/08/19/iskander-m-udarni-bpla-ta-banderol-povitryani-syly-povidomyly-detali-kombinovanoyi-nichnoyi-ataky/,fc26b8b8c644f5869468527ab39e52b6fec4073efe71f46774502334bad01dbc,,ok,2026-11-19T21:43:56+00:00
 2026-08-19,gsu,https://armyinform.com.ua/2026/08/19/239-bojovyh-zitknen-za-dobu-vorog-najbilshe-atakuye-na-kostyantynivskomu-napryamku/,640cce8355bb56038b22d3c121434bbb7a8914140fb975ee95c7d0dec0493599,08:00 19 серпня,ok,2026-11-17T13:42:15+00:00
+2026-08-19,rumod,https://t.me/mod_russia/66610,6233193c913d80c119d479b4f8ad3b295ddf98f946e0798467f9422bae753003,,ok,2026-11-19T22:10:32+00:00
+2026-08-20,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:44:11+00:00
 2026-08-20,gsu,https://armyinform.com.ua/2026/08/20/genshtab-zsu-najbilshu-kilkist-shturmovyh-dij-zafiksovano-na-pokrovskomu-napryamku/,1758db73fc27a472db93337e4f6fd4e8a7eb2b9dfa3f97ef107941245ccc6c53,08:00 20 серпня,ok,2026-11-17T13:42:18+00:00
+2026-08-20,rumod,https://t.me/mod_russia/66654,69ad57410f0cf922614792e43305c8ea788c29cae26fcc249c4900591e5acce5,,ok,2026-11-19T22:10:32+00:00
+2026-08-21,af,https://armyinform.com.ua/2026/08/21/nichna-povitryana-ataka-rosiyany-zastosuvaly-135-bezpilotnykiv/,c9b9d88bf5f72e35c497b555ec16557369e7d4ab3db0e645aedb20456530bde3,,ok,2026-11-19T21:44:23+00:00
 2026-08-21,gsu,https://armyinform.com.ua/2026/08/21/238-bojovyh-zitknen-za-dobu-vorog-najbilshe-atakuye-na-dvoh-napryamkah/,2784db13a1ece1f714a761519392f06190fda4e52368532e83e7726074d5c7c9,08:00 21 серпня,ok,2026-11-17T13:42:24+00:00
+2026-08-21,rumod,https://t.me/mod_russia/66676,cc60d42decb31d433e3d1bb09176b4c1084ee95d09e6f3f8c61d35f6f5f499c8,,ok,2026-11-19T22:10:32+00:00
+2026-08-22,af,,,,"missing (3 candidates, 0 http errors)",2026-11-19T21:44:32+00:00
 2026-08-22,gsu,,,,"missing (7 candidates, 0 http errors)",2026-11-17T13:42:45+00:00
+2026-08-22,rumod,https://t.me/mod_russia/66700,7572b6fc3c63db311aa14a3156068490514b190a739186529b3b2e9c2b017df7,,ok,2026-11-19T22:10:32+00:00
+2026-08-23,af,https://armyinform.com.ua/2026/08/23/nichna-povitryana-ataka-rosiyany-zastosuvaly-127-bezpilotnykiv/,ca4b5992ba85655df968dee63ee4d10cf522055d7cbcf350497a9403ebea1764,,ok,2026-11-19T21:44:44+00:00
 2026-08-23,gsu,,,,"missing (5 candidates, 0 http errors)",2026-11-17T13:43:00+00:00
+2026-08-23,rumod,https://t.me/mod_russia/66716,edcdbfc4e829c453a385b300daa07f612248830b3cc052080a2a22550fdb4512,,ok,2026-11-19T22:10:32+00:00
+2026-08-24,af,https://armyinform.com.ua/2026/08/24/oniks-h-31p-h-59-ta-143-drony-odeshhyna-stala-golovnym-napryamkom-nichnogo-udaru-rosiyan/,09f5465cb7d37aca4d7c13716573315deb8f3c09939d235951391e60708233bd,,ok,2026-11-19T21:45:02+00:00
 2026-08-24,gsu,,,,"missing (9 candidates, 0 http errors)",2026-11-17T13:43:27+00:00
+2026-08-24,rumod,https://t.me/mod_russia/66737,6939a1192ccbafc445bae67a0e588b9f7b7fa8bb832a90d45a22a171f35fe735,,ok,2026-11-19T22:10:32+00:00
+2026-08-25,af,,,,"missing (3 candidates, 0 http errors)",2026-11-19T21:45:11+00:00
 2026-08-25,gsu,https://armyinform.com.ua/2026/08/25/za-dobu-zafiksovano-209-boyezitknen-najbilshe-%e2%80%94-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,ff890b61d40a3092ac8f72b0fd4c41783003b29eb11a100c742c74ca52ab6ef4,08:00 25 серпня,ok,2026-11-17T13:17:37+00:00
+2026-08-25,rumod,https://t.me/mod_russia/66758,356e9cb977d0c196fad276bb227bc8bf5046f8aa9fa37b024188b5a35bc88a76,,ok,2026-11-19T22:10:32+00:00
+2026-08-26,af,,,,"missing (3 candidates, 0 http errors)",2026-11-19T21:45:20+00:00
 2026-08-26,gsu,https://armyinform.com.ua/2026/08/26/protyvnyk-skonczentruvav-svoyi-zusyllya-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,bbfd3c2832938e0318b4e6ba193a810a9f62d3cf3a4399a1af1f053039846ac1,08:00 26 серпня,ok,2026-11-17T13:17:55+00:00
+2026-08-26,rumod,https://t.me/mod_russia/66777,947b8c6f0fa8c13ce807cc3b7634586ed11f8827ca390a216625863978e71066,,ok,2026-11-19T22:10:32+00:00
+2026-08-27,af,https://armyinform.com.ua/2026/08/27/syly-ppo-zbyly-vnochi-oniks-sim-balistychnyh-raket-ta-222-bpla/,2ddaf403df5388db4c9cb1b70cb7f996d1d642277fa5e3e36d79cb1a68e4c487,,ok,2026-11-19T21:45:41+00:00
 2026-08-27,gsu,https://armyinform.com.ua/2026/08/27/na-fronti-zafiksovano-229-boyezitknen-najbilshe-vorozhyh-atak-bulo-na-pokrovskomu-napryamku/,5e362d6d05b100a14d77164ece48f7ef32eb10d6a0fa9a9efce134ff738cec27,08:00 27 серпня,ok,2026-11-17T13:17:58+00:00
+2026-08-27,rumod,https://t.me/mod_russia/66797,b5c1edacf4d664b25365f69d530607c1e23c4164a07d97f798fa1ad6a8d472ae,,ok,2026-11-19T22:10:32+00:00
+2026-08-28,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:46:00+00:00
 2026-08-28,gsu,https://armyinform.com.ua/2026/08/28/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,be050cd92463d55f6bdc154162f593d920ff9da4badcd449b3bca25d399bb28c,08:00 28 серпня,ok,2026-11-17T13:18:28+00:00
+2026-08-28,rumod,https://t.me/mod_russia/66845,10efd10c38e7089eff968ce4840917cc15b48881219f0ad73b29c2e21f576291,,ok,2026-11-19T22:10:32+00:00
+2026-08-29,af,https://armyinform.com.ua/2026/08/29/vorog-atakuvav-vnochi-267-udarnymy-bpla-233-z-yakyh-vdalosya-perehopyty/,62a2b95dd1e33fc8f00c4e2d4ca532108496b9c360283db535fcbfcd2c3a8f3e,,ok,2026-11-19T21:46:14+00:00
 2026-08-29,gsu,https://armyinform.com.ua/2026/08/29/vorog-zdijsnyv-ponad-40-atak-na-pokrovskomu-napryamku-genshtab-zsu/,73a62cdc0b3aa4c80f5c54e9b57feffbd921d79a3c1c38be4288779955deea94,08:00 29 серпня,ok,2026-11-17T13:18:31+00:00
+2026-08-29,rumod,https://t.me/mod_russia/66860,674aacd4280ea0e642e0d379598a20096abe82a1ae41f542331afcc51135b26e,,ok,2026-11-19T22:10:32+00:00
+2026-08-30,af,https://armyinform.com.ua/2026/08/30/vnochi-ppo-zneshkodyla-125-vorozhyh-droniv-bilshist-bula-reaktyvnoyu/,144aebf86e65fcc92d8f40467a4d3f6372d1a398b79509e969a13bc3f1504a71,,ok,2026-11-19T21:46:23+00:00
 2026-08-30,gsu,,,,"missing (4 candidates, 0 http errors)",2026-11-17T13:43:39+00:00
+2026-08-30,rumod,https://t.me/mod_russia/66897,e8a4cc750026bad38d2f28ae23f81bdc6b1ccd5081c28c6d57afc56598ae231f,,ok,2026-11-19T22:10:32+00:00
+2026-08-31,af,https://armyinform.com.ua/2026/08/31/ponad-120-bpla-ta-aviaczijna-raketa-vorog-vnochi-atakuvav-ukrayinu/,9e0754b0557b13306de37b8fc959fef4f78750731750ecc37348fbd86697a4d5,,ok,2026-11-19T21:46:35+00:00
 2026-08-31,gsu,https://armyinform.com.ua/2026/08/31/na-fronti-zafiksovano-225-boyezitknen-najbilshe-%e2%80%94-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,39ff48044b5248d443f76239ec13dc83d325102a6698680377ee306163922651,08:00 31 серпня,ok,2026-11-17T13:18:46+00:00
+2026-08-31,rumod,https://t.me/mod_russia/66902,c4c36478c3fc7c68a6805e06a32e82b039351dae1cbaba815425bb29922a7495,,ok,2026-11-19T22:10:32+00:00
+2026-09-01,af,https://armyinform.com.ua/2026/09/01/ponad-200-bpla-ta-raket-riznyh-typiv-vorog-vnochi-atakuvav-ukrayinu/,defd9ab83c2ae1d16085b0ff6fd7c19e83935c40e1b6ad3f348bb21d336f4471,,ok,2026-11-19T21:46:48+00:00
 2026-09-01,gsu,https://armyinform.com.ua/2026/09/01/na-fronti-zafiksovano-210-bojovyh-zitknen-najbilshe-na-pokrovskomu-napryamku/,bfa498522ee8b2fb52d2f8148169be9a8ac472a3a6f94bcc007e959fba5d5d98,08:00 01 вересня,ok,2026-11-17T13:18:54+00:00
+2026-09-01,rumod,https://t.me/mod_russia/66957,ee0f4a9f0a80494eb2b0bae23c606a15b88d648f5a535e9f6a1d5c40f5cc2867,,ok,2026-11-19T22:10:32+00:00
+2026-09-02,af,https://armyinform.com.ua/2026/09/02/vorog-atakuvav-vnochi-174-udarnymy-bpla-141-z-yakyh-vdalosya-perehopyty/,1b6b826dd5c1596388b7024d0a21e4ee8bcfa44d6412ddea3f7aac7323b372e4,,ok,2026-11-19T21:46:57+00:00
 2026-09-02,gsu,https://armyinform.com.ua/2026/09/02/na-fronti-zafiksovano-213-bojovyh-zitknen-najbilshe-na-kostyantynivskomu-napryamku/,f723fe16ef6a44b3594a60650dbe1decd51bbc915615a11187421fcc8c55c4c6,08:00 2 вересня,ok,2026-11-17T13:18:57+00:00
+2026-09-02,rumod,https://t.me/mod_russia/66988,751b57b206811d7b09f1d5319247af2f505063de8285f8f3bca5347579ff5b26,,ok,2026-11-19T22:10:32+00:00
+2026-09-03,af,,,,"missing (10 candidates, 0 http errors)",2026-11-19T21:47:27+00:00
 2026-09-03,gsu,https://armyinform.com.ua/2026/09/03/vorog-zdijsnyv-ponad-30-atak-na-pokrovskomu-napryamku-genshtab-zsu/,599f6947e6174567e2c1bc29b3eff68e6810fd95bbdb74be16a44ae0c8822e6a,08:00 3 вересня,ok,2026-11-17T13:19:03+00:00
+2026-09-03,rumod,https://t.me/mod_russia/67011,918555b2c6d11f5ba423ddee5c964a48e9c3a935b91b28431fbf9e4956128f0e,,ok,2026-11-19T22:10:32+00:00
+2026-09-04,af,https://armyinform.com.ua/2026/09/04/povitryani-syly-nazvaly-kilkist-zbytyh-vnochi-vorozhyh-bpla/,0c9b61d2f5dacf24e40d190ed4a476d5f462d1ba7ce1037589e8cb0ebbfdd32c,,ok,2026-11-19T21:47:31+00:00
 2026-09-04,gsu,https://armyinform.com.ua/2026/09/04/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-2/,a164b26b5e4e712bcee9c4fdf13fa8283583790f4af6054370dae5e20a89791e,08:00 4 вересня,ok,2026-11-17T13:19:27+00:00
+2026-09-04,rumod,https://t.me/mod_russia/67028,9dbce4dbc14f144c273b64f7863916d68b89520e277e9f08c69d5148ec82a2aa,,ok,2026-11-19T22:10:32+00:00
+2026-09-05,af,https://armyinform.com.ua/2026/09/05/blyzko-polovyny-shahediv-yaki-zapustyly-rosiyany-buly-reaktyvnymy-povitryani-syly/,541d504515cf3f5366167e274c178e5abf6e78042e3080bd315adc734e7201b6,,ok,2026-11-19T21:47:33+00:00
 2026-09-05,gsu,https://armyinform.com.ua/2026/09/05/vorog-najbilshe-atakuvav-na-pokrovskomu-napryamku-genshtab-zsu-2/,3a2b116fc9c4d3b9c8b8fa744a74fe73a7edc33dc35d5357549d33e3305f53c4,08:00 5 вересня,ok,2026-11-17T13:19:30+00:00
+2026-09-05,rumod,https://t.me/mod_russia/67073,ebf0bc946e9c440357b5ba12dc78fbf1d20eabf89f0f39322f0acb24394035aa,,ok,2026-11-19T22:10:32+00:00
+2026-09-06,af,,,,"missing (0 candidates, 0 http errors)",2026-11-19T21:47:33+00:00
 2026-09-06,gsu,https://armyinform.com.ua/2026/09/06/na-pokrovskomu-napryamku-vorog-zdijsnyv-43-ataky-generalnyj-shtab/,b6cca5ca12a070a3b04583a8b0f477f3e22fe1b72ca61a5c9ebef298b255253b,08:00 6 вересня,ok,2026-11-17T13:19:42+00:00
+2026-09-06,rumod,https://t.me/mod_russia/67103,ba33c2a7fd1ba8e30a2a4fce6ef6f4ba6bf6d3383a944c8150e167645e508872,,ok,2026-11-19T22:10:32+00:00
+2026-09-07,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:47:52+00:00
 2026-09-07,gsu,https://armyinform.com.ua/2026/09/07/najbilshu-kilkist-shturmovyh-dij-zafiksovano-na-pokrovskomu-napryamku-genshtab-zsu/,fd7cc22f3758cf5dabf5ea8e3f188c50ecf999afae5e3066033568bc20b2d253,08:00 7 вересня,ok,2026-11-17T13:19:48+00:00
+2026-09-07,rumod,https://t.me/mod_russia/67116,908e972b0d6c8fab5fab45c5a15716aa709c8000ef73178782d5ef62d7e0ea78,,ok,2026-11-19T22:10:32+00:00
+2026-09-08,af,,,,"missing (15 candidates, 0 http errors)",2026-11-19T21:48:37+00:00
 2026-09-08,gsu,https://armyinform.com.ua/2026/09/08/244-bojovyh-zitknennya-za-dobu-yaka-sytuacziya-na-klyuchovyh-napryamkah-frontu/,8b3ebea96c75d3b9896109b9e0969753c19e62fc37cbb8e787b3bcc8eede7f62,08:00 8 вересня,ok,2026-11-17T13:43:47+00:00
+2026-09-08,rumod,https://t.me/mod_russia/67160,d0d78c4537bd4c1c2981a61aa934ba189f00fa00f4572f277efbb4c9802f7309,,ok,2026-11-19T22:10:32+00:00
+2026-09-09,af,https://armyinform.com.ua/2026/09/09/balistyka-banderoli-ta-reaktyvni-shahedy-vorog-vnochi-atakuvav-ukrayinu/,a8fdc3da79d52f7db9ad0a1463fea689784b37451688e51285be5e1310e1100d,,ok,2026-11-19T21:48:58+00:00
 2026-09-09,gsu,https://armyinform.com.ua/2026/09/09/protyvnyk-za-mynulu-dobu-49-raziv-namagavsya-prosunutysya-na-pokrovskomu-napryamku/,1ac9a293c63bd37948ff198c93e398dc6770ae0615c5e2e429dac0be3909882a,08:00 9 вересня,ok,2026-11-17T13:20:16+00:00
+2026-09-09,rumod,https://t.me/mod_russia/67176,831480c440846bd50033555b9b3481b212d5544a8223d74073fa2b09838804ac,,ok,2026-11-19T22:10:32+00:00
+2026-09-10,af,https://armyinform.com.ua/2026/09/10/majzhe-150-bezpilotnykiv-riznyh-typiv-u-povitryanyh-sylah-rozpovily-pro-nichnu-ataku-voroga/,b4a894f153f87c7cbd063689e3aad29cb889133a4e9ee0814ca7b808a38240c9,,ok,2026-11-19T21:49:01+00:00
 2026-09-10,gsu,https://armyinform.com.ua/2026/09/10/na-pokrovskomu-napryamku-vidbyto-44-ataky-genshtab-zsu/,9dcabb85efb63952dc8d111495f86dbbe44034a812dd1f36b0ad24f30f46fc92,08:00 10 вересня,ok,2026-11-17T13:20:20+00:00
+2026-09-10,rumod,https://t.me/mod_russia/67206,78f3c0cb158c39776c32c549d350f61854568f0cad49bbc45c5cd4889b2cf033,,ok,2026-11-19T22:10:32+00:00
+2026-09-11,af,https://armyinform.com.ua/2026/09/11/syly-ppo-zneshkodyly-138-vorozhyh-bpla-pid-chas-nichnoyi-ataky-na-ukrayinu/,2a3599ebba03c5e901122ba078404f9f8d8359c14e5b42f9d00e2d798b87b538,,ok,2026-11-19T21:49:16+00:00
 2026-09-11,gsu,https://armyinform.com.ua/2026/09/11/syly-oborony-vidbyly-ataky-na-pokrovskomu-i-kostyantynivskomu-napryamkah-ta-poblyzu-maloyi-tokmachky/,ea708dc2789c31d6b14f67a3d499e97cca9cb4926905e699ba787c896cd4e500,08:00 11 серпня,ok,2026-11-17T13:44:17+00:00
+2026-09-11,rumod,https://t.me/mod_russia/67217,63bafd6481a6f6730c2b869f555eb5554006906b3c06f1a18dbb353688aaeb90,,ok,2026-11-19T22:10:32+00:00
+2026-09-12,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:49:31+00:00
 2026-09-12,gsu,https://armyinform.com.ua/2026/09/12/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah/,e29e49735726d97e1f5076ab65c60ebde44e8a6032827d256a7dbad8ab24079f,08:00 12 вересня,ok,2026-11-17T13:21:09+00:00
+2026-09-12,rumod,https://t.me/mod_russia/67259,495d0541560de0a0a129176e3a60e45514b900a805d3b0d66b6cf9fc2214b418,,ok,2026-11-19T22:10:32+00:00
+2026-09-13,af,https://armyinform.com.ua/2026/09/13/syly-ppo-zneshkodyly-405-vorozhyh-bpla-pid-chas-nichnoyi-ataky-na-ukrayinu/,a5f11b53ec74c21fb35e231600ceb41f47b6f0a074ac8b0d424f77b6098d4431,,ok,2026-11-19T21:49:43+00:00
 2026-09-13,gsu,https://armyinform.com.ua/2026/09/13/na-pokrovskomu-napryamku-vidbyto-29-ataky-genshtab-zsu/,23a88b631c50fbbac0c309b443c44981570b7e8837510699cfcea128fcb409e0,08:00 13 вересня,ok,2026-11-17T13:21:18+00:00
+2026-09-13,rumod,https://t.me/mod_russia/67310,f3e43e242fe4304ad6c89deed9d0fd428777ca1db8cae38a57a80d20181bc274,,ok,2026-11-19T22:10:32+00:00
+2026-09-14,af,https://armyinform.com.ua/2026/09/14/nichna-ataka-na-ukrayinu-syly-ppo-zneshkodyly-85-vorozhyh-bpla/,71274f3e70a1ca29596f312c26f91f40a78407868909017cad447f61dd44b5b7,,ok,2026-11-19T21:49:55+00:00
 2026-09-14,gsu,https://armyinform.com.ua/2026/09/14/ponad-200-bojovyh-zitknen-za-dobu-genshtab-zsu-povidomyv-pro-sytuacziyu-na-fronti/,303700653f67e14e9665d823c2f0727324fd5b3806a22eced07fd38c219c3340,08:00 14 вересня,ok,2026-11-17T13:44:23+00:00
+2026-09-14,rumod,https://t.me/mod_russia/67344,7987d8aa23c5e581276538d029a1606b3114af68a5f4f9721c697b8297dda11b,,ok,2026-11-19T22:10:32+00:00
+2026-09-15,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T21:50:07+00:00
 2026-09-15,gsu,https://armyinform.com.ua/2026/09/15/na-kostyantynivskomu-napryamku-vidbyto-29-atak-genshtab-zsu/,69b31758ffd4011a2bfae284b17c6dba3a99ad010e607718a38bee2f6f22420e,08:00 15 вересня,ok,2026-11-17T13:44:32+00:00
+2026-09-15,rumod,https://t.me/mod_russia/67363,e7f4fb86384c0e6ac7d9f94e386f281ce5cb870fa9b456f7e7b4347ffc289ded,,ok,2026-11-19T22:10:32+00:00
+2026-09-16,af,https://armyinform.com.ua/2026/09/16/syly-oborony-nejtralizuvaly-63-vorozhyh-bpla/,bff3dceff55f96b82d58e3dec1686c7b5bf1162d9485390335c3429568577552,,ok,2026-11-19T21:50:19+00:00
 2026-09-16,gsu,https://armyinform.com.ua/2026/09/16/na-pokrovskomu-napryamku-vidbyto-43-ataky-genshtab-zsu/,3db2f8d49b806e2d0025cd4324c974eae811d0ec09b243a99a3479c069411ca4,08:00 16 вересня,ok,2026-11-17T13:44:35+00:00
+2026-09-16,rumod,https://t.me/mod_russia/67382,af0538983324a12696d555713367b51cf87cbd07b305ad32dcef9ba257465a2a,,ok,2026-11-19T22:10:32+00:00
+2026-09-17,af,https://armyinform.com.ua/2026/09/17/balistyka-protykorabelni-rakety-ta-kalibry-chym-vorog-vnochi-atakuvav-ukrayinu/,97bcc2460e2ce801d7a7245485fe5a89b53b88930b7db8a7f6f944278d8baefb,,ok,2026-11-19T21:50:25+00:00
 2026-09-17,gsu,https://armyinform.com.ua/2026/09/17/najbilshu-kilkist-shturmovyh-dij-zafiksovano-na-dvoh-napryamkah-donechchyny-genshtab-zsu/,96f9a095ef8a6deb5f1fd1c511dd4321ac663194d7df46486c9ebff48d6f45d4,08:00 17 вересня,ok,2026-11-17T13:44:38+00:00
+2026-09-17,rumod,https://t.me/mod_russia/67404,310359f5144329b5645b5309ad1f2593952f36cbf7f3ad49294b32a3b7e13354,,ok,2026-11-19T22:10:32+00:00
+2026-09-18,af,https://armyinform.com.ua/2026/09/18/syly-ppo-vnochi-zneshkodyly-69-vorozhyh-bpla-ta-try-banderoli/,c87434b3a7d893818da82898e54d189e8e09f26b6638d555e8b6abedcc2571c1,,ok,2026-11-19T21:50:34+00:00
 2026-09-18,gsu,https://armyinform.com.ua/2026/09/18/230-boyezitknen-za-dobu-v-genshtabi-zsu-rozpovily-pro-sytuacziyu-na-klyuchovyh-napryamkah/,7346b551140df0880e1138bde09ba50cda533b8dc3f262a1527aa208fe110311,08:00 18 вересня,ok,2026-11-17T13:44:41+00:00
+2026-09-18,rumod,https://t.me/mod_russia/67445,1658e6448cd2b498bda80bfd4d99b13632eb194d30e232158c76ded6032bb993,,ok,2026-11-19T22:10:32+00:00
+2026-09-19,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:50:49+00:00
 2026-09-19,gsu,https://armyinform.com.ua/2026/09/19/213-boyezitknen-za-dobu-genshtab-zsu-rozpoviv-pro-sytuacziyu-na-klyuchovyh-napryamkah/,0a88b1977647875e89708025388eca4daeede471097303f0005482608d740f0f,08:00 19 вересня,ok,2026-11-17T13:44:44+00:00
+2026-09-19,rumod,https://t.me/mod_russia/67475,e7caf6ed8618b9fb259d6277ede4a46ecb3972b596c54aad6fc7baa9f9981e59,,ok,2026-11-19T22:10:32+00:00
+2026-09-20,af,,,,"missing (7 candidates, 0 http errors)",2026-11-19T21:51:10+00:00
 2026-09-20,gsu,https://armyinform.com.ua/2026/09/20/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-napryamku/,1d068bdd4a7956d4cef7a138ee1fea28159e0868a5fd4b6797f627a0f344c3ea,08:00 20 вересня,ok,2026-11-17T13:24:07+00:00
+2026-09-20,rumod,https://t.me/mod_russia/67509,46cea18df51cfe7373f96a6cb9461f46b68bc35473b6a06764d834462b304058,,ok,2026-11-19T22:10:32+00:00
+2026-09-21,af,https://armyinform.com.ua/2026/09/21/ne-lyshe-velyka-kilkist-bpla-a-j-nova-taktyka-yak-rosiya-zminyuye-povitryani-ataky-reaktyvnymy-shahedamy/,49206d54493c3b70b781021330eb7bee50115db1dff73552bac4888271fe881a,,ok,2026-11-19T21:51:25+00:00
 2026-09-21,gsu,https://armyinform.com.ua/2026/09/21/genshtab-zsu-najbilshe-vorozhyh-atak-na-kostyantynivskomu-napryamku/,1647faa82248511b8bbf4289d56319b1ea5cb61be52784f10cbe3df51bd70b68,08:00 21 вересня,ok,2026-11-17T13:44:53+00:00
+2026-09-21,rumod,https://t.me/mod_russia/67531,4c3436006e5d8b658c8afd476b307be610dd92ba38f95627ee9b4720824c4816,,ok,2026-11-19T22:10:32+00:00
+2026-09-22,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:51:43+00:00
 2026-09-22,gsu,https://armyinform.com.ua/2026/09/22/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-napryamku-genshtab-zsu-2/,2ffd778743b6ac66f5fc395c3001d3de4a0f6cfb6d8b5d10f7a81bd3845e5ee1,08:00 22 вересня,ok,2026-11-17T13:24:40+00:00
+2026-09-22,rumod,https://t.me/mod_russia/67549,469ac60e0200ec5ef487814043a2ca815fb73f3dc005947dfc52c029bfb2124d,,ok,2026-11-19T22:10:32+00:00
+2026-09-23,af,https://armyinform.com.ua/2026/09/23/syly-ppo-vnochi-zneshkodyly-119-vorozhyh-bpla-ta-try-banderoli/,4a7c46f73d3a7325e66e2fbe47b29826a6ee149fee0576adc70eea70c380d4c1,,ok,2026-11-19T21:51:52+00:00
 2026-09-23,gsu,https://armyinform.com.ua/2026/09/23/na-kostyantynivskomu-napryamku-zafiksovano-25-atak-voroga-genshtab-zsu/,2ba28a727ecb41db43ba26554af88062be164d3a0f9c44726a47e0a296679410,08:00 23 вересня,ok,2026-11-17T13:44:56+00:00
+2026-09-23,rumod,https://t.me/mod_russia/67571,ac9cb9c68ecc618aa0989448dbce66ac8a8b0c61d6715f618694cf6cadb3c7ca,,ok,2026-11-19T22:10:32+00:00
+2026-09-24,af,https://armyinform.com.ua/2026/09/24/nichna-ataka-24-veresnya-u-kyyevi-zagynuly-dvoye-lyudej-ye-postrazhdali-v-inshyh-misczyah/,84ce883699e4a4dd29decb33f75c885d5aaf4a28cc1a379a9ba7a3e96d4127f7,,ok,2026-11-19T21:52:10+00:00
 2026-09-24,gsu,https://armyinform.com.ua/2026/09/24/najbilshe-vorozhyh-shturmiv-za-dobu-zafiksovano-na-kostyantynivskomu-napryamku/,e4d28abe4232bd12d6d597fc0184b165398bc4be67cf688e385faca29618bfab,08:00 24 вересня,ok,2026-11-17T13:25:43+00:00
+2026-09-24,rumod,https://t.me/mod_russia/67594,2ba7eb826035905f139b61d8a26ce5bb5977db26dcaaa3c99c4966b3e18e07d6,,ok,2026-11-19T22:10:32+00:00
+2026-09-25,af,https://armyinform.com.ua/2026/09/25/reaktyvni-bpla-znovu-atakuyut-stolyczyu-u-kyyevi-shhe-odne-vluchannya-v-ofisnu-budivlyu/,2c2b6f0314e9503db6da7576484a19e5c19c637a00455e755c6ebe8b0f1503ae,,ok,2026-11-19T21:52:19+00:00
 2026-09-25,gsu,https://armyinform.com.ua/2026/09/25/u-genshtabi-zsu-nazvaly-napryamky-de-vorog-proviv-najbilshe-shturmiv-za-dobu/,b6442ef8b8608e37ffdd71dccfc09215e7d703615f7d19948864c12d50423b1d,08:00 15 вересня,ok,2026-11-17T13:25:52+00:00
+2026-09-25,rumod,https://t.me/mod_russia/67638,8c45b3292c26f180774e0bc4a708893fcfe836c3e34034065a85f525c6af0d99,,ok,2026-11-19T22:10:32+00:00
+2026-09-26,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:52:37+00:00
 2026-09-26,gsu,https://armyinform.com.ua/2026/09/26/najbilshe-vorozhyh-shturmiv-za-dobu-zafiksovano-na-kostyantynivskomu-ta-pokrovskomu-napryamkah-3/,852c0175233694334a62cce0856ea8f2acffde5a238772c58d5137bca7d4ebcd,08:00 26 вересня,ok,2026-11-17T13:26:04+00:00
+2026-09-26,rumod,https://t.me/mod_russia/67658,8e1cdf0cdb6c8067b5e73e89c1563b358d76747af7d7d99d65a8cba4069d618c,,ok,2026-11-19T22:10:32+00:00
+2026-09-27,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:52:55+00:00
 2026-09-27,gsu,https://armyinform.com.ua/2026/09/27/ponad-220-bojovyh-zitknen-na-yakyh-napryamkah-frontu-protyvnyk-atakuvav-najbilshe/,6483fc1940d54052319bc69e7b1f6815f490ec8d4d9f2b95683f1d4cc8a753eb,08:00 27 вересня,ok,2026-11-17T13:45:02+00:00
+2026-09-27,rumod,https://t.me/mod_russia/67674,660ff25ee44ba54e8c9d8bab61f43e589561c6b44b28d7f10e439e8dc1a2621f,,ok,2026-11-19T22:10:32+00:00
+2026-09-28,af,https://armyinform.com.ua/2026/09/28/vorog-vnochi-zapustyv-po-ukrayini-ponad-160-bpla-79-iz-nyh-reaktyvni/,e49ab7c8384399785956e744522480381178a1ce44057ab94704c58fe357c720,,ok,2026-11-19T21:53:17+00:00
 2026-09-28,gsu,https://armyinform.com.ua/2026/09/28/na-fronti-229-bojovyh-zitknen-za-dobu-vorog-najbilshe-atakuvav-na-dvoh-napryamkah/,b27c1e7b3d4855f511e3834459be839203f9d0b5ece8096780c6fc36be335df1,08:00 28 вересня,ok,2026-11-17T13:45:05+00:00
+2026-09-28,rumod,https://t.me/mod_russia/67721,fb9bd9e0754134a10b3280954a7f4245b19a6235839ee36c33245fc12552ebe8,,ok,2026-11-19T22:10:32+00:00
+2026-09-29,af,https://armyinform.com.ua/2026/09/29/unochi-rosiya-vypustyla-po%c2%a0ukrayini-try-rakety-j%c2%a0ponad-150%c2%a0bpla/,30117c90ca4237f8684aa78e0ca5ca426d5356f9b0cbd2b995d33a39309c1102,,ok,2026-11-19T21:53:34+00:00
 2026-09-29,gsu,https://armyinform.com.ua/2026/09/29/ponad-200-boyezitknen-za-dobu-u-genshtabi-zsu-povidomyly-pro-sytuacziyu-na-fronti-3/,0ead78937788a09434d959c365006603ce2eeab17f8cbccea9f33cdeb99b2c02,08:00 29 вересня,ok,2026-11-17T13:45:08+00:00
+2026-09-29,rumod,https://t.me/mod_russia/67740,2e6b521a251c664a3bc0b5880b1baf48d21b8fddf18f48d1a110c56d1685082a,,ok,2026-11-19T22:10:32+00:00
+2026-09-30,af,https://armyinform.com.ua/2026/09/30/osnovnyj-napryamok-udaru%c2%a0%e2%80%94-kyyivshhyna-u%c2%a0povitryanyh-sylah-povidomyly-podrobyczi-nichnogo-obstrilu/,b62835b4053f942f904fca27f63a958f22102e7cab07c3fbc7e2e5960712ea58,,ok,2026-11-19T21:53:38+00:00
 2026-09-30,gsu,https://armyinform.com.ua/2026/09/30/na-fronti-za-dobu-vidbulos-ponad-220-boyezitknen-najbilshe-%e2%80%94-na-kostyantynivskomu-napryamku/,80a3786e57f5214457824f4e652f51c366f1979544eff72e37f419724808b77e,08:00 30 вересня,ok,2026-11-17T13:45:11+00:00
+2026-09-30,rumod,https://t.me/mod_russia/67776,3c0ffbd3ad13bce199d04c23605efecf6930c8e44cdcb6d710cc3d4c72beb456,,ok,2026-11-19T22:10:32+00:00
+2026-10-01,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:53:56+00:00
 2026-10-01,gsu,https://armyinform.com.ua/2026/10/01/na-pokrovskomu-napryamku-ukrayinski-oboronczi-zupynyly-33-ataky-rf/,3799fc586af7af3ff9d19a8f8dce771e8961e1bab7a0e1b4e1c6f902dcb0d72a,08:00 1 жовтня,ok,2026-11-17T13:45:33+00:00
+2026-10-01,rumod,https://t.me/mod_russia/67832,10b46ba9ed98cbd1a44f20c04f1d0519124b74f9ee05ce1944ae68328f449045,,ok,2026-11-19T22:10:32+00:00
+2026-10-02,af,https://armyinform.com.ua/2026/10/02/ponad-100-bezpilotnykiv-atakuvaly-ukrayinu-syly-ppo-zbyly-bilshist-vorozhyh-droniv/,422a816f97193659f477cde916af3fee8c3f02084fa6736649b6b7f5cf770b51,,ok,2026-11-19T21:54:01+00:00
 2026-10-02,gsu,,,,"missing (7 candidates, 0 http errors)",2026-11-17T13:45:54+00:00
+2026-10-02,rumod,https://t.me/mod_russia/67887,2df0c911acdbc274a9c9ecd32c52db0fd0c40d4f972bd5c159ff3b0a178ff60b,,ok,2026-11-19T22:10:32+00:00
+2026-10-03,af,https://armyinform.com.ua/2026/10/03/vorog-vnochi-zapustyv-po-ukrayini-ponad-150-bpla-45-iz-nyh-reaktyvni/,4c5add987ad3a4fea4b37b8bd00c3b5d1953e228e1099eae0b39870f724234ef,,ok,2026-11-19T21:54:08+00:00
 2026-10-03,gsu,https://armyinform.com.ua/2026/10/03/na-kostyantynivskomu-napryamku-ukrayinski-oboronczi-zupynyly-21-ataku-rf/,e3c3d2b2d3667c5c23074b60fbb095b550ab4850abcd11448fb2a1f09e7f7a20,08:00 3 жовтня,ok,2026-11-17T13:46:12+00:00
+2026-10-03,rumod,https://t.me/mod_russia/67908,790d9e667786551ec272c29f7a8d2f53aacaa6f3b83cba32f14496817c2eaffb,,ok,2026-11-19T22:10:32+00:00
+2026-10-04,af,https://armyinform.com.ua/2026/10/04/unochi-rosiya-zapustyla-po-ukrayini-ponad-50-reaktyvnyh-bpla/,de8a3547b5ae22b7329068a11e87ccb77ceefb8dfa22a34b13c15d969f02601b,,ok,2026-11-19T21:54:20+00:00
 2026-10-04,gsu,https://armyinform.com.ua/2026/10/04/ponad-200-boyezitknen-za-dobu-u-genshtabi-povidomyly-pro-sytuacziyu-na-najgaryachishyh-napryamkah-frontu/,9f1a0f7754bfa5f89cf2de0d087b5441aeb31d0c6754db2db4e81c090b1a6635,08:00 4 жовтня,ok,2026-11-17T13:46:15+00:00
+2026-10-04,rumod,https://t.me/mod_russia/67928,1daeba5fbf408c2f229050846f38eb137dbaf1629c562f79abdd56a25845db7a,,ok,2026-11-19T22:10:32+00:00
+2026-10-05,af,https://armyinform.com.ua/2026/10/05/ponad-200-bezpilotnykiv-vnochi-atakuvaly-ukrayinu-yak-vidpraczyuvala-ppo/,98e79f8e8c3171987c1b3b765a198967edc84f86f4adee2a5cb111288f082f0a,,ok,2026-11-19T21:54:44+00:00
 2026-10-05,gsu,,,,"missing (7 candidates, 0 http errors)",2026-11-17T13:46:36+00:00
+2026-10-05,rumod,https://t.me/mod_russia/67969,a19699de6e2799c644721d39a5a6e0842d9fcec42cc772e9ca053323200bcaf5,,ok,2026-11-19T22:10:32+00:00
+2026-10-06,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:54:59+00:00
 2026-10-06,gsu,https://armyinform.com.ua/2026/10/06/genshtab-zsu-nazvav-napryamky-z-najbilshoyu-kilkistyu-vorozhyh-shturmiv/,8ff098fe7fc61004d99cc2b6f16e7f455c871b60d0a57900cd7c8898107ac29e,08:00 6 жовтня,ok,2026-11-17T13:46:39+00:00
+2026-10-06,rumod,https://t.me/mod_russia/67989,19b88df201c6951f36ee810360df136054d71fa30cdb0776462890b399ccf3ce,,ok,2026-11-19T22:10:32+00:00
+2026-10-07,af,,,,"missing (8 candidates, 0 http errors)",2026-11-19T21:55:23+00:00
 2026-10-07,gsu,https://armyinform.com.ua/2026/10/07/ponad-200-bojovyh-zitknen-za-dobu-syly-oborony-vidbyly-ataky-protyvnyka-na-devyaty-napryamkah/,f6e3f4bf9ab13449d35cb6ebe074dee5a07d2fc3c8025f98b9d26dc8eb65bcd5,08:00 7 жовтня,ok,2026-11-17T13:46:42+00:00
+2026-10-07,rumod,https://t.me/mod_russia/68015,fbe0b5560590d736169a18513ff6902506f7650287d5779636bd8980da3f8ded,,ok,2026-11-19T22:10:32+00:00
+2026-10-08,af,https://armyinform.com.ua/2026/10/08/vorog-vnochi-zapustyv-po-ukrayini-ponad-140-bpla-82-z-nyh-reaktyvni/,53e4b3f867ad92baa099387b8aa7cf4eb82c2b167e3baef57db2e5920b69fb09,,ok,2026-11-19T21:55:29+00:00
 2026-10-08,gsu,https://armyinform.com.ua/2026/10/08/na-kostyantynivskomu-napryamku-za-dobu-zafiksovano-24-vorozhi-ataky/,2f4983de7f72bea6973012ef5e8a76458b68a00e5fe9092194963d809721534b,08:00 8 жовтня,ok,2026-11-17T13:30:08+00:00
+2026-10-08,rumod,https://t.me/mod_russia/68033,a4f209015c41e3fcd578a1178e534ba604cceb2c1f408d3579435ebe6e909089,,ok,2026-11-19T22:10:32+00:00
+2026-10-09,af,https://armyinform.com.ua/2026/10/09/syly-ppo-vnochi-zneshkodyly-114-vorozhyh-bpla-bilshist-reaktyvni/,982bca027951482804f1336e7a90de93aac200cc056e71b409a41919902cc3bd,,ok,2026-11-19T21:55:44+00:00
 2026-10-09,gsu,https://armyinform.com.ua/2026/10/09/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-3/,bb24d2052d42c1863962ff5aa24267895992bd131ff0bc6c92b2a0b7dee3e464,08:00 9 жовтня,ok,2026-11-17T13:30:19+00:00
+2026-10-09,rumod,https://t.me/mod_russia/68073,13bcc6efe2206906cb686d5f68ee797ac190edc47cdea82c2ce8c967c19b4396,,ok,2026-11-19T22:10:32+00:00
+2026-10-10,af,,,,"missing (6 candidates, 0 http errors)",2026-11-19T21:56:02+00:00
 2026-10-10,gsu,https://armyinform.com.ua/2026/10/10/na-pokrovskomu-napryamku-za-dobu-zafiksovano-22-vorozhi-ataky/,55c09123968f8840969b88816c69628fff8340538acffa42ab22e99d9c6969a5,08:00 10 жовтня,ok,2026-11-17T13:30:34+00:00
+2026-10-10,rumod,https://t.me/mod_russia/68094,66d250cd64351e479d05ee424646f1d2b85ec11ae9358a081a54a771c892451e,,ok,2026-11-19T22:10:32+00:00
+2026-10-11,af,https://armyinform.com.ua/2026/10/11/ppo-zbyla-bilshist-reaktyvnyh-droniv-yaki-vnochi-atakuvaly-ukrayinu/,13303800004b3995466fb9d2c1ba62ee9f3eaa4404afdfee9e178a3254912f6a,,ok,2026-11-19T21:56:11+00:00
 2026-10-11,gsu,https://armyinform.com.ua/2026/10/11/na-gulyajpilskomu-ta-pokrovskomu-napryamkah-najbilshe-vorozhyh-atak-genshtab-zsu/,28df28eee5d7b0fa47994308b87cb743ad73ca012ecd2c6846d5aef582ddc266,08:00 11 жовтня,ok,2026-11-17T13:46:45+00:00
+2026-10-11,rumod,https://t.me/mod_russia/68114,18cd14bffeea5b93d5e7973901c82fe914001a411d5180f7ebf24db66eb17e1e,,ok,2026-11-19T22:10:32+00:00
+2026-10-12,af,https://armyinform.com.ua/2026/10/12/ponad-120-droniv-atakuvaly-ukrayinu-povitryani-syly-povidomyly-kilkist-zbytyh-czilej/,cdea286fb6ad2b0ebb1001da9960c0422ef6d89dad6ea6f8b629a9b1b6c3ae35,,ok,2026-11-19T21:56:14+00:00
 2026-10-12,gsu,,,,"missing (7 candidates, 0 http errors)",2026-11-17T13:47:06+00:00
+2026-10-12,rumod,https://t.me/mod_russia/68133,da7d3dc7bce69d9251e4b02de6de08bd6ea96d592ef54695fce1eda268a38d51,,ok,2026-11-19T22:10:32+00:00
+2026-10-13,af,https://armyinform.com.ua/2026/10/13/unochi-rosiya-vypustyla-po-ukrayini-5-balistychnyh-raket-ta-ponad-100-bpla/,eb2d42904879d278f1eaeacc1f9bed0b25c93849b219f5717446d3655f6e0c89,,ok,2026-11-19T21:56:26+00:00
 2026-10-13,gsu,https://armyinform.com.ua/2026/10/13/na-fronti-zafiksovano-ponad-200-boyezitknen-najbilshe-vorozhyh-atak-na-pokrovskomu-napryamku/,680c4cdb438f94fec7f4289ddf266192c8f6d809d601611372a6c7051b37387e,08:00 13 жовтня,ok,2026-11-17T13:31:10+00:00
+2026-10-13,rumod,https://t.me/mod_russia/68155,0208468f09ea09c4b13d7cae252ac3c3a1956977bafa28512567e4e30fbedaad,,ok,2026-11-19T22:10:32+00:00
+2026-10-14,af,https://armyinform.com.ua/2026/10/14/za-dva-try-tyzhni-z-konveyera-potraplyayut-u-zbirku-raket-zvidky-rosiya-bere-komponenty-dlya-novyh-udariv/,97c46b2ba4963660c4ba38b7f2007ac88a09be3ec089c58b80f6778731388f7d,,ok,2026-11-19T21:56:38+00:00
 2026-10-14,gsu,https://armyinform.com.ua/2026/10/14/najbilshe-vorozhyh-atak-za-dobu-zafiksovano-na-pokrovskomu-napryamku-%e2%80%94-genshtab-zsu/,edf7549608cfb11e2194414fa454da3a05895039dac5406eedfbab9150f09a8e,08:00 14 жовтня,ok,2026-11-17T13:31:16+00:00
+2026-10-14,rumod,https://t.me/mod_russia/68200,2a59ead51d6a27ca3cf2e1f727d2fccf2abd1d364e490338a4ea9120f3673217,,ok,2026-11-19T22:10:32+00:00
+2026-10-15,af,https://armyinform.com.ua/2026/10/15/blyzko-600-droniv-atakuvaly-ukrayinu-povitryani-syly-povidomyly-kilkist-zbytyh-czilej/,e4f703d2e1585c2507e82ffa5e804c451e410fd71bc636f3188c2ffd9a994da1,,ok,2026-11-19T21:56:44+00:00
 2026-10-15,gsu,https://armyinform.com.ua/2026/10/15/najbilshe-vorozhyh-shturmiv-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-4/,4a0a77a7090fa5456af438ed617dc0b3402617f26a173932874162af0b7ace8d,08:00 15 жовтня,ok,2026-11-17T13:31:46+00:00
+2026-10-15,rumod,https://t.me/mod_russia/68238,d286fd79928990c5b37d5914ae2758e3bda652c9f9ae08757a327ae18166242b,,ok,2026-11-19T22:10:32+00:00
+2026-10-16,af,,,,"missing (7 candidates, 0 http errors)",2026-11-19T21:57:05+00:00
 2026-10-16,gsu,https://armyinform.com.ua/2026/10/16/na-pokrovskomu-napryamku-za-dobu-zafiksovano-60-vorozhyh-atak-genshtab-zsu/,9e4183ec3a8c1531e2622e9f06e19a5415fe4254e93fb64460e2f2be847fbf02,08:00 16 жовтня,ok,2026-11-17T13:31:55+00:00
+2026-10-16,rumod,https://t.me/mod_russia/68283,f0ea2762e9ae3d23b609bb2a5efeeed6576df5065f8fb531ad263f3652b9dc6b,,ok,2026-11-19T22:10:32+00:00
+2026-10-17,af,,,,"missing (3 candidates, 0 http errors)",2026-11-19T21:57:14+00:00
 2026-10-17,gsu,https://armyinform.com.ua/2026/10/17/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-ta-pivdenno-slobozhanskomu-napryamkah-%e2%80%94-genshtab-zsu/,dd47ae244dd482f4e3b4f583d01e7154fd125a6d166d1c6ba51a4170c8a6079d,08:00 17 жовтня,ok,2026-11-17T13:32:02+00:00
+2026-10-17,rumod,https://t.me/mod_russia/68299,429a755ebb025e953c4696bbb3985f99399eb3f33411199be18ecdfa34056fb4,,ok,2026-11-19T22:10:32+00:00
+2026-10-18,af,https://armyinform.com.ua/2026/10/18/unochi-rosiya-vypustyla-po-ukrayini-odnu-balistychnu-raketu-ta-180-bpla/,ce9c10a25a1edebb2179b831610b77fbb1eb4b5bdc0268c02eb12014e4c5bb6a,,ok,2026-11-19T21:57:23+00:00
 2026-10-18,gsu,,,,"missing (10 candidates, 0 http errors)",2026-11-17T13:47:36+00:00
+2026-10-18,rumod,https://t.me/mod_russia/68329,676bd285684a699af30672a84d148dac7344ada92d42edb3b39d2f94778d2db3,,ok,2026-11-19T22:10:32+00:00
+2026-10-19,af,https://armyinform.com.ua/2026/10/19/za-nich-bulo-zbyto-4-balistychni-rakety-ta-243-drony-voroga-povitryani-syly/,cbeb6fff9e68e3d80a3a9d66be6ea9a730853cc38637ccf16b33d7516f647b0b,,ok,2026-11-19T21:57:26+00:00
 2026-10-19,gsu,https://armyinform.com.ua/2026/10/19/vorog-najbilshe-atakuvav-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-genshtab-zsu-2/,7888c7cb6541db91a35f61e91cd7473cf198ccc93f23589e81209b433b3ea4ff,08:00 19 жовтня,ok,2026-11-17T13:32:38+00:00
+2026-10-19,rumod,https://t.me/mod_russia/68350,367a50ac96ed3478e67490643322d4fd3466f88e6048ba395bbe9fc98c00ade4,,ok,2026-11-19T22:10:32+00:00
+2026-10-20,af,https://armyinform.com.ua/2026/10/20/syly-oborony-perehopyly-vnochi-115-vorozhyh-bpla-73-z-yakyh-reaktyvni/,6e0fcbad38e77db213c2749d8a28936c0832d867aad36818892980af7e67f795,,ok,2026-11-19T21:57:42+00:00
 2026-10-20,gsu,https://armyinform.com.ua/2026/10/20/na-fronti-zafiksovano-ponad-200-boyezitknen-najbilshe-%e2%80%94-na-pokrovskomu-napryamku/,29883db066e872036117410a01ee0ba7087df6b7fdf5d90cf6d1a9f7c1c786d0,08:00 20 жовтня,ok,2026-11-17T13:32:41+00:00
+2026-10-20,rumod,https://t.me/mod_russia/68369,e782633b5b6a14e3116eadd77f1d2f60c0acfd7fce376faeeca10be892b009e7,,ok,2026-11-19T22:10:32+00:00
+2026-10-21,af,https://armyinform.com.ua/2026/10/21/syly-oborony-perehopyly-vnochi-150-vorozhyh-bpla-63-z-yakyh-%e2%80%94-reaktyvni/,7920d9320491116c3b3f6cc1748838f2676668a7e1cf19262fbf0fe2643aa390,,ok,2026-11-19T21:57:56+00:00
 2026-10-21,gsu,https://armyinform.com.ua/2026/10/21/najbilshe-vorozhyh-atak-zafiksovano-na-kostyantynivskomu-ta-pokrovskomu-napryamkah-2/,d95286b45c8e0cd7233503cbb96c7f60eaa574da657e4c60076975659f0886d2,08:00 21 жовтня,ok,2026-11-17T13:33:08+00:00
+2026-10-21,rumod,https://t.me/mod_russia/68412,3d1484e5fe093dea797459b535a365aba7ebb35c22e404950bb2a963d211af6d,,ok,2026-11-19T22:10:32+00:00
+2026-10-22,af,https://armyinform.com.ua/2026/10/22/osnovnyj-napryamok-udaru-kyyiv-povitryani-syly-povidomyly-kilkist-zbytyh-czilej/,4835bbe97a06cc848bb126687bc2d9aae1edbe75defe8321af1c1319b55e8eba,,ok,2026-11-19T21:58:00+00:00
 2026-10-22,gsu,https://armyinform.com.ua/2026/10/22/vorog-najbilshe-atakuvav-na-pokrovskomu-napryamku-genshtab-zsu-3/,688c43174d96f3d335e5c455df529bbefa0c93b79d3badbc17da31bf2303b592,08:00 22 жовтня,ok,2026-11-17T13:33:20+00:00
+2026-10-22,rumod,https://t.me/mod_russia/68453,385dc9b85f50987f7e05e104c5bfee20dd61b4eb2f2feae721fa420979bfc4a2,,ok,2026-11-19T22:10:32+00:00
+2026-10-23,af,,,,"missing (7 candidates, 0 http errors)",2026-11-19T21:58:20+00:00
 2026-10-23,gsu,https://armyinform.com.ua/2026/10/23/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-gulyajpilskomu-ta-kostyantynivskomu-napryamkah-3/,0dcebd95c0f10418c53dab49e8a11d2266d625e3280d04d1d7c317985e8c0649,08:00 23 жовтня,ok,2026-11-17T13:33:35+00:00
+2026-10-23,rumod,https://t.me/mod_russia/68476,85ede44b76619cabd33bec9ec81f45c1bdf768563868f53df6d45356b1fa3b75,,ok,2026-11-19T22:10:32+00:00
+2026-10-24,af,,,,"missing (2 candidates, 0 http errors)",2026-11-19T21:58:26+00:00
 2026-10-24,gsu,,,,"missing (4 candidates, 0 http errors)",2026-11-17T13:47:48+00:00
+2026-10-24,rumod,https://t.me/mod_russia/68498,c4b7ba63c4f31f65efe4ad88745ea9ebffac604271ecdefcf591d8556bdc829c,,ok,2026-11-19T22:10:32+00:00
+2026-10-25,af,https://armyinform.com.ua/2026/10/25/syly-oborony-perehopyly-za-nich-119-vorozhyh-bpla-64-z-yakyh-reaktyvni/,519b158a6576bc527ea0a682239bb7493c8a3536b402aadff77c1f8b394092e2,,ok,2026-11-19T21:58:32+00:00
 2026-10-25,gsu,https://armyinform.com.ua/2026/10/25/vorog-namagavsya-atakuvaty-kostyantynivku-13-raziv-genshtab-zsu/,724a969f68ba9ba167789f8dc8ce907185dc78de3b3a51c4741ec2414a36f257,08:00 25 жовтня,ok,2026-11-17T13:33:56+00:00
+2026-10-25,rumod,https://t.me/mod_russia/68515,20c93d330c759f555a022a636669d3f477c86df74d0814837145d2e0681e8557,,ok,2026-11-19T22:10:32+00:00
+2026-10-26,af,https://armyinform.com.ua/2026/10/26/try-rakety-ta-112-droniv-znyshhyly-syly-ppo-pid-chas-nichnoyi-ataky/,e7f9e139b49db5d57c4f82a5cda537a4ef1d28fcbf40d523cdc312c9b9477df8,,ok,2026-11-19T21:58:44+00:00
 2026-10-26,gsu,https://armyinform.com.ua/2026/10/26/syly-oborony-zupynyly-najbilshe-vorozhyh-atak-na-pokrovskomu-ta-gulyajpilskomu-napryamkah/,115944191e9e176f0968c1c5b7f5343fd3c56cf3e3e3eeb436dd9050142283b5,08:00 26 жовтня,ok,2026-11-17T13:48:15+00:00
+2026-10-26,rumod,https://t.me/mod_russia/68563,769276c6a4a4ccab9fcea924ce97bb598e1f0f5c6989f02dc354d7710b58c7d6,,ok,2026-11-19T22:10:32+00:00
+2026-10-27,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T21:58:59+00:00
 2026-10-27,gsu,https://armyinform.com.ua/2026/10/27/najbilshe-rosijskyh-atak-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-2/,04def0bc88c23cf3f19ebc114ca24b1ab514793381204fd8d62970489bec0bc0,08:00 27 жовтня,ok,2026-11-17T13:34:47+00:00
+2026-10-27,rumod,https://t.me/mod_russia/68583,41222d7121435af10f7aa82cd23d3cf226c496078958514f7c7eb7c01be5f8c7,,ok,2026-11-19T22:10:32+00:00
+2026-10-28,af,https://armyinform.com.ua/2026/10/28/syly-oborony-perehopyly-za-nich-71-vorozhyj-bpla-31-z-yakyh-reaktyvni/,aa99af8f6df9d615d704d40976a7da8333ed7fa025203ae5e0ed7b7b5abdcdf2,,ok,2026-11-19T21:59:11+00:00
 2026-10-28,gsu,https://armyinform.com.ua/2026/10/28/vorog-zdijsnyv-za-dobu-32-ataky-na-pokrovskomu-napryamku-genshtab-zsu/,e154ead5a4d7edff96526af36925365fc4af077ffdafb05d68b0e829f207b9cb,08:00 28 жовтня,ok,2026-11-17T13:34:53+00:00
+2026-10-28,rumod,https://t.me/mod_russia/68603,6d2fdde9b5b2767f5273c79f53e637c9d59187a426170c9c22e5cffc2e87d1d9,,ok,2026-11-19T22:10:32+00:00
+2026-10-29,af,https://armyinform.com.ua/2026/10/29/syly-oborony-perehopyly-za-nich-97-vorozhyh-bpla-30-z-yakyh-reaktyvni/,2685aea62b5ee2b24a98d57ef2e08ad74eb57137e483ac7a188e1fb30c2cced8,,ok,2026-11-19T21:59:29+00:00
 2026-10-29,gsu,https://armyinform.com.ua/2026/10/29/syly-oborony-zupynyly-42-ataky-protyvnyka-na-pokrovskomu-napryamku/,7643073294fdae2f6b9e2730842a0d62e94345696c8e3221cda172b895d2e461,08:00 29 жовтня,ok,2026-11-17T13:48:27+00:00
+2026-10-29,rumod,https://t.me/mod_russia/68628,2d96cd5200091f06aa5a6b53e5e8b6da11e9144e10455164d3a22b2c0301841b,,ok,2026-11-19T22:10:32+00:00
+2026-10-30,af,https://armyinform.com.ua/2026/10/30/balistyka-ta-ponad-sotnya-droniv-chym-rosiya-byla-po-ukrayini-vnochi/,3a6ef55cc1088920a234f9b1e12b3b0ac3dac299aa62fce95e3ef2fd2d612f6d,,ok,2026-11-19T21:59:41+00:00
 2026-10-30,gsu,https://armyinform.com.ua/2026/10/30/vorog-zdijsnyv-24-sproby-atakuvaty-kostyantynivku-genshtab-zsu/,b937431e2a79dbba39df029c537058551440ff36698f388787ef8a718a458a29,08:00 30 жовтня,ok,2026-11-17T13:48:37+00:00
+2026-10-30,rumod,https://t.me/mod_russia/68653,9488abbc7139fd0be2159a66bd1bca5b07b7021313688d935fd6b8742482a92e,,ok,2026-11-19T22:10:32+00:00
+2026-10-31,af,https://armyinform.com.ua/2026/10/31/syly-ppo-perehopyly-za-nich-105-vorozhyh-bpla-49-z-yakyh-reaktyvni/,324bc12e3c4221162e8dfdbddbd0468c95a850979cccd9c50c3d74e5d8cf6424,,ok,2026-11-19T21:59:44+00:00
 2026-10-31,gsu,https://armyinform.com.ua/2026/10/31/ponad-170-boyezitknen-za-dobu-u-genshtabi-zsu-povidomyly-pro-sytuacziyu-na-fronti-5/,852ffe497bff148c68c2d0f5a2caacfae6e7e099428b5c3753073e289543c13d,08:00 31 жовтня,ok,2026-11-17T13:48:40+00:00
+2026-10-31,rumod,https://t.me/mod_russia/68666,4382e338f4de2ecee119a32c817991595b2b2161f625459931c9d1e110e9ba16,,ok,2026-11-19T22:10:32+00:00
+2026-11-01,af,https://armyinform.com.ua/2026/11/01/reaktyvni-drony-j-banderoli-rosiya-vden-zapustyla-po-ukrayini-326-bezpilotnykiv/,be3cb7baea7a895e9ede28d347292595988f61770938f2bb7fd00b84561738a2,,ok,2026-11-19T21:59:50+00:00
 2026-11-01,gsu,https://armyinform.com.ua/2026/11/01/264-bojovyh-zitknennya-za-dobu-genshtab-zsu-povidomyv-pro-sytuacziyu-na-klyuchovyh-napryamkah/,556bea7992d08c3c8fb8bb056904ff7a6917ad835da8a18123d3bdd1d138aa9e,08:00 1 листопада,ok,2026-11-17T13:48:46+00:00
+2026-11-01,rumod,https://t.me/mod_russia/68696,613d91ffd563d20ea85128125e5ad19ac0121512bde947faa912724989c3b6d3,,ok,2026-11-19T22:10:32+00:00
+2026-11-02,af,https://armyinform.com.ua/2026/11/02/vnochi-vorog-vypustyv-po-ukrayini-193-bezpilotnyky/,b9af70f300cc813f9df9d89de6345bbe9090e329e1e6caeedb602a6f8a7d55e3,,ok,2026-11-19T22:00:05+00:00
 2026-11-02,gsu,https://armyinform.com.ua/2026/11/02/ponad-200-bojovyh-zitknen-za-dobu-u-genshtabi-zsu-povidomyly-pro-sytuacziyu-na-fronti/,9c8b69d0b6b9aff72a7aaffb84acb9fc47f62db60aff4d7a134cf4e66607d49d,08:00 2 листопада,ok,2026-11-17T13:48:49+00:00
+2026-11-02,rumod,https://t.me/mod_russia/68712,c1004ab63b57744c99dc012def9157ed0de03d5824d1b4c0b1239e51a811763b,,ok,2026-11-19T22:10:32+00:00
+2026-11-03,af,https://armyinform.com.ua/2026/11/03/iskandery-shahedy-czyrkony-rosiya-vypustyla-po-ukrayini-desyatky-raket-i-sotni-droniv/,0ee4eeebb20727e6d16a51bd27bce0635a03ea89a759cde5e64369ccd5f8b2bb,,ok,2026-11-19T22:00:20+00:00
 2026-11-03,gsu,https://armyinform.com.ua/2026/11/03/na-fronti-vidbulos-ponad-200-boyezitknen-za-dobu-najbilshe-na-kostyantynivskomu-napryamku/,dbfe6356b8354914d07551a9964ed441ab079c51e94aaa6ef5e0232cee160ed1,08:00 3 листопада,ok,2026-11-17T13:48:55+00:00
+2026-11-03,rumod,https://t.me/mod_russia/68735,0dfd745a706ff7d1b47cbd3968d7270edcca50dd461d6821703bd1690045f404,,ok,2026-11-19T22:10:32+00:00
+2026-11-04,af,https://armyinform.com.ua/2026/11/04/syly-ppo-perehopyly-za-nich-272-vorozhyh-bpla-64-z-yakyh-reaktyvni/,1533393cb4ab6a865a8f645f1e5fbe994d68db644f02999d5321521faf040db5,,ok,2026-11-19T22:00:33+00:00
 2026-11-04,gsu,https://armyinform.com.ua/2026/11/04/syly-oborony-zupynyly-24-ataky-protyvnyka-na-kostyantynivskomu-napryamku/,795ce8d37e3cb6e3cc043f8de1a60aa949681dc4b2dee4b5023815dc177e9889,08:00 4 листопада,ok,2026-11-17T13:49:16+00:00
+2026-11-04,rumod,https://t.me/mod_russia/68760,544a722ca212e7c403c85c64e6353f19b50608c3d55effa06dc399cfa240604f,,ok,2026-11-19T22:10:32+00:00
+2026-11-05,af,https://armyinform.com.ua/2026/11/05/vnochi-vorog-vypustyv-po-ukrayini-128-bezpilotnykiv/,33072447ed884d37fd814ff44437679bc4eb35f46eec1d2a8e819b98dae691e7,,ok,2026-11-19T22:00:41+00:00
 2026-11-05,gsu,https://armyinform.com.ua/2026/11/05/na-fronti-vidbulos-ponad-180-boyezitknen-za-dobu-najbilshe-na-pokrovskomu-napryamku/,5bdb8dd06b21fb07754c96fee9ef5e405b0614f2da763f340cd0984dbe9f3546,08:00 5 листопада,ok,2026-11-17T13:49:19+00:00
+2026-11-05,rumod,https://t.me/mod_russia/68778,39448debd4fa24a828cefa77c727af120223239d93ffa1081e18418907e49e44,,ok,2026-11-19T22:10:32+00:00
+2026-11-06,af,https://armyinform.com.ua/2026/11/06/syly-ppo-perehopyly-za-nich-196-vorozhyh-bpla-70-z-yakyh-%e2%80%94-reaktyvni/,bf9a7094741eab4981a33dd757ccb47aaff3b9845fd117889f2d476fc62346c1,,ok,2026-11-19T22:00:50+00:00
 2026-11-06,gsu,https://armyinform.com.ua/2026/11/06/majzhe-190-boyezitknen-za-dobu-u-genshtabi-povidomyly-pro-sytuacziyu-na-fronti/,46423eaa59c53283e5fed9208072578069ac472b362d8a2975c683d8665c0aa2,08:00 6 листопада,ok,2026-11-17T13:49:22+00:00
+2026-11-06,rumod,https://t.me/mod_russia/68801,4dadbca69018619f2307ea4f8ea19d1225d4a1f131f3654d25634cf18cd25337,,ok,2026-11-19T22:10:32+00:00
+2026-11-07,af,https://armyinform.com.ua/2026/11/07/rosiya-mogla-atakuvaty-ukrayinskyj-energoobyekt-raketamy-kn-23-prezydent-povidomyv-pro-deficzyt-perehoplyuvachiv-dlya-patriot/,5a1a1176040764c0eca5d6c513e81c146850320744bd97788f3e19dd330ca194,,ok,2026-11-19T22:00:53+00:00
 2026-11-07,gsu,https://armyinform.com.ua/2026/11/07/na-fronti-vidbulos-majzhe-200-boyezitknen-za-dobu-najbilshe-na-kostyantynivskomu-napryamku/,ab510ef76b57728d6e40e3191e36db8ce5caf7fd4dfa9b84e1399105649b8c02,08:00 7 листопада,ok,2026-11-17T13:49:28+00:00
+2026-11-07,rumod,https://t.me/mod_russia/68815,42eecc918282c87935d34f8f0b0eeec487b34be0203a9f011bc134b9f0cfc147,,ok,2026-11-19T22:10:32+00:00
+2026-11-08,af,,,,"missing (5 candidates, 0 http errors)",2026-11-19T22:01:08+00:00
 2026-11-08,gsu,https://armyinform.com.ua/2026/11/08/najbilshe-vorozhyh-atak-zafiksovano-na-kostyantynivskomu-napryamku-%e2%80%94-genshtab-zsu/,a074d06b46d6ebfa0f493f1558014ae7d3714af5d7f5e971ec174f9b4aec7271,08:00 8 листопада,ok,2026-11-17T13:38:45+00:00
+2026-11-08,rumod,https://t.me/mod_russia/68857,c985972cc73de8ecd49c4c2d35046c540826e4f474f70eec60da2fcd06ecf516,,ok,2026-11-19T22:10:32+00:00
+2026-11-09,af,https://armyinform.com.ua/2026/11/09/ponad-300-bpla-atakuvaly-ukrayinu-syly-ppo-zbyly-bilshist-reaktyvnyh-droniv/,5843787be7f73788eaa240d6106b4e6f8f3bc170633e935185822a9e9a79a096,,ok,2026-11-19T22:01:14+00:00
 2026-11-09,gsu,https://armyinform.com.ua/2026/11/09/140-bojovyh-zitknen-syly-oborony-vidbyly-ataky-voroga-na-semy-napryamkah/,c085070eada5afd63d946a0c5154dc1e6dfc246bb796b6ea30f9077ba337e59d,08:00 9 листопада,ok,2026-11-17T13:49:31+00:00
+2026-11-09,rumod,https://t.me/mod_russia/68887,6239b3b5f73651f4fccc24365b13118a4458cf30f45f5ae9a3cd6a59c8e2a9e9,,ok,2026-11-19T22:10:32+00:00
+2026-11-10,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T22:01:27+00:00
 2026-11-10,gsu,https://armyinform.com.ua/2026/11/10/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-napryamku-genshtab-zsu-3/,5d61af37cc35c5feefd6398bde22e9c2e3c29d4c6b30469db934b2e92233ef82,08:00 10 листопада,ok,2026-11-17T13:39:15+00:00
+2026-11-10,rumod,https://t.me/mod_russia/68909,6a7801475e73240eaef911def10389f8e3b5de68664100d86e68155ef2c311c7,,ok,2026-11-19T22:10:32+00:00
+2026-11-11,af,https://armyinform.com.ua/2026/11/11/syly-ppo-perehopyly-za-nich-130-vorozhyh-bpla-72-z-yakyh-reaktyvni/,7dd2c25468e00c6b716034dad6c2ba2bbd62369d403219f8e9d316dae47c8a1f,,ok,2026-11-19T22:01:39+00:00
 2026-11-11,gsu,https://armyinform.com.ua/2026/11/11/za-dobu-na-fronti-zafiksovano-125-boyezitknen-najbilshe-%e2%80%94-na-kostyantynivskomu-napryamku/,3f6be3493ea60a067997818298ad3633c955c9a21f6e8a1229d18b9a0bf2e30a,08:00 11 листопада,ok,2026-11-17T13:39:18+00:00
+2026-11-11,rumod,https://t.me/mod_russia/68924,734641119ca15b4ab2b3613f6adbad4a2b98b3d31aa398ea759ec486200cf031,,ok,2026-11-19T22:10:32+00:00
+2026-11-12,af,https://armyinform.com.ua/2026/11/12/143-drony-za-den-iz-nyh-66-reaktyvnyh-ppo-zneshkodyla-124-bpla-ta-dvi-banderoli/,f86dec43dd1ab18cabc2c4dd93e8e62323fe1c750f587bd0e674bfceeb7a092f,,ok,2026-11-19T22:01:41+00:00
 2026-11-12,gsu,https://armyinform.com.ua/2026/11/12/najbilshe-vorozhyh-shturmiv-%e2%80%94-na-kostyantynivskomu-napryamku-na-pokrovskomu-intensyvnist-atak-znyzylasya/,e1d51c8ee6183114a5f7e32f19197b04779884dca17cee42ae1d75e742810adf,08:00 12 листопада,ok,2026-11-17T13:39:36+00:00
+2026-11-12,rumod,https://t.me/mod_russia/68966,693c5bdcddf8292b1a29d1d6ae960b7c132bfc26e0d3ed6751a4b4ec589a5206,,ok,2026-11-19T22:10:32+00:00
+2026-11-13,af,https://armyinform.com.ua/2026/11/13/syly-ppo-perehopyly-za-nich-80-vorozhyh-bpla-39-z-yakyh-reaktyvni/,e1894147a6fdd4caacb8eb197da31d332272947c10d41e1fb6a17467473e12ef,,ok,2026-11-19T22:01:54+00:00
 2026-11-13,gsu,https://armyinform.com.ua/2026/11/13/za-dobu-na-fronti-zafiksovano-175-boyezitknen-najbilshe-na-kostyantynivskomu-napryamku/,3acfa15a4c3f7ece536f9ebf19c7f3391b3f4bb53e7500f7ebf99e15885f9116,08:00 13 листопада,ok,2026-11-17T13:39:39+00:00
+2026-11-13,rumod,https://t.me/mod_russia/68986,ed01beb583b0414bc839684da7e1c41225626c45fd99ee21055d493d0e82346f,,ok,2026-11-19T22:10:32+00:00
+2026-11-14,af,https://armyinform.com.ua/2026/11/14/syly-oborony-perehopyly-za-nich-81-vorozhyh-bpla-52-z-yakyh-reaktyvni/,8971fca5228c504d41871ea0924d352ad8aa45d41bae5814763a4b33910b5e18,,ok,2026-11-19T22:02:06+00:00
 2026-11-14,gsu,https://armyinform.com.ua/2026/11/14/vorog-zdijsnyv-za-dobu-47-atak-na-pokrovskomu-napryamku-genshtab-zsu/,0fabbd7a79e1fe78d4edeb73da6124b1cf5db8999d60f85b8cd51cac3cce0b96,08:00 14 листопада,ok,2026-11-17T13:39:42+00:00
+2026-11-14,rumod,https://t.me/mod_russia/69004,cfd9b520bee6c74e96c4ea6eefbdc2f351cb18023c21941eeba97a4b91f4549e,,ok,2026-11-19T22:10:32+00:00
+2026-11-15,af,,,,"missing (4 candidates, 0 http errors)",2026-11-19T22:02:18+00:00
 2026-11-15,gsu,https://armyinform.com.ua/2026/11/15/najbilshe-vorozhyh-atak-zafiksovano-na-pokrovskomu-ta-kostyantynivskomu-napryamkah-2/,39f7a6878cef6501ab7ef6a5e54840ec62fc3fc169533d43741173e5e22420a4,08:00 15 листопада,ok,2026-11-17T13:40:06+00:00
+2026-11-15,rumod,https://t.me/mod_russia/69047,cd359f26476ce76571b42ac7d3db1838ec1b89785cfe93c1b9983203bd6c71f4,,ok,2026-11-19T22:10:32+00:00

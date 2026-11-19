@@ -1,0 +1,302 @@
+[
+ {
+  "id": "e01",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 131,
+  "evidence_end": 246,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e02",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 1623,
+  "evidence_end": 1735,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e03",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 1741,
+  "evidence_end": 1885,
+  "event_type": "naval_event"
+ },
+ {
+  "id": "e04",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 1903,
+  "evidence_end": 2061,
+  "event_type": "naval_event"
+ },
+ {
+  "id": "e05",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 2277,
+  "evidence_end": 2391,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e06",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 2632,
+  "evidence_end": 2695,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e07",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 2777,
+  "evidence_end": 2874,
+  "event_type": "other"
+ },
+ {
+  "id": "e08",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 3420,
+  "evidence_end": 3467,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e09",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 3571,
+  "evidence_end": 3656,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e10",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 3660,
+  "evidence_end": 3768,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e11",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 3792,
+  "evidence_end": 3861,
+  "event_type": "air_strike"
+ },
+ {
+  "id": "e12",
+  "kind": "event",
+  "report_id": "rumod-2026-07-21",
+  "evidence_start": 3792,
+  "evidence_end": 3861,
+  "event_type": "air_strike"
+ },
+ {
+  "id": "e13",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 318,
+  "evidence_end": 558,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e14",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 966,
+  "evidence_end": 1077,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e15",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 1595,
+  "evidence_end": 1699,
+  "event_type": "territorial_advance"
+ },
+ {
+  "id": "e16",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 2063,
+  "evidence_end": 2105,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e17",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 2111,
+  "evidence_end": 2181,
+  "event_type": "naval_event"
+ },
+ {
+  "id": "e18",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 2187,
+  "evidence_end": 2296,
+  "event_type": "naval_event"
+ },
+ {
+  "id": "e19",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 2444,
+  "evidence_end": 2559,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e20",
+  "kind": "event",
+  "report_id": "rumod-2026-07-29",
+  "evidence_start": 3221,
+  "evidence_end": 3367,
+  "event_type": "territorial_advance"
+ },
+ {
+  "id": "e21",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 249,
+  "evidence_end": 373,
+  "event_type": "naval_event"
+ },
+ {
+  "id": "e22",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 586,
+  "evidence_end": 697,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e23",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 1185,
+  "evidence_end": 1349,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e24",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 1359,
+  "evidence_end": 1461,
+  "event_type": "other"
+ },
+ {
+  "id": "e25",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2116,
+  "evidence_end": 2227,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e26",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2803,
+  "evidence_end": 2884,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e27",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2886,
+  "evidence_end": 2931,
+  "event_type": "logistics_or_infrastructure_strike"
+ },
+ {
+  "id": "e28",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2933,
+  "evidence_end": 2965,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e29",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2998,
+  "evidence_end": 3090,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e30",
+  "kind": "event",
+  "report_id": "rumod-2026-08-06",
+  "evidence_start": 2998,
+  "evidence_end": 3090,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "p01",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 1
+ },
+ {
+  "id": "p02",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 16
+ },
+ {
+  "id": "p03",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 24
+ },
+ {
+  "id": "p04",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 27
+ },
+ {
+  "id": "p05",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 28
+ },
+ {
+  "id": "p06",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-21",
+  "paragraph": 30
+ },
+ {
+  "id": "p07",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-07-29",
+  "paragraph": 29
+ },
+ {
+  "id": "p08",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-08-06",
+  "paragraph": 15
+ },
+ {
+  "id": "p09",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-08-06",
+  "paragraph": 17
+ },
+ {
+  "id": "p10",
+  "kind": "paragraph",
+  "report_id": "rumod-2026-08-06",
+  "paragraph": 23
+ }
+]
