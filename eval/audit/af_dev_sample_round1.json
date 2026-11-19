@@ -1,0 +1,126 @@
+[
+ {
+  "id": "e01",
+  "kind": "event",
+  "report_id": "af-2026-07-21",
+  "evidence_start": 0,
+  "evidence_end": 43,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e02",
+  "kind": "event",
+  "report_id": "af-2026-07-21",
+  "evidence_start": 45,
+  "evidence_end": 73,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e03",
+  "kind": "event",
+  "report_id": "af-2026-07-29",
+  "evidence_start": 89,
+  "evidence_end": 136,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e04",
+  "kind": "event",
+  "report_id": "af-2026-07-29",
+  "evidence_start": 438,
+  "evidence_end": 491,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "e05",
+  "kind": "event",
+  "report_id": "af-2026-08-06",
+  "evidence_start": 250,
+  "evidence_end": 307,
+  "event_type": "missile_strike"
+ },
+ {
+  "id": "e06",
+  "kind": "event",
+  "report_id": "af-2026-08-06",
+  "evidence_start": 337,
+  "evidence_end": 379,
+  "event_type": "missile_strike"
+ },
+ {
+  "id": "e07",
+  "kind": "event",
+  "report_id": "af-2026-08-06",
+  "evidence_start": 446,
+  "evidence_end": 474,
+  "event_type": "drone_strike"
+ },
+ {
+  "id": "e08",
+  "kind": "event",
+  "report_id": "af-2026-08-06",
+  "evidence_start": 695,
+  "evidence_end": 752,
+  "event_type": "air_defence_interception"
+ },
+ {
+  "id": "p01",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-21",
+  "paragraph": 1
+ },
+ {
+  "id": "p02",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-21",
+  "paragraph": 4
+ },
+ {
+  "id": "p03",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-29",
+  "paragraph": 1
+ },
+ {
+  "id": "p04",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-29",
+  "paragraph": 3
+ },
+ {
+  "id": "p05",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-29",
+  "paragraph": 4
+ },
+ {
+  "id": "p06",
+  "kind": "paragraph",
+  "report_id": "af-2026-07-29",
+  "paragraph": 6
+ },
+ {
+  "id": "p07",
+  "kind": "paragraph",
+  "report_id": "af-2026-08-06",
+  "paragraph": 1
+ },
+ {
+  "id": "p08",
+  "kind": "paragraph",
+  "report_id": "af-2026-08-06",
+  "paragraph": 3
+ },
+ {
+  "id": "p09",
+  "kind": "paragraph",
+  "report_id": "af-2026-08-06",
+  "paragraph": 4
+ },
+ {
+  "id": "p10",
+  "kind": "paragraph",
+  "report_id": "af-2026-08-06",
+  "paragraph": 7
+ }
+]

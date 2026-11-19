@@ -169,6 +169,9 @@ gold:
   substitutions:
     gsu-2026-08-22: 2026-08-25
     gsu-2026-08-30: 2026-08-31
+    # Amendment A2: no Air Force report on ArmyInform on these dates.
+    af-2026-10-01: 2026-10-02
+    af-2026-11-10: 2026-11-11
 
 field_audit:
   # Unsupported-field audit (SPEC 5.3, src/audit_fields.py): records drawn from S2

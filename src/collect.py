@@ -245,7 +245,10 @@ class Collector:
             except httpx.HTTPError:
                 errors += 1
                 continue
-            text = clean_gsu(html)
+            try:
+                text = clean_gsu(html)
+            except ValueError:  # not an article page (video, gallery): not the report
+                continue
             if is_gsu_morning(text, pattern):
                 self._save(source, day, html, text)
                 return self._row(day, source, url, text, "ok")

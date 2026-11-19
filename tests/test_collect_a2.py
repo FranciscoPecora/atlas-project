@@ -40,7 +40,7 @@ def test_collect_af_picks_the_air_force_report(tmp_path):
     routes = {
         f"{BASE}/robots.txt": (200, ""),
         f"{BASE}/sitemap-posttype-post.202608.xml": (200, sitemap),
-        other: (200, article("Президент заслухав доповідь.")),
+        other: (200, "<html><body><video></video></body></html>"),
         report: (200, article("У ніч на 3 серпня противник атакував 181 БПЛА. Повітряні сили.")),
     }
     row = Collector(CFG, make_fetcher(routes), data_dir=tmp_path).collect(["af"][0], [day])[0]
