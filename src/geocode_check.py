@@ -303,6 +303,10 @@ def main(argv: list[str] | None = None) -> None:
           "gazetteer (counted as misses for every variant)")  # fmt: skip
     missing = {k for k, g in picks.items() if g is None}
     groups = {"random sample": in_sample, "places where the two rules disagree": differ}
+    # SPEC 5.3's metric is undefined on dev (no precision-1 gold event); recorded as such.
+    rows: list[dict[str, Any]] = [
+        {"split": "dev", "system": "S3-H", "metric": "geocoding_accuracy_10km", "value": "", "n": 0}
+    ]
     for label, ids in groups.items():
         checked = [i for i in items if pid(i) in ids and pid(i) in picks]
         print(f"-- {label}: {len({pid(i) for i in checked})} places judged")
@@ -315,6 +319,37 @@ def main(argv: list[str] | None = None) -> None:
             if n:
                 print(f"{variant}: accuracy@10km {acc:.3f} over {n} gold events, median error "
                       f"{med:.1f} km")  # fmt: skip
+                system = "geocoder-rules" if not prev else "geocoder-rules+previous_day"
+                split = "dev-place-check" if label == "random sample" else "dev-place-disagree"
+                rows.append(
+                    {
+                        "split": split,
+                        "system": system,
+                        "metric": "hand_accuracy_10km",
+                        "value": round(acc, 4),
+                        "n": n,
+                    }
+                )
+                rows.append({"split": split, "system": system, "metric": "hand_median_error_km",
+                             "value": round(med, 1), "n": n})  # fmt: skip
+
+    import subprocess
+    from datetime import date
+
+    from eval.score import append_results
+    from src.config import config_hash
+
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
+                            text=True, cwd=ROOT).stdout.strip()  # fmt: skip
+    note = (
+        "owner's picks among namesakes, judged by the paragraph's uniquely named villages "
+        "(a proxy, not ground truth); SPEC 5.3 metric undefined on dev: n=0 precision-1"
+    )
+    for r in rows:
+        r.update(commit=commit, config_hash=config_hash(cfg), date=date.today().isoformat(),
+                 config=note)  # fmt: skip
+    append_results(rows)
+    print(f"{len(rows)} rows appended to eval/results.csv")
 
 
 if __name__ == "__main__":
