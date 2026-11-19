@@ -123,3 +123,21 @@ def test_page_holds_the_items_and_cannot_be_broken_by_text():
 
     html = render_page([{"id": "a", "quote_en": "x </script> y"}], "<p>/*ITEMS*/[]</p>")
     assert "</script>" not in html and '"id": "a"' in html
+
+
+def test_over_removed_counts_fields_the_annotator_called_supported():
+    from src.audit_fields import over_removed
+
+    marks = {"r:1": {"quantity"}, "r:2": set()}
+    before = {"r:1": {"event_type", "quantity"}, "r:2": {"event_type", "actor"}}
+    after = {"r:1": {"event_type"}, "r:2": {"event_type"}}
+    assert over_removed(marks, before, after) == (1, 2)  # actor removed but was fine
+
+
+def test_bootstrap_interval_contains_the_rate_and_is_seeded():
+    from src.audit_fields import bootstrap_rate
+
+    marks = {f"rep{i}:{j}": ({"quantity"} if i == 0 else set()) for i in range(5) for j in range(4)}
+    kept = {k: {"event_type", "quantity"} for k in marks}
+    low, high = bootstrap_rate(marks, kept, 500, 1)
+    assert low <= 0.1 <= high and (low, high) == bootstrap_rate(marks, kept, 500, 1)

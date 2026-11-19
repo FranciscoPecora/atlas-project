@@ -389,3 +389,15 @@ af04ba4,e9b1f958ae77,2026-11-18,test,gold-key-audit-round1-reread,event_error_ra
 81f9780,59a1dc578b80,2026-11-19,dev,S3-S,verifier_removed_event_type,4,173,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
 81f9780,59a1dc578b80,2026-11-19,dev,S3-S,verifier_removed_target,5,173,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
 81f9780,59a1dc578b80,2026-11-19,dev,S3-S,verifier_dropped_event_type,4,173,K=10km D=1d resamples=2000 seed=20261116 model=claude-haiku-5-5 verifier=claude-sonnet-5-5 effort=low
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S2,unsupported_field_rate,0.0404,1609,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S2,unsupported_field_rate_low,0.0065,1609,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S2,unsupported_field_rate_high,0.0901,1609,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S2,verifier_removed_supported,0,0,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-H,unsupported_field_rate,0.0143,1464,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-H,unsupported_field_rate_low,0.0,1464,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-H,unsupported_field_rate_high,0.0368,1464,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-H,verifier_removed_supported,101,145,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-S,unsupported_field_rate,0.0168,1432,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-S,unsupported_field_rate_low,0.0027,1432,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-S,unsupported_field_rate_high,0.0394,1432,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"
+ada8847,59a1dc578b80,2026-11-19,dev-field-audit,S3-S,verifier_removed_supported,136,177,"200 records, seed 20261119; judged from a machine translation; resamples=2000 seed=20261116"

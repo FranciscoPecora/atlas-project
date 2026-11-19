@@ -180,6 +180,40 @@ def unsupported_rate(
     return bad, total
 
 
+def bootstrap_rate(
+    marks: dict[str, set[str]], kept: dict[str, set[str]], resamples: int, seed: int
+) -> tuple[float, float]:
+    """95% percentile interval of the rate, resampling whole reports (SPEC 5.4)."""
+    by_report: dict[str, list[str]] = {}
+    for rid in kept:
+        if rid in marks:
+            by_report.setdefault(rid.rsplit(":", 1)[0], []).append(rid)
+    reports = sorted(by_report)
+    rng = random.Random(seed)
+    rates = []
+    for _ in range(resamples):
+        ids = [r for rep in rng.choices(reports, k=len(reports)) for r in by_report[rep]]
+        bad = sum(len(kept[r] & marks[r]) for r in ids)
+        total = sum(len(kept[r]) for r in ids)
+        rates.append(bad / total if total else 0.0)
+    rates.sort()
+    return rates[int(0.025 * resamples)], rates[int(0.975 * resamples) - 1]
+
+
+def over_removed(
+    marks: dict[str, set[str]], before: dict[str, set[str]], after: dict[str, set[str]]
+) -> tuple[int, int]:
+    """(fields the verifier removed that the annotator judged supported, fields it removed)."""
+    removed = right = 0
+    for rid, fields in before.items():
+        if rid not in marks:
+            continue
+        gone = fields - after.get(rid, set())
+        removed += len(gone)
+        right += len(gone & marks[rid])
+    return removed - right, removed
+
+
 class QuoteTranslations(BaseModel):
     english: list[str]
 
@@ -286,10 +320,38 @@ def main(argv: list[str] | None = None) -> None:
     )
     print(f"{len(marks)} of {len(sample)} records judged (unsure left out); "
           f"answers copied to {ANSWERS_JSON.relative_to(ROOT)}")  # fmt: skip
+    import subprocess
+
+    from eval.score import append_results
+    from src.config import config_hash
+
+    ev = cfg["eval"]
+    s2 = system_fields("S2", sample)
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
+                            text=True, cwd=ROOT).stdout.strip()  # fmt: skip
+    stamp = {"commit": commit, "config_hash": config_hash(cfg), "date": date.today().isoformat(),
+             "split": "dev-field-audit"}  # fmt: skip
+    rows_out = []
     for system in ("S2", "S3-H", "S3-S"):
-        bad, total = unsupported_rate(marks, system_fields(system, sample))
-        rate = bad / total if total else float("nan")
-        print(f"{system}: {bad} of {total} fields unsupported = {rate:.2%}")
+        kept = s2 if system == "S2" else system_fields(system, sample)
+        bad, total = unsupported_rate(marks, kept)
+        low, high = bootstrap_rate(marks, kept, ev["bootstrap_resamples"], ev["seed"])
+        wrong, removed = over_removed(marks, s2, kept)
+        print(f"{system}: {bad} of {total} fields unsupported = {bad / total:.2%} "
+              f"[{low:.2%}, {high:.2%}]; removed {removed} fields, {wrong} of them judged "
+              "supported")  # fmt: skip
+        note = (
+            f"200 records, seed {cfg['field_audit']['seed']}; judged from a machine "
+            f"translation; resamples={ev['bootstrap_resamples']} seed={ev['seed']}"
+        )
+        for metric, value, n in (("unsupported_field_rate", bad / total, total),
+                                 ("unsupported_field_rate_low", low, total),
+                                 ("unsupported_field_rate_high", high, total),
+                                 ("verifier_removed_supported", wrong, removed)):  # fmt: skip
+            rows_out.append({**stamp, "system": system, "metric": metric,
+                             "value": round(value, 4), "n": n, "config": note})  # fmt: skip
+    append_results(rows_out)
+    print(f"{len(rows_out)} rows appended to eval/results.csv")
 
 
 if __name__ == "__main__":
