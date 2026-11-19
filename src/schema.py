@@ -127,7 +127,7 @@ class LedgerEvent(ExtractedEvent):
 
     event_id: str
     report_id: str
-    source: Annotated[str, Field(pattern="^(isw|gsu)$")]
+    source: Annotated[str, Field(pattern="^(isw|gsu|af|rumod)$")]  # af, rumod: amendment A2
     section: str
     sector: str
     report_date: date

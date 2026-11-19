@@ -59,6 +59,10 @@ DROP_IF_UNSUPPORTED = ("event_type", "location_text", "epistemic_status", "event
 SOURCES = {
     "gsu": "Ukrainian General Staff, 08:00 operational update (the whole report is its claim)",
     "isw": "Institute for the Study of War, Russian Offensive Campaign Assessment",
+    "af": "Ukrainian Air Force, report on the overnight air attack (the whole report is its "
+    "claim)",
+    "rumod": "Russian Ministry of Defence, Telegram channel posts of one day (every post is "
+    "its claim)",
 }
 
 TASK = (
@@ -293,7 +297,9 @@ def main(argv: list[str] | None = None) -> None:
         geocode_choices(client, cfg, name, days)
 
 
-def geocode_choices(client: Any, cfg: dict[str, Any], name: str, days: list[str]) -> None:
+def geocode_choices(
+    client: Any, cfg: dict[str, Any], name: str, days: list[str], source: str = "gsu"
+) -> None:
     """Run the S3 geocoder on the verified records once, asking the model on weak rules.
 
     Choices are saved to data/pred/geocode_choices.json for scoring; the cost of new
@@ -307,12 +313,12 @@ def geocode_choices(client: Any, cfg: dict[str, Any], name: str, days: list[str]
     cache = load_choices()
     price = cfg["prices"][cfg["models"]["geocode_disambiguation"]]
     for day in days:
-        rid = f"gsu-{day}"
-        text = (DATA / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+        rid = f"{source}-{day}"
+        text = (DATA / "text" / source / f"{day}.txt").read_text(encoding="utf-8")
         kept, run = verified(name, rid, text)
         log: list[dict[str, Any]] = []
         chooser = cached_chooser(cache, model_chooser(client, cfg, log))
-        geocode_s3(kept, text, day, gaz, cfg["geocode"], chooser)
+        geocode_s3(kept, text, day, gaz, cfg["geocode"], chooser, source)
         save_choices(cache)
         spent = sum(cost_usd(usage_dict(x["usage"]), price) for x in log)
         run.pop("counts")

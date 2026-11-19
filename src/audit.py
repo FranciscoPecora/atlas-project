@@ -1,6 +1,7 @@
 """Spot check of the machine-made GSU answer key (dev split).
 
     uv run python -m src.audit build            # write data/audit/audit.html
+    uv run python -m src.audit build --source af   # A2 sources: data/audit/af_audit.html
     uv run python -m src.audit score ANSWERS [--split test]   # read the saved answers
 
 Step 3 of amendment A1. `build` draws a seeded random sample of events
@@ -61,10 +62,10 @@ def paragraph_of(spans: list[tuple[int, int]], start: int) -> int:
     return next(i for i, (a, b) in enumerate(spans, start=1) if a <= start < b)
 
 
-def read_key(dev_dir: Path = DEV) -> list[dict[str, Any]]:
+def read_key(dev_dir: Path = DEV, source: str = "gsu") -> list[dict[str, Any]]:
     """All machine-made GSU dev records, in a stable order."""
     records: list[dict[str, Any]] = []
-    for path in sorted(dev_dir.glob("gsu-*__FULL__pass1.jsonl")):
+    for path in sorted(dev_dir.glob(f"{source}-*__FULL__pass1.jsonl")):
         lines = path.read_text(encoding="utf-8").splitlines()
         records += [r for r in map(json.loads, filter(str.strip, lines)) if r.get("label_method")]
     return records
@@ -252,35 +253,52 @@ def earlier_draws(
     return out
 
 
-def sample_path(audit_round: int, split: str = "dev") -> Path:
-    return AUDIT_DIR / f"{split}_sample_round{audit_round}.json"
+def tag(source: str) -> str:
+    """File-name prefix: none for GSU (A1's files keep their names), '<source>_' for A2."""
+    return "" if source == "gsu" else f"{source}_"
 
 
-def page_path(split: str) -> Path:
-    return PAGE if split == "dev" else PAGE.with_name(f"audit_{split}.html")
+def sample_path(audit_round: int, split: str = "dev", source: str = "gsu") -> Path:
+    return AUDIT_DIR / f"{tag(source)}{split}_sample_round{audit_round}.json"
 
 
-def build_page(records: list[dict[str, Any]], cfg: dict[str, Any], split: str = "dev") -> str:
+def page_path(split: str, source: str = "gsu") -> Path:
+    name = "audit.html" if split == "dev" else f"audit_{split}.html"
+    return PAGE.with_name(tag(source) + name)
+
+
+def audit_round(cfg: dict[str, Any], split: str, source: str = "gsu") -> int:
+    """GSU rounds come from config (A1); each A2 source has one round per split."""
+    if source != "gsu":
+        return 1
+    return cfg["audit"]["round"] if split == "dev" else cfg["audit"]["test_round"]
+
+
+def build_page(
+    records: list[dict[str, Any]], cfg: dict[str, Any], split: str = "dev", source: str = "gsu"
+) -> str:
     """Draw the sample from `records` and write the check page. Returns a one-line summary.
 
     For the test split the caller passes the records it has just made, so no file
     under eval/gold/test/ is opened, and the committed sample holds ids only."""
     dates = sorted({r["report_date"] for r in records})
     texts = {
-        f"gsu-{d}": (DATA / "text" / "gsu" / f"{d}.txt").read_text(encoding="utf-8") for d in dates
+        f"{source}-{d}": (DATA / "text" / source / f"{d}.txt").read_text(encoding="utf-8")
+        for d in dates
     }
-    aids = {f"gsu-{d}": load_translation(d) for d in dates}
+    aid_dir = DATA / "text" / f"{source}_en"
+    aids = {f"{source}-{d}": load_translation(d, aid_dir) for d in dates}
     counts = {rid: len(paragraph_spans(t)) for rid, t in texts.items()}
     a = cfg["audit"]
-    n = a["round"] if split == "dev" else a["test_round"]
+    n = audit_round(cfg, split, source)
     seed = cfg["eval"]["seed"] + n - 1
-    if split == "dev":
+    if split == "dev" and source == "gsu":
         size = round_sizes(cfg, n)
         skip = earlier_draws(records, counts, cfg, size["skip_rounds"])
         sample = draw(records, counts, size["events"], size["paragraphs"], seed, skip)
     else:
         sample = draw(records, counts, a["events"], a["paragraphs"], seed)
-    page = page_path(split)
+    page = page_path(split, source)
     page.parent.mkdir(parents=True, exist_ok=True)
     items = build_items(sample, records, texts, aids)
     page.write_text(render_page(items, TEMPLATE.read_text(encoding="utf-8")), encoding="utf-8")
@@ -289,7 +307,7 @@ def build_page(records: list[dict[str, Any]], cfg: dict[str, Any], split: str = 
         public = [committable(s, records) for s in sample]
     else:
         public = [{"id": s["id"], "kind": s["kind"]} for s in sample]
-    sample_path(n, split).write_text(json.dumps(public, indent=1), encoding="utf-8")
+    sample_path(n, split, source).write_text(json.dumps(public, indent=1), encoding="utf-8")
     n_events = sum(s["kind"] == "event" for s in sample)
     return (
         f"{split} round {n}: {n_events} events and {len(sample) - n_events} paragraphs "
@@ -297,23 +315,25 @@ def build_page(records: list[dict[str, Any]], cfg: dict[str, Any], split: str = 
     )
 
 
-def build(cfg: dict[str, Any]) -> None:
-    records = read_key()
+def build(cfg: dict[str, Any], source: str = "gsu") -> None:
+    records = read_key(source=source)
     if not records:
-        raise SystemExit("no machine-made key in eval/gold/dev/; run src.review first")
-    print(build_page(records, cfg, "dev"))
+        raise SystemExit(f"no machine-made {source} key in eval/gold/dev/; run the reviewer first")
+    print(build_page(records, cfg, "dev", source))
 
 
-def report(cfg: dict[str, Any], answers_path: Path, split: str = "dev") -> None:
-    n = cfg["audit"]["round"] if split == "dev" else cfg["audit"]["test_round"]
-    sample = json.loads(sample_path(n, split).read_text(encoding="utf-8"))
+def report(
+    cfg: dict[str, Any], answers_path: Path, split: str = "dev", source: str = "gsu"
+) -> None:
+    n = audit_round(cfg, split, source)
+    sample = json.loads(sample_path(n, split, source).read_text(encoding="utf-8"))
     answers = clean_answers(json.loads(answers_path.read_text(encoding="utf-8")))
     public = answers
     if split == "test":  # notes may quote the reports: keep them local, commit verdicts only
         public = {k: {"verdict": v["verdict"]} for k, v in answers.items()}
-        notes = page_path(split).with_name(f"{split}_notes_round{n}.json")
+        notes = page_path(split, source).with_name(f"{tag(source)}{split}_notes_round{n}.json")
         notes.write_text(json.dumps(answers, ensure_ascii=False, indent=1), encoding="utf-8")
-    (AUDIT_DIR / f"{split}_answers_round{n}.json").write_text(
+    (AUDIT_DIR / f"{tag(source)}{split}_answers_round{n}.json").write_text(
         json.dumps(public, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     limit = cfg["audit"]["max_error_rate"]
@@ -321,7 +341,7 @@ def report(cfg: dict[str, Any], answers_path: Path, split: str = "dev") -> None:
     for kind, res in result.items():
         ok = res["rate"] is not None and res["rate"] <= limit and not res["unanswered"]
         print(f"{kind}: {res} -> {'OK' if ok else 'NOT ACCEPTED'} (limit {limit})")
-    earlier = round_sizes(cfg, n)["skip_rounds"] if split == "dev" else []
+    earlier = round_sizes(cfg, n)["skip_rounds"] if split == "dev" and source == "gsu" else []
     if earlier:
         results = [result]
         for m in earlier:
@@ -338,16 +358,18 @@ def report(cfg: dict[str, Any], answers_path: Path, split: str = "dev") -> None:
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("build")
+    bd = sub.add_parser("build")
+    bd.add_argument("--source", choices=["gsu", "af", "rumod"], default="gsu")
     sc = sub.add_parser("score")
     sc.add_argument("answers", type=Path)
     sc.add_argument("--split", choices=["dev", "test"], default="dev")
+    sc.add_argument("--source", choices=["gsu", "af", "rumod"], default="gsu")
     args = ap.parse_args(argv)
     cfg = load_config()
     if args.cmd == "build":
-        build(cfg)
+        build(cfg, args.source)
     else:
-        report(cfg, args.answers, args.split)
+        report(cfg, args.answers, args.split, args.source)
 
 
 if __name__ == "__main__":

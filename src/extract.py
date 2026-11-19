@@ -67,6 +67,24 @@ def instructions(guideline: str) -> str:
     return TASK + "\n# Annotation guideline\n\n" + guideline_rules(guideline)
 
 
+def instructions_for(source: str, guideline: str) -> str:
+    """GSU: sections 1 to 7 and 9. AF and RUMOD (amendment A2): section 8.4 as well."""
+    if source == "gsu":
+        return instructions(guideline)
+    from src.review_a2 import guideline_rules_a2
+
+    return TASK + "\n# Annotation guideline\n\n" + guideline_rules_a2(guideline)
+
+
+def system_prompt_for(
+    source: str, cfg: dict[str, Any], guideline: str, limit: int | None = None
+) -> str:
+    """S1's system prompt. GSU carries worked examples from its dev key; the A2 sources
+    carry none (no dev example was chosen before their keys were made)."""
+    rules = instructions_for(source, guideline)
+    return rules + "\n\n" + load_examples(cfg, limit) if source == "gsu" else rules
+
+
 def user_prompt(report_date: str, default_date: str, section: str, text: str) -> str:
     return (
         f"Report date: {report_date}\n"

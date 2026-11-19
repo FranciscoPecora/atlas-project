@@ -49,7 +49,14 @@ OBLAST_WORDS = {
     "дніпропетровщин": "Dnipropetrovsk", "чернігівськ": "Chernihiv Oblast",
     "чернігівщин": "Chernihiv Oblast", "миколаївськ": "Mykolaiv", "миколаївщин": "Mykolaiv",
     "полтавськ": "Poltava", "полтавщин": "Poltava",
+    # Russian (RUMOD, SPEC amendment A2): "Запорожской области", "ДНР", "Донецкой
+    # Народной Республики".
+    "сумск": "Sumy", "харьковск": "Kharkiv", "донецк": "Donetsk", "днр": "Donetsk",
+    "луганск": "Luhansk", "лнр": "Luhansk", "запорожск": "Zaporizhzhia",
+    "херсонск": "Kherson", "днепропетровск": "Dnipropetrovsk",
+    "черниговск": "Chernihiv Oblast", "николаевск": "Mykolaiv",
 }  # fmt: skip
+PEOPLES_REPUBLIC = re.compile(r"(\w+)\s+Народной\s+Республик\w*|\b([ДЛ]НР)\b")
 OBLAST_ADJ = re.compile(r"(\w+)\s+област\w*", re.IGNORECASE)
 WEAK_RULES = ("nearest_town", "population")
 Point = tuple[float, float]
@@ -66,6 +73,7 @@ def paragraph_oblasts(paragraph: str) -> set[str]:
     """Gazetteer oblast names the paragraph mentions ("Сумської області", "на Харківщині")."""
     words = [m.group(1) for m in OBLAST_ADJ.finditer(paragraph)]
     words += re.findall(r"\w*щин\w*|\w*ччин\w*|Запоріжжі", paragraph)
+    words += [m.group(1) or m.group(2) for m in PEOPLES_REPUBLIC.finditer(paragraph)]
     found = set()
     for w in words:
         low = w.lower()

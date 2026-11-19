@@ -45,10 +45,9 @@ from src.config import config_hash, load_config
 from src.extract import (
     cost_usd,
     default_date,
-    instructions,
-    load_examples,
     pred_path,
     read_pred,
+    system_prompt_for,
     usage_dict,
     user_prompt,
     write_pred,
@@ -56,26 +55,58 @@ from src.extract import (
 from src.labels import SPEC
 from src.review import GUIDELINE, gsu_test_dates
 from src.schema import ExtractionResult, LedgerEvent
+from src.sources import A2_SOURCES, a2_units, post_url_at, split_report_id, text_path
 
 LEDGER = DATA / "ledger.parquet"
 MANIFEST = DATA / "manifest.csv"
 VERIFIER_KEY = {"S3-H": "verifier", "S3-S": "verifier_alt"}
 
 
-def corpus_days(cfg: dict[str, Any], data_dir: Path = DATA) -> list[str]:
-    """Dates of the collected GSU reports inside the corpus window, in order."""
+def corpus_days(cfg: dict[str, Any], data_dir: Path = DATA, source: str = "gsu") -> list[str]:
+    """Dates of a source's collected reports inside the corpus window, in order."""
     start, end = str(cfg["corpus"]["start"]), str(cfg["corpus"]["end"])
-    days = [p.stem for p in (data_dir / "text" / "gsu").glob("*.txt")]
+    days = [p.stem for p in (data_dir / "text" / source).glob("*.txt")]
     return sorted(d for d in days if start <= d <= end)
 
 
-def report_text(day: str, data_dir: Path = DATA) -> str:
-    return (data_dir / "text" / "gsu" / f"{day}.txt").read_text(encoding="utf-8")
+def corpus_reports(cfg: dict[str, Any], sources: list[str], data_dir: Path = DATA) -> list[str]:
+    """Report ids ("af-2026-08-03") of the sources' collected reports, by source then date."""
+    return [f"{s}-{d}" for s in sources for d in corpus_days(cfg, data_dir, s)]
 
 
-def facts(day: str) -> dict[str, str]:
-    return {"source": "gsu", "report_date": day,
-            "default_date": default_date({"source": "gsu", "report_date": day})}  # fmt: skip
+def report_text(rid: str, data_dir: Path = DATA) -> str:
+    source, day = split_report_id(rid)
+    return text_path(source, day, data_dir).read_text(encoding="utf-8")
+
+
+def facts(rid: str) -> dict[str, str]:
+    source, day = split_report_id(rid)
+    return {"source": source, "report_date": day,
+            "default_date": default_date({"source": source, "report_date": day})}  # fmt: skip
+
+
+def test_reports(cfg: dict[str, Any], sources: list[str], data_dir: Path = DATA) -> list[str]:
+    """Collected test-split report ids of the sources (GSU: SPEC 4.2; AF, RUMOD: A2)."""
+    out = []
+    for source in sources:
+        if source == "gsu":
+            days, _ = gsu_test_dates(SPEC.read_text(encoding="utf-8"), data_dir)
+        else:
+            days = [d for d, split in a2_units(source, cfg) if split == "test"]
+        out += [f"{source}-{d}" for d in days if text_path(source, d, data_dir).exists()]
+    return out
+
+
+def a2_key_ready(source: str, cfg: dict[str, Any], gold_dir: Path | None = None) -> bool:
+    """A2: a source's test key must exist before any evaluated system runs on its reports.
+    Checks that the files exist; never opens them."""
+    from src.labels import GOLD
+    from src.review_a2 import gold_path
+
+    gold_dir = gold_dir or GOLD
+    tests = [d for d, split in a2_units(source, cfg) if split == "test"]
+    have = [d for d in tests if text_path(source, d).exists()]
+    return bool(have) and all(gold_path(source, d, "test", gold_dir).exists() for d in have)
 
 
 def structured_params(
@@ -122,26 +153,28 @@ def run_payload(
 # --- stage 1: extraction -------------------------------------------------------------
 
 
-def extract_stage(client: Any, cfg: dict[str, Any], days: list[str], test_days: list[str]) -> None:
+def extract_stage(client: Any, cfg: dict[str, Any], rids: list[str], test_rids: list[str]) -> None:
     from src.baselines.b2_single_prompt import ASK, parse_reply
 
     models = cfg["models"]
     model, effort = models["extraction"], models["extraction_effort"]
-    rules = instructions(GUIDELINE.read_text(encoding="utf-8"))
-    systems = {
-        "S1": (rules + "\n\n" + load_examples(cfg), ExtractionResult, days),
-        "B2": (rules + "\n\n" + load_examples(cfg, limit=1) + ASK, None, test_days),
-    }
+    guideline = GUIDELINE.read_text(encoding="utf-8")
+    sources = sorted({split_report_id(r)[0] for r in rids + test_rids})
+    s1 = {s: system_prompt_for(s, cfg, guideline) for s in sources}
+    b2 = {s: system_prompt_for(s, cfg, guideline, limit=1) + ASK for s in sources}
+    systems = {"S1": (s1, ExtractionResult, rids), "B2": (b2, None, test_rids)}
     requests, wanted = [], {}
-    for name, (prompt, fmt, which) in systems.items():
-        for day in which:
+    for name, (prompts, fmt, which) in systems.items():
+        for rid in which:
             if name == "B2" and "B2" not in cfg["ledger"]["test_only_systems"]:
                 continue
-            if read_pred(name, f"gsu-{day}") is not None:
+            if read_pred(name, rid) is not None:
                 continue
-            user = user_prompt(day, facts(day)["default_date"], "FULL", report_text(day))
-            cid = custom_id(name, day)
-            wanted[cid] = (name, day)
+            f = facts(rid)
+            prompt = prompts[f["source"]]
+            user = user_prompt(f["report_date"], f["default_date"], "FULL", report_text(rid))
+            cid = custom_id(name, rid)
+            wanted[cid] = (name, rid)
             params = structured_params(model, cfg["extract"]["max_tokens"], effort, prompt,
                                        user, fmt)  # fmt: skip
             requests.append({"custom_id": cid, "params": params})
@@ -150,19 +183,19 @@ def extract_stage(client: Any, cfg: dict[str, Any], days: list[str], test_days: 
     ok, failed = run_batch(client, label, requests, cfg["batch"]["poll_seconds"],
                            cfg["batch"]["retries"])  # fmt: skip
     for cid, message in ok.items():
-        name, day = wanted[cid]
+        name, rid = wanted[cid]
         usage = usage_dict(message.usage)
         if name == "S1":
             events = [e.model_dump(mode="json") for e in parsed(message, ExtractionResult).events]
             extra: dict[str, Any] = {"events": events}
         else:
-            events, dropped = parse_reply(reply_text(message), facts(day)["default_date"])
+            events, dropped = parse_reply(reply_text(message), facts(rid)["default_date"])
             extra = {"dropped_items": dropped, "events": events}
         write_pred(
-            pred_path(name, f"gsu-{day}"),
-            run_payload(name, f"gsu-{day}", model, effort, cfg, usage, label, **extra),
+            pred_path(name, rid),
+            run_payload(name, rid, model, effort, cfg, usage, label, **extra),
         )
-        print(f"{name} {day}: {len(events)} events")  # fmt: skip
+        print(f"{name} {rid}: {len(events)} events")  # fmt: skip
     if failed:
         raise RuntimeError(f"extract: {len(failed)} requests failed after retries: {failed}")
 
@@ -170,7 +203,7 @@ def extract_stage(client: Any, cfg: dict[str, Any], days: list[str], test_days: 
 # --- stage 2: model verification -----------------------------------------------------
 
 
-def quote_prompts(records: list[dict[str, Any]], day: str) -> list[str]:
+def quote_prompts(records: list[dict[str, Any]], rid: str) -> list[str]:
     """The verifier prompts for a report, one per distinct quote, in call order."""
     from src.verify_model import Verification, verify_report
 
@@ -180,7 +213,7 @@ def quote_prompts(records: list[dict[str, Any]], day: str) -> list[str]:
         prompts.append(u)
         return Verification(records=[]), {}, 0.0
 
-    verify_report(capture, records, facts(day))
+    verify_report(capture, records, facts(rid))
     return prompts
 
 
@@ -194,29 +227,29 @@ def verify_stage(client: Any, cfg: dict[str, Any], plan: dict[str, list[str]]) -
     effort = models["verifier_effort"]
     requests: list[dict[str, Any]] = []
     jobs: dict[tuple[str, str], tuple[list[dict[str, Any]], list[str]]] = {}
-    for name, days in plan.items():
+    for name, rids in plan.items():
         model = models[VERIFIER_KEY[name]]
-        for day in days:
-            if read_pred(name, f"gsu-{day}") is not None:
+        for rid in rids:
+            if read_pred(name, rid) is not None:
                 continue
-            records = s2_records(f"gsu-{day}", report_text(day))
-            prompts = quote_prompts(records, day)
-            jobs[(name, day)] = (records, prompts)
+            records = s2_records(rid, report_text(rid))
+            prompts = quote_prompts(records, rid)
+            jobs[(name, rid)] = (records, prompts)
             for n, u in enumerate(prompts):
                 params = structured_params(model, cfg["verify"]["max_tokens"], effort, system,
                                            u, Verification)  # fmt: skip
-                requests.append({"custom_id": custom_id(name, day, f"q{n:04d}"), "params": params})
+                requests.append({"custom_id": custom_id(name, rid, f"q{n:04d}"), "params": params})
     print(f"verify: {len(jobs)} reports, {len(requests)} quotes")
     label = f"verify-{config_hash(cfg)}"
     ok, failed = run_batch(client, label, requests, cfg["batch"]["poll_seconds"],
                            cfg["batch"]["retries"])  # fmt: skip
-    for (name, day), (records, prompts) in jobs.items():
+    for (name, rid), (records, prompts) in jobs.items():
         model = models[VERIFIER_KEY[name]]
         answers: dict[str, tuple[Any, dict[str, int], float]] = {}
         usage: Counter[str] = Counter()
         missing = 0
         for n, u in enumerate(prompts):
-            message = ok.get(custom_id(name, day, f"q{n:04d}"))
+            message = ok.get(custom_id(name, rid, f"q{n:04d}"))
             try:
                 result = parsed(message, Verification) if message else None
             except (RuntimeError, ValueError):
@@ -225,14 +258,14 @@ def verify_stage(client: Any, cfg: dict[str, Any], plan: dict[str, list[str]]) -
                 usage.update(usage_dict(message.usage))
             missing += result is None
             answers[u] = (result or Verification(records=[]), {}, 0.0)
-        verdicts, run = verify_report(lambda u, a=answers: a[u], records, facts(day))
+        verdicts, run = verify_report(lambda u, a=answers: a[u], records, facts(rid))
         total = {k: usage.get(k, 0) for k in usage_dict(object())}
-        write_pred(pred_path(name, f"gsu-{day}"), run_payload(
-            name, f"gsu-{day}", model, effort, cfg, total, label,
+        write_pred(pred_path(name, rid), run_payload(
+            name, rid, model, effort, cfg, total, label,
             n_records=len(records), verdicts=verdicts, reasons=run["reasons"],
             quotes_without_answer=missing,
         ))  # fmt: skip
-        print(f"{name} {day}: {len(records)} records, {len(prompts)} quotes, {missing} unanswered")
+        print(f"{name} {rid}: {len(records)} records, {len(prompts)} quotes, {missing} unanswered")
     if failed:
         print(f"verify: {len(failed)} quotes failed after retries; their fields stay unjudged")
 
@@ -241,37 +274,41 @@ def verify_stage(client: Any, cfg: dict[str, Any], plan: dict[str, list[str]]) -
 
 
 def manifest(path: Path = MANIFEST) -> dict[str, str]:
-    """{report date: source url} for collected GSU reports."""
-    rows = pl.read_csv(path, infer_schema_length=0).filter(
-        (pl.col("source") == "gsu") & (pl.col("status") == "ok")
-    )
-    return dict(zip(rows["date"].to_list(), rows["url"].to_list(), strict=True))
+    """{report id: source url} for every collected report."""
+    rows = pl.read_csv(path, infer_schema_length=0).filter(pl.col("status") == "ok")
+    rids = [f"{s}-{d}" for s, d in zip(rows["source"], rows["date"], strict=True)]
+    return dict(zip(rids, rows["url"].to_list(), strict=True))
 
 
 def ledger_rows(
-    records: list[dict[str, Any]], text: str, day: str, url: str, system: str, run_id: str,
+    records: list[dict[str, Any]], text: str, rid: str, url: str, system: str, run_id: str,
     unit_table: list[dict[str, str]], fuzzy_min: float,
 ) -> list[dict[str, Any]]:  # fmt: skip
-    """Geocoded S3 records of one report as validated ledger rows (JSON-ready dicts)."""
+    """Geocoded S3 records of one report as validated ledger rows (JSON-ready dicts).
+
+    RUMOD rows point to the channel post that holds their evidence (amendment A2)."""
     from src.units import unit_ids
 
+    source, day = split_report_id(rid)
     sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    rid = f"gsu-{day}"
     out = []
     fields = LedgerEvent.model_fields  # the schema forbids extra keys (geocode_how, ...)
     for i, r in enumerate(records):
+        row_url = url
+        if source == "rumod" and r.get("evidence_start") is not None:
+            row_url = post_url_at(text, r["evidence_start"]) or url
         row = LedgerEvent.model_validate({
             **{k: v for k, v in r.items() if k in fields},
-            "event_id": f"{rid}:{system}:{i}", "report_id": rid, "source": "gsu",
+            "event_id": f"{rid}:{system}:{i}", "report_id": rid, "source": source,
             "section": "FULL", "sector": "FULL", "report_date": day,
             "unit_ids": unit_ids(r.get("units") or [], unit_table, fuzzy_min),
-            "text_sha256": sha, "source_url": url, "system": system, "run_id": run_id,
+            "text_sha256": sha, "source_url": row_url, "system": system, "run_id": run_id,
         })  # fmt: skip
         out.append(row.model_dump(mode="json"))
     return out
 
 
-def build(cfg: dict[str, Any], days: list[str], out: Path = LEDGER) -> pl.DataFrame:
+def build(cfg: dict[str, Any], rids: list[str], out: Path = LEDGER) -> pl.DataFrame:
     """Assemble data/ledger.parquet from the saved S3 runs (no API call)."""
     from src.gazetteer import Gazetteer, read_table
     from src.geocode import cached_chooser
@@ -285,11 +322,12 @@ def build(cfg: dict[str, Any], days: list[str], out: Path = LEDGER) -> pl.DataFr
     units = read_units()
     run_id = f"{date.today().isoformat()}-{config_hash(cfg)}"
     rows: list[dict[str, Any]] = []
-    for day in days:
-        text = report_text(day)
-        kept, _ = verified(system, f"gsu-{day}", text)
-        located = geocode_s3(kept, text, day, gaz, cfg["geocode"], chooser)
-        rows += ledger_rows(located, text, day, urls[day], system, run_id, units,
+    for rid in rids:
+        source, day = split_report_id(rid)
+        text = report_text(rid)
+        kept, _ = verified(system, rid, text)
+        located = geocode_s3(kept, text, day, gaz, cfg["geocode"], chooser, source)
+        rows += ledger_rows(located, text, rid, urls[rid], system, run_id, units,
                             cfg["units"]["fuzzy_min"])  # fmt: skip
     frame = pl.DataFrame(rows, infer_schema_length=None)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -311,23 +349,34 @@ def summary(frame: pl.DataFrame) -> str:
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("stage", choices=["run", "build"])
+    ap.add_argument("--sources", default=",".join(load_config()["ledger"]["sources"]),
+                    help="comma-separated; default config ledger.sources")  # fmt: skip
     args = ap.parse_args(argv)
     cfg = load_config()
-    days = corpus_days(cfg)
-    test_days, _ = gsu_test_dates(SPEC.read_text(encoding="utf-8"))
+    sources = args.sources.split(",")
+    unready = [s for s in sources if s in A2_SOURCES and not a2_key_ready(s, cfg)]
+    if unready:
+        raise SystemExit(f"no frozen test key for {', '.join(unready)} yet; make it first with "
+                         "src.review_a2 --split test (amendment A2)")  # fmt: skip
+    rids = corpus_reports(cfg, sources)
+    test_rids = test_reports(cfg, sources)
     if args.stage == "run":
         from src.verify_model import geocode_choices
 
         load_dotenv(ROOT / ".env")
         client = anthropic.Anthropic()
-        extract_stage(client, cfg, days, test_days)
+        extract_stage(client, cfg, rids, test_rids)
         shipped = cfg["ledger"]["system"]
-        plan = {shipped: days}
-        plan.update({s: test_days for s in cfg["ledger"]["test_only_systems"] if s in VERIFIER_KEY})
+        plan = {shipped: rids}
+        plan.update({s: test_rids for s in cfg["ledger"]["test_only_systems"] if s in VERIFIER_KEY})
         verify_stage(client, cfg, plan)
         for name, which in plan.items():
-            geocode_choices(client, cfg, name, which)
-    frame = build(cfg, days)
+            for source in sources:
+                days = [split_report_id(r)[1] for r in which if r.startswith(f"{source}-")]
+                geocode_choices(client, cfg, name, days, source)
+    all_sources = ",".join(cfg["ledger"]["sources"])
+    built = [s for s in all_sources.split(",") if s not in A2_SOURCES or a2_key_ready(s, cfg)]
+    frame = build(cfg, corpus_reports(cfg, built))
     print(summary(frame))
     print(f"wrote {LEDGER.relative_to(ROOT)}")
 

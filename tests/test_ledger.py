@@ -62,7 +62,7 @@ def test_run_payload_prices_at_the_batch_rate():
 
 def test_quote_prompts_one_per_distinct_quote():
     recs = [record("A near X and Y", "X"), record("A near X and Y", "Y"), record("B at Z", "Z")]
-    prompts = ledger.quote_prompts(recs, "2026-08-02")
+    prompts = ledger.quote_prompts(recs, "gsu-2026-08-02")
     assert len(prompts) == 2
     assert "A near X and Y" in prompts[0] and "Record 2" in prompts[0]
     assert "2026-08-01" in prompts[1]  # default event date = report date minus one day
@@ -71,7 +71,7 @@ def test_quote_prompts_one_per_distinct_quote():
 def test_ledger_rows_validate_and_drop_extra_keys():
     text = "B at Z"
     recs = [record(text, "Z", geocode_how="exact", direction=None, id="tmp", system="S3-H")]
-    rows = ledger.ledger_rows(recs, text, "2026-08-02", "https://u", "S3-H", "run1", [], 85)
+    rows = ledger.ledger_rows(recs, text, "gsu-2026-08-02", "https://u", "S3-H", "run1", [], 85)
     (row,) = rows
     assert row["event_id"] == "gsu-2026-08-02:S3-H:0"
     assert row["report_date"] == "2026-08-02" and row["source_url"] == "https://u"
@@ -86,3 +86,50 @@ def test_summary_counts_located_events():
          "epistemic_status": "ua_claimed"},
     ])  # fmt: skip
     assert "2 events in 1 reports; 1 located (50.0%)" in ledger.summary(frame)
+
+
+def test_rumod_rows_point_to_their_post():
+    text = (
+        "T\n\n## https://t.me/mod_russia/7 · 13:57\nB at Z"
+        "\n\n## https://t.me/mod_russia/9 · 18:00\nC"
+    )
+    start = text.index("B at Z")
+    recs = [record("B at Z", "Z", start=start)]
+    (row,) = ledger.ledger_rows(recs, text, "rumod-2026-07-04", "https://first", "S3-H", "r",
+                                [], 85)  # fmt: skip
+    assert row["source"] == "rumod" and row["source_url"] == "https://t.me/mod_russia/7"
+    assert row["event_id"] == "rumod-2026-07-04:S3-H:0"
+
+
+def test_reports_and_facts_by_report_id(tmp_path):
+    for src, day in (("gsu", "2026-07-20"), ("af", "2026-07-20"), ("af", "2026-11-20")):
+        folder = tmp_path / "text" / src
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / f"{day}.txt").write_text("x")
+    assert ledger.corpus_reports(CFG, ["gsu", "af"], tmp_path) == [
+        "gsu-2026-07-20",
+        "af-2026-07-20",
+    ]
+    assert ledger.facts("af-2026-08-03")["default_date"] == "2026-08-03"
+    assert ledger.facts("gsu-2026-08-03")["default_date"] == "2026-08-02"
+
+
+def test_a2_key_ready_needs_every_collected_test_key(tmp_path, monkeypatch):
+    from src import sources
+
+    cfg = {"gold": {}}
+    text_dir = tmp_path / "text" / "af"
+    text_dir.mkdir(parents=True)
+    tests = [d for d, s in sources.a2_units("af", cfg) if s == "test"]
+    for d in tests[:2]:
+        (text_dir / f"{d}.txt").write_text("x")
+    monkeypatch.setattr(
+        ledger, "text_path", lambda s, d, data_dir=tmp_path: sources.text_path(s, d, tmp_path)
+    )
+    gold = tmp_path / "gold"
+    assert not ledger.a2_key_ready("af", cfg, gold)
+    (gold / "test").mkdir(parents=True)
+    (gold / "test" / f"af-{tests[0]}__FULL__pass1.jsonl").write_text("")
+    assert not ledger.a2_key_ready("af", cfg, gold)
+    (gold / "test" / f"af-{tests[1]}__FULL__pass1.jsonl").write_text("")
+    assert ledger.a2_key_ready("af", cfg, gold)

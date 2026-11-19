@@ -27,14 +27,16 @@ CHOICES = PRED / "geocode_choices.json"
 SYSTEMS = ("S3-H", "S3-S")
 
 
-def previous_events(day: str, gaz: Gazetteer, geo: dict[str, Any]) -> list[dict[str, Any]]:
-    """Rules-only geocoded S2 events of the GSU report one day before `day` ([] if none)."""
+def previous_events(
+    day: str, gaz: Gazetteer, geo: dict[str, Any], source: str = "gsu"
+) -> list[dict[str, Any]]:
+    """Rules-only geocoded S2 events of the same source's report one day before `day`."""
     before = (date.fromisoformat(day) - timedelta(days=1)).isoformat()
-    path = DATA / "text" / "gsu" / f"{before}.txt"
-    if not path.exists() or read_pred("S1", f"gsu-{before}") is None:
+    path = DATA / "text" / source / f"{before}.txt"
+    if not path.exists() or read_pred("S1", f"{source}-{before}") is None:
         return []
     text = path.read_text(encoding="utf-8")
-    return geocode(s2_records(f"gsu-{before}", text), text, gaz, geo)
+    return geocode(s2_records(f"{source}-{before}", text), text, gaz, geo)
 
 
 def verified(system: str, report_id: str, text: str) -> tuple[list[dict[str, Any]], dict]:
@@ -61,6 +63,7 @@ def save_choices(cache: dict[str, str | None], path: Path = CHOICES) -> None:
 
 def geocode_s3(
     records: list[dict[str, Any]], text: str, day: str, gaz: Gazetteer, geo: dict[str, Any],
-    chooser: Chooser,
+    chooser: Chooser, source: str = "gsu",
 ) -> list[dict[str, Any]]:  # fmt: skip
-    return geocode(records, text, gaz, geo, previous_events(day, gaz, geo), chooser)
+    prev = previous_events(day, gaz, geo, source)
+    return geocode(records, text, gaz, geo, prev, chooser)
