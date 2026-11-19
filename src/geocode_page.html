@@ -29,6 +29,11 @@
          border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
   .pin.town { background: #1c1c1a; width: auto; padding: 0 8px; border-radius: 14px; font-size: 13px; }
   .pin.on { background: var(--good); }
+  .ref { display: flex; align-items: center; gap: 4px; white-space: nowrap;
+         font: 600 12px -apple-system, Arial, sans-serif; color: #444; }
+  .ref::before { content: ""; width: 12px; height: 12px; border-radius: 50%;
+                 background: #9a9a92; border: 2px solid #fff; box-shadow: 0 0 2px rgba(0,0,0,.5); }
+  .near { color: var(--good); font-weight: 600; }
   .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
   .choice { text-align: left; font: inherit; padding: 10px 12px; border-radius: 8px; cursor: pointer;
             border: 2px solid var(--line); background: var(--card); color: var(--ink); }
@@ -83,21 +88,32 @@ function firstOpen() { const i = ITEMS.findIndex(it => !answers[it.id]); return 
 function intro() {
   return [
     el("h1", {}, "Claimline place check"),
-    el("p", {}, "The reports name villages, and many Ukrainian villages share a name. For " + ITEMS.length +
-      " places you pick which one on the map the report means. The program's own choice is not shown."),
+    el("p", {}, "Many Ukrainian villages share a name. For " + ITEMS.length +
+      " places you pick which one the report means. You do not need to know the area: the report itself gives the clue."),
     el("div", { class: "card" },
-      el("div", { class: "label" }, "How it works"),
+      el("div", { class: "label" }, "The clue"),
+      el("p", {}, "Each sentence names several villages together, for example 'the enemy attacked near Alfa, Bravo and Charlie'. " +
+        "Villages fought over in one sentence lie close together. Most names exist only once in Ukraine, so we know exactly where those are."),
       el("ul", {},
-        el("li", {}, "Read the sentence. The place is highlighted. The report says which front direction it is on; the black label on the map is the town that direction is named after."),
-        el("li", {}, "The blue lettered pins are every village with that name within 120 km of that town."),
-        el("li", {}, "Click the pin's card (or press its letter key) for the village the report means: the one on the front line in that direction."),
-        el("li", {}, "Only one pin? Check it is in the right area and press ", el("kbd", {}, "A"), "."),
-        el("li", {}, "'None of these' (", el("kbd", {}, "N"), ") if no pin can be the place. 'Not sure' (", el("kbd", {}, "U"), ") if you cannot tell."),
-        el("li", {}, el("kbd", {}, "←"), " goes back. Progress is kept if you close the page."))),
-    el("p", { class: "soft" }, "About 10 to 15 minutes. 29 of the places have only one pin."),
+        el("li", {}, "Grey dots = the other villages from the same sentence (names that exist only once)."),
+        el("li", {}, "Blue lettered pins = every village with the name in question. The map is zoomed onto the grey dots; pins far away are off screen (zoom out with − to see them)."),
+        el("li", {}, el("b", {}, "Pick the lettered pin that sits among the grey dots."), " Each card also says how far that pin is from the nearest grey dot."),
+        el("li", {}, "If two pins are both close, or no pin is close (more than about 30 km from every grey dot), press ", el("kbd", {}, "U"), " (not sure)."),
+        el("li", {}, "No grey dots on the map? Then there is nothing to compare with: press ", el("kbd", {}, "U"), "."),
+        el("li", {}, "Keys: the letter picks, ", el("kbd", {}, "U"), " = not sure, ", el("kbd", {}, "N"), " = none of these, ", el("kbd", {}, "←"), " = back. Progress is kept if you close the page."))),
+    el("p", { class: "soft" }, "About 10 minutes. Most screens take a few seconds."),
     el("button", { class: "btn main", onclick: () => go(Object.keys(answers).length ? firstOpen() : 0) },
       Object.keys(answers).length ? "Continue" : "Start")
   ];
+}
+function kmTo(c, refs) {
+  if (!refs.length) return null;
+  const R = 6371, rad = Math.PI / 180;
+  return Math.round(Math.min(...refs.map(r => {
+    const dl = (r.lat - c.lat) * rad, dn = (r.lon - c.lon) * rad;
+    const a = Math.sin(dl / 2) ** 2 + Math.cos(c.lat * rad) * Math.cos(r.lat * rad) * Math.sin(dn / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  })));
 }
 function drawMap(it) {
   if (map) { map.remove(); map = null; }
@@ -112,11 +128,21 @@ function drawMap(it) {
       .addTo(map).on("click", () => pick(c.id));
     pts.push([c.lat, c.lon]);
   });
-  if (it.town) {
+  it.neighbours.forEach(r => {
+    L.marker([r.lat, r.lon], { icon: L.divIcon({ className: "", html: '<div class="ref">' + r.name + "</div>", iconSize: null, iconAnchor: [8, 8] }), zIndexOffset: -500 }).addTo(map);
+    pts.push([r.lat, r.lon]);
+  });
+  if (it.town && !it.neighbours.length) {
     L.marker([it.town.lat, it.town.lon], { icon: L.divIcon({ className: "", html: '<div class="pin town">' + it.town.name + "</div>", iconSize: null, iconAnchor: [20, 14] }), zIndexOffset: -1000, opacity: 0.75 }).addTo(map);
     pts.push([it.town.lat, it.town.lon]);
   }
-  if (pts.length === 1) map.setView(pts[0], 10); else map.fitBounds(pts, { padding: [40, 40], maxZoom: 11 });
+  // Frame the grey villages and the pins near them; farther pins stay on the map, off screen.
+  let frame = pts;
+  if (it.neighbours.length) {
+    frame = it.neighbours.map(r => [r.lat, r.lon]).concat(
+      it.cands.filter(c => kmTo(c, it.neighbours) <= 30).map(c => [c.lat, c.lon]));
+  }
+  if (frame.length === 1) map.setView(frame[0], 10); else map.fitBounds(frame, { padding: [40, 40], maxZoom: 11 });
 }
 function screen() {
   const it = ITEMS[pos];
@@ -125,16 +151,19 @@ function screen() {
     el("button", { class: "choice" + (a === c.id ? " on" : ""), onclick: () => pick(c.id) },
       el("b", {}, LETTERS[i] + "  " + c.name),
       el("small", {}, (c.oblast || "oblast unknown") + " oblast · " + (c.population ? "population " + c.population : "population not recorded")),
-      el("small", {}, it.town ? c.km + " km from " + it.town.name : "")));
+      el("small", { class: kmTo(c, it.neighbours) !== null && kmTo(c, it.neighbours) <= 30 ? "near" : "" },
+        kmTo(c, it.neighbours) === null ? "no grey dots to compare with" : kmTo(c, it.neighbours) + " km from the nearest grey dot")));
   return [
     el("div", { class: "soft" }, "Place " + (pos + 1) + " of " + ITEMS.length + (a ? " · answered" : "")),
     el("div", { class: "bar" }, el("div", { style: "width:" + (100 * Object.keys(answers).length / ITEMS.length) + "%" })),
     el("div", { class: "card" },
       el("div", { class: "big" }, it.place_en || it.place_uk, el("span", { class: "soft" }, "  (" + it.place_uk + ")")),
-      el("div", { class: "soft" }, it.town ? "Front direction named after " + it.town.name : "The paragraph names no front direction"),
+      el("div", { class: "soft" }, it.neighbours.length
+        ? "Grey dots: " + it.neighbours.map(r => r.name).join(", ")
+        : "No other village in this sentence has a unique name, so there is nothing to compare with: press U."),
       el("p", {}, ...highlight(it.paragraph_en, it.place_en))),
     el("div", { class: "card" }, el("div", { id: "map" })),
-    el("div", { class: "label" }, "Which one does the report mean?"),
+    el("div", { class: "label" }, "Which lettered pin sits among the grey dots?"),
     el("div", { class: "choices" }, ...cards),
     el("div", { class: "buttons" },
       el("button", { class: "btn bad" + (a === "none" ? " on" : ""), onclick: () => pick("none") }, "None of these (N)"),

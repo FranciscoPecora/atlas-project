@@ -98,3 +98,18 @@ def test_page_item_and_saved_answers(tmp_path):
     path.write_text(json.dumps({"kind": "places", "answers": {"a": "gn:1", "b": "none",
                                                               "c": "unsure"}}))  # fmt: skip
     assert read_answers(path) == {"a": "gn:1", "b": None}
+
+
+def test_neighbours_are_unique_names_from_the_same_paragraph_only():
+    from src.geocode_check import neighbours
+
+    uniq = Place("gn:u", "Unica", 48.2, 37.1, "Donetsk", 0, "PPL", ("Unica", "Уніка"))
+    gaz = Gazetteer([A1, A2, uniq])
+    items = [
+        {"name": "Альфа", "direction": "x", "paragraph": ("d", 1)},
+        {"name": "Уніка", "direction": "x", "paragraph": ("d", 1), "english": "Unika"},
+        {"name": "Альфа", "direction": "x", "paragraph": ("d", 2)},  # same name: not a reference
+        {"name": "Уніка", "direction": "x", "paragraph": ("d", 9)},  # other paragraph
+        {"name": "Покровському напрямку", "direction": "x", "paragraph": ("d", 1)},
+    ]
+    assert neighbours(items[0], items, gaz) == [{"name": "Unika", "lat": 48.2, "lon": 37.1}]

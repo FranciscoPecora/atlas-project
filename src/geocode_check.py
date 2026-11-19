@@ -18,6 +18,12 @@ owner writes the letter of the right row in `pick`, `none` if no row is right, o
 `?` if unsure. The CSV holds English text of the reports, so it stays local
 (git-ignored); `pick` and the ids are copied to eval/audit/ to commit.
 
+The marking page (`make mark-places`) needs no knowledge of the front: it also
+shows, as grey dots, the other villages named in the same paragraph whose names
+exist once in the gazetteer, and the owner picks the pin among them. So the check
+measures agreement with the paragraph's other villages, a strong proxy for the
+right namesake but not ground truth.
+
 Score: each geocoder variant is run on the dev gold events at the checked places;
 an event is right when its point is within 10 km of the picked row. Accuracy and
 median error are reported over events and over places.
@@ -188,8 +194,29 @@ def gold_items() -> list[dict[str, Any]]:
             "name": r["location_text"], "direction": paragraph_direction(text[a:b]),
             "english": glossary(en.get("places", "")).get(r["location_text"], ""),
             "paragraph_en": english_paragraph(en.get("translation", ""), n), "record": r,
+            "paragraph": (day, n),
         })  # fmt: skip
     return items
+
+
+def neighbours(
+    item: dict[str, Any], items: list[dict[str, Any]], gaz: Gazetteer
+) -> list[dict[str, Any]]:
+    """Other villages named in the item's paragraph (the one shown) that match one gazetteer row.
+
+    They are the reference the owner judges against: the right namesake sits among them.
+    Unique names need no disambiguation, so they do not depend on the rules being checked.
+    """
+    out: dict[str, dict[str, Any]] = {}
+    for other in items:
+        name = other["name"]
+        if other["paragraph"] != item["paragraph"] or name == item["name"] or "напрям" in name:
+            continue
+        _, rows = gaz.lookup(name, limit=2)
+        if len(rows) == 1 and name not in out:
+            p = rows[0]
+            out[name] = {"name": other.get("english") or p.name, "lat": p.lat, "lon": p.lon}
+    return list(out.values())
 
 
 def pid(item: dict[str, Any]) -> str:
@@ -243,12 +270,15 @@ def main(argv: list[str] | None = None) -> None:
         for item in sample + sorted(extra, key=pid):
             town = direction_place(gaz, item["direction"], geo["direction_anchors"])
             cands = candidates(gaz, item["name"], town, geo["max_anchor_km"])
-            shown.append({**page_item(item, cands, town), "extra": pid(item) not in in_sample})
+            shown.append({**page_item(item, cands, town), "extra": pid(item) not in in_sample,
+                          "neighbours": neighbours(item, items, gaz)})  # fmt: skip
         items = shown
         blob = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
         PAGE.parent.mkdir(parents=True, exist_ok=True)
         PAGE.write_text(TEMPLATE.read_text(encoding="utf-8").replace("/*ITEMS*/[]", blob), "utf-8")
-        print(f"{len(items)} places -> {PAGE.relative_to(ROOT)}")
+        with_ref = sum(bool(i["neighbours"]) for i in items)
+        print(f"{len(items)} places -> {PAGE.relative_to(ROOT)}; {with_ref} have other "
+              "villages from the same sentence to compare with")  # fmt: skip
         return
     if args.step == "build":
         rows = []
