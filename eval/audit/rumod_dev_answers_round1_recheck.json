@@ -1,0 +1,22 @@
+{
+ "e01": {
+  "verdict": "wrong",
+  "note": "many places named"
+ },
+ "e05": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e19": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e22": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e24": {
+  "verdict": "right",
+  "note": ""
+ }
+}

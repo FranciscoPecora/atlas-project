@@ -1,0 +1,30 @@
+{
+ "e05": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e06": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e07": {
+  "verdict": "right",
+  "note": ""
+ },
+ "p02": {
+  "verdict": "missing",
+  "note": "It should be an event"
+ },
+ "p03": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p06": {
+  "verdict": "missing",
+  "note": "should be an event"
+ },
+ "p07": {
+  "verdict": "complete",
+  "note": ""
+ }
+}
