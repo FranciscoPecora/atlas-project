@@ -185,3 +185,18 @@ def test_round_sizes_default_to_a1_and_follow_extra_rounds():
     }
     assert round_sizes(cfg, 2) == {"events": 30, "paragraphs": 10, "skip_rounds": []}
     assert round_sizes(cfg, 3) == {"events": 100, "paragraphs": 20, "skip_rounds": [2]}
+
+
+def test_recheck_page_keeps_chosen_items_and_merged_overrides(tmp_path, monkeypatch):
+    from src import audit
+
+    items = [{"id": "e01", "kind": "event"}, {"id": "p01", "kind": "paragraph"}]
+    page = tmp_path / "af_audit.html"
+    page.write_text(audit.render_page(items, audit.TEMPLATE.read_text(encoding="utf-8"), "af"))
+    monkeypatch.setattr(audit, "page_path", lambda split, source="gsu": page)
+    out = audit.recheck_page("dev", "af", ["p01"])
+    assert [i["id"] for i in audit.page_items(out)] == ["p01"]
+    assert "hard case 14" in out.read_text(encoding="utf-8")
+    first = {"e01": {"verdict": "right", "note": ""}, "p01": {"verdict": "missing", "note": ""}}
+    again = {"p01": {"verdict": "complete", "note": ""}}
+    assert audit.merged(first, again)["p01"]["verdict"] == "complete"

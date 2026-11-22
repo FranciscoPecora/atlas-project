@@ -140,6 +140,10 @@ applies; these add what the two sources need.
   for that place.
 - Date: the night's date as written ("the night of 3 August" is 3 August), else the
   report date.
+- Evidence: the attack and the defence are stated more than once (headline, first
+  sentence, a longer quote). Label each once per report, quoting the body sentence that
+  states it, not the headline. (Added 2026-11-22, after the dev spot check, before any
+  test key.)
 
 **Russian MoD (RUMOD), one day of channel posts.** All of it is `ru_claimed` with
 `claim_source` = "Russian Ministry of Defence". Each post starts with a `## <url>` line;

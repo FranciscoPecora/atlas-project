@@ -158,13 +158,18 @@ def build_items(
 PAGE_TEXT = {
     "af": {
         "reports": "3 Ukrainian Air Force reports on overnight air attacks",
-        "date": "The date is the report's day (the night ends on it). You do not need to "
-        "check it.",
+        "date": "The date is the report's day (the night ends on it). You do not need to check it.",
         "extra": [
             "One event for the drones launched, one per missile kind, and one for those "
             "shot down. Launch areas (Bryansk, Kursk, Crimea) are not event places.",
             "A place is given only when an oblast or town is named; 'north, south and east "
             "of the country' is no place, and an empty place is correct then.",
+            "Hits 'at N locations' name no place and are not an extra event: those drones "
+            "are already counted in the attack (hard case 14). No box for them is correct.",
+            "A report states its attack more than once: in the headline, in a first sentence "
+            "and in a longer quote. The attack is labelled once per report. A headline or "
+            "repeat paragraph with no box is complete when the attack has a box elsewhere in "
+            "the report.",
         ],
     },
     "rumod": {
@@ -176,6 +181,13 @@ PAGE_TEXT = {
             "'Liberated' or 'took control of' a village is a territorial advance at that "
             "village. The evening digest repeats earlier posts: a claim counts once, at its "
             "first post, so a missing box in the digest is correct.",
+            "Air-defence totals over several regions ('over Belgorod, Bryansk, Kursk oblasts "
+            "and the Black Sea') are ONE event with the total and NO place: the number belongs "
+            "to all the regions together, and Russian regions are not on the map (hard case "
+            "16). An empty place is correct there.",
+            "A strike post can hold two events: strikes on energy or transport sites (an "
+            "infrastructure strike) and strikes on 'deployment points in N areas' (type other, "
+            "with the count N, hard case 11). You see one box; the other may exist.",
         ],
     },
 }
@@ -343,6 +355,31 @@ def build_page(
     )
 
 
+def page_items(path: Path) -> list[dict[str, Any]]:
+    """The items embedded in a built check page."""
+    html = path.read_text(encoding="utf-8")
+    m = re.search(r'id="items"[^>]*>(.*?)</script>', html, re.S)
+    if m is None:
+        raise ValueError(f"no items in {path}")
+    return json.loads(m.group(1).replace("<\\/", "</"))
+
+
+def recheck_page(split: str, source: str, ids: list[str]) -> Path:
+    """A page with only `ids` of a built round, under the page's current instructions.
+    Used when the first page left out a rule; both results are reported."""
+    items = [i for i in page_items(page_path(split, source)) if i["id"] in ids]
+    if sorted(i["id"] for i in items) != sorted(ids):
+        raise SystemExit(f"unknown ids: {sorted(set(ids) - {i['id'] for i in items})}")
+    out = page_path(split, source).with_name(f"{tag(source)}recheck_{split}.html")
+    out.write_text(render_page(items, TEMPLATE.read_text(encoding="utf-8"), source), "utf-8")
+    return out
+
+
+def merged(first: dict[str, dict[str, str]], again: dict[str, dict[str, str]]) -> dict:
+    """First answers with the rechecked items replaced."""
+    return {**first, **again}
+
+
 def build(cfg: dict[str, Any], source: str = "gsu") -> None:
     records = read_key(source=source)
     if not records:
@@ -351,8 +388,9 @@ def build(cfg: dict[str, Any], source: str = "gsu") -> None:
 
 
 def report(
-    cfg: dict[str, Any], answers_path: Path, split: str = "dev", source: str = "gsu"
-) -> None:
+    cfg: dict[str, Any], answers_path: Path, split: str = "dev", source: str = "gsu",
+    recheck_path: Path | None = None,
+) -> None:  # fmt: skip
     n = audit_round(cfg, split, source)
     sample = json.loads(sample_path(n, split, source).read_text(encoding="utf-8"))
     answers = clean_answers(json.loads(answers_path.read_text(encoding="utf-8")))
@@ -381,6 +419,16 @@ def report(
     for item_id, a in answers.items():
         if a["verdict"] in ("wrong", "missing", "unsure"):
             print(f"  {item_id}: {a['verdict']} {a['note']}")
+    if recheck_path is not None:
+        again = clean_answers(json.loads(recheck_path.read_text(encoding="utf-8")))
+        name = f"{tag(source)}{split}_answers_round{n}_recheck.json"
+        (AUDIT_DIR / name).write_text(json.dumps(again, ensure_ascii=False, indent=1), "utf-8")
+        print(f"after rechecking {len(again)} items under the full instructions:")
+        for kind, res in score(sample, merged(answers, again)).items():
+            ok = res["rate"] is not None and res["rate"] <= limit and not res["unanswered"]
+            print(f"{kind}: {res} -> {'OK' if ok else 'NOT ACCEPTED'} (limit {limit})")
+        for item_id, a in again.items():
+            print(f"  {item_id}: {answers[item_id]['verdict']} -> {a['verdict']} {a['note']}")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -392,12 +440,19 @@ def main(argv: list[str] | None = None) -> None:
     sc.add_argument("answers", type=Path)
     sc.add_argument("--split", choices=["dev", "test"], default="dev")
     sc.add_argument("--source", choices=["gsu", "af", "rumod"], default="gsu")
+    sc.add_argument("--recheck", type=Path, help="answers from the recheck page")
+    rc = sub.add_parser("recheck")
+    rc.add_argument("ids", help="comma-separated item ids, e.g. e01,p02")
+    rc.add_argument("--split", choices=["dev", "test"], default="dev")
+    rc.add_argument("--source", choices=["gsu", "af", "rumod"], default="gsu")
     args = ap.parse_args(argv)
     cfg = load_config()
     if args.cmd == "build":
         build(cfg, args.source)
+    elif args.cmd == "recheck":
+        print(recheck_page(args.split, args.source, args.ids.split(",")).relative_to(ROOT))
     else:
-        report(cfg, args.answers, args.split, args.source)
+        report(cfg, args.answers, args.split, args.source, args.recheck)
 
 
 if __name__ == "__main__":
