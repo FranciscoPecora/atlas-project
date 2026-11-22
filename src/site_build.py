@@ -114,6 +114,25 @@ def meta(frame: pl.DataFrame, kept: pl.DataFrame, built: datetime, cfg: dict[str
     }
 
 
+def air_nights(frame: pl.DataFrame) -> list[dict[str, Any]]:
+    """Per night of Air Force reports: drones launched and drones and missiles shot down.
+
+    The ledger has no field for "launched" versus "hit": both are drone strikes with a
+    count. The launch is the largest drone count of the night (hits are a part of it).
+    """
+    af = frame.filter((pl.col("source") == "af") & pl.col("quantity").is_not_null())
+    if af.height == 0:
+        return []
+    nights = af.group_by("event_date").agg(
+        pl.col("quantity").filter(pl.col("event_type") == "drone_strike").max().alias("drones"),
+        pl.col("quantity").filter(pl.col("event_type") == "missile_strike").sum().alias("missiles"),
+        pl.col("quantity").filter(pl.col("event_type") == "air_defence_interception").sum()
+        .alias("shot_down"),
+    ).sort("event_date")  # fmt: skip
+    return [{"d": r["event_date"].isoformat(), "drones": r["drones"], "missiles": r["missiles"],
+             "shot_down": r["shot_down"]} for r in nights.to_dicts()]  # fmt: skip
+
+
 def build(built: datetime | None = None, out: Path = SITE_DATA,
           public: Path = PUBLIC) -> dict[str, Any]:  # fmt: skip
     cfg = load_config()
@@ -124,6 +143,7 @@ def build(built: datetime | None = None, out: Path = SITE_DATA,
     out.mkdir(parents=True, exist_ok=True)
     (out / "events.geojson").write_text(json.dumps(geojson(kept), separators=(",", ":")))
     (out / "meta.json").write_text(json.dumps(info, indent=2) + "\n")
+    (out / "air.json").write_text(json.dumps(air_nights(kept), separators=(",", ":")))
     return info
 
 

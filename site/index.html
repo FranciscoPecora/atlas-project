@@ -92,6 +92,14 @@
     <canvas id="timeline"></canvas>
     <div class="row"><span id="t-range">All days</span><button id="t-reset">Reset</button></div>
 
+    <div id="air-panel" hidden>
+      <h2>Overnight air attacks (Ukrainian Air Force)</h2>
+      <canvas id="air" style="width:100%;height:110px;display:block;background:var(--bg);border:1px solid var(--line);border-radius:6px"></canvas>
+      <div class="row"><span><span class="swatch" style="display:inline-block;background:#a78bfa"></span> drones launched
+        <span class="swatch" style="display:inline-block;background:#34d399;margin-left:8px"></span> shot down</span></div>
+      <p class="sub" id="air-note" style="font-size:12px;margin-top:6px"></p>
+    </div>
+
     <h2>Claim and confirmation pairs</h2>
     <div class="note" id="pairs"></div>
 
@@ -226,6 +234,40 @@ document.getElementById("t-reset").addEventListener("click", () => {
   state.from = state.to = null; update();
 });
 window.addEventListener("resize", drawTimeline);
+
+// Nightly Air Force counts: these events name no place, so they are not on the map.
+let air = [];
+function drawAir() {
+  const c = document.getElementById("air");
+  if (!air.length || !c) return;
+  const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+  c.width = w * dpr; c.height = h * dpr;
+  const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
+  const max = Math.max(1, ...air.map((n) => Math.max(n.drones || 0, n.shot_down || 0)));
+  const bw = w / air.length;
+  air.forEach((n, i) => {
+    const bh = ((n.drones || 0) / max) * (h - 8);
+    ctx.fillStyle = "#a78bfa"; ctx.fillRect(i * bw, h - bh, Math.max(1, bw - 1), bh);
+  });
+  ctx.strokeStyle = "#34d399"; ctx.lineWidth = 1.5; ctx.beginPath();
+  air.forEach((n, i) => {
+    const x = i * bw + bw / 2, y = h - ((n.shot_down || 0) / max) * (h - 8);
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  });
+  ctx.stroke();
+}
+window.addEventListener("resize", drawAir);
+fetch("data/air.json").then((r) => (r.ok ? r.json() : [])).then((rows) => {
+  air = rows || [];
+  if (!air.length) return;
+  document.getElementById("air-panel").hidden = false;
+  const sum = (k) => air.reduce((t, n) => t + (n[k] || 0), 0);
+  document.getElementById("air-note").textContent =
+    `${air.length} nights, ${air[0].d} to ${air[air.length - 1].d}: ${sum("drones").toLocaleString()} drones ` +
+    `and ${sum("missiles").toLocaleString()} missiles launched, ${sum("shot_down").toLocaleString()} drones and ` +
+    `missiles shot down, as the Air Force reports. Not on the map: these reports name no places.`;
+  drawAir();
+}).catch(() => {});
 
 const map = new maplibregl.Map({
   container: "map",
