@@ -1,0 +1,122 @@
+{
+ "e01": {
+  "verdict": "right"
+ },
+ "e02": {
+  "verdict": "right"
+ },
+ "e03": {
+  "verdict": "wrong"
+ },
+ "e04": {
+  "verdict": "right"
+ },
+ "e05": {
+  "verdict": "right"
+ },
+ "e06": {
+  "verdict": "right"
+ },
+ "e07": {
+  "verdict": "unsure"
+ },
+ "e08": {
+  "verdict": "right"
+ },
+ "e09": {
+  "verdict": "right"
+ },
+ "e10": {
+  "verdict": "right"
+ },
+ "e11": {
+  "verdict": "right"
+ },
+ "e12": {
+  "verdict": "right"
+ },
+ "e13": {
+  "verdict": "right"
+ },
+ "e14": {
+  "verdict": "right"
+ },
+ "e15": {
+  "verdict": "right"
+ },
+ "e16": {
+  "verdict": "right"
+ },
+ "e17": {
+  "verdict": "right"
+ },
+ "e18": {
+  "verdict": "right"
+ },
+ "e19": {
+  "verdict": "right"
+ },
+ "e20": {
+  "verdict": "right"
+ },
+ "e21": {
+  "verdict": "right"
+ },
+ "e22": {
+  "verdict": "right"
+ },
+ "e23": {
+  "verdict": "right"
+ },
+ "e24": {
+  "verdict": "right"
+ },
+ "e25": {
+  "verdict": "right"
+ },
+ "e26": {
+  "verdict": "right"
+ },
+ "e27": {
+  "verdict": "right"
+ },
+ "e28": {
+  "verdict": "right"
+ },
+ "e29": {
+  "verdict": "right"
+ },
+ "e30": {
+  "verdict": "right"
+ },
+ "p01": {
+  "verdict": "complete"
+ },
+ "p02": {
+  "verdict": "complete"
+ },
+ "p03": {
+  "verdict": "complete"
+ },
+ "p04": {
+  "verdict": "complete"
+ },
+ "p05": {
+  "verdict": "complete"
+ },
+ "p06": {
+  "verdict": "complete"
+ },
+ "p07": {
+  "verdict": "complete"
+ },
+ "p08": {
+  "verdict": "complete"
+ },
+ "p09": {
+  "verdict": "complete"
+ },
+ "p10": {
+  "verdict": "complete"
+ }
+}
