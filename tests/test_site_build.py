@@ -73,14 +73,9 @@ def test_build_writes_geojson_and_meta(tmp_path):
     assert len(gj["features"]) == 1
 
 
-def test_air_nights_takes_the_largest_drone_count_as_the_launch():
-    def af(etype, qty, day="2026-08-01"):
-        r = row(0, "2026-08-01", day)
-        return {**r, "source": "af", "event_type": etype, "quantity": qty, "lat": None}
-
-    frame = pl.DataFrame([af("drone_strike", 80), af("drone_strike", 14),
-                          af("missile_strike", 2), af("air_defence_interception", 65),
-                          row(1, "2026-08-01", "2026-08-01")])  # fmt: skip
-    assert site_build.air_nights(frame) == [
-        {"d": "2026-08-01", "drones": 80, "missiles": 2, "shot_down": 65}]  # fmt: skip
-    assert site_build.air_nights(frame.filter(pl.col("source") == "gsu")) == []
+def test_air_series_reads_the_release_table(tmp_path):
+    path = tmp_path / "air_nights.csv"
+    path.write_text("night,drones_launched,shot_down\n2026-08-01,80,65\n")
+    assert site_build.air_series(path) == [{"night": "2026-08-01", "drones_launched": 80,
+                                            "shot_down": 65}]  # fmt: skip
+    assert site_build.air_series(tmp_path / "none.csv") == []

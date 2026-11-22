@@ -38,6 +38,24 @@ GAZETTEER = DATA / "gazetteer.parquet"
 PRIVATE_TEXT_FIELDS = ("evidence_quote", "location_text", "claim_source", "actor_text",
                        "target_text", "equipment", "units", "section")  # fmt: skip
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
+# Ukrainian national transliteration (KMU 2010), for gazetteer names with no Latin form.
+KMU = dict(
+    zip(
+        "абвгґдежзиіїйклмнопрстуфхцчшщьюяєё’'ыэъ",
+        ["a", "b", "v", "h", "g", "d", "e", "zh", "z", "y", "i", "i", "i", "k", "l", "m", "n",
+         "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "", "iu", "ia",
+         "ie", "e", "", "", "y", "e", ""],
+        strict=True,
+    )
+)  # fmt: skip
+
+
+def latin(name: str | None) -> str | None:
+    """A gazetteer name in Latin letters: as it is, or transliterated (KMU 2010)."""
+    if name is None or not CYRILLIC.search(name):
+        return name
+    out = "".join(KMU.get(ch.lower(), ch) for ch in name)
+    return out[:1].upper() + out[1:]
 
 
 class PublicEvent(BaseModel):
@@ -86,7 +104,11 @@ def public_frame(
     confirmations: pl.DataFrame,
 ) -> pl.DataFrame:
     """Join gazetteer names and link results onto the ledger, keep the public fields."""
-    places = gazetteer.select("gazetteer_id", pl.col("name").alias("place_name"), "oblast")
+    places = gazetteer.select(
+        "gazetteer_id",
+        pl.col("name").map_elements(latin, return_dtype=pl.String).alias("place_name"),
+        "oblast",
+    )
     dup = duplicates.select("event_id", "cluster_id", pl.col("cluster_size").cast(pl.Int64))
     conf = confirmations.select(
         pl.col("claim_id").alias("event_id"),
@@ -190,6 +212,36 @@ def write_release(frame: pl.DataFrame, folder: Path = RELEASE) -> list[Path]:
     return paths
 
 
+AIR = RELEASE / "air_nights.csv"
+HIT = "влучан"  # "hits by N drones at K locations" (hard case 14)
+
+
+def air_nights(ledger: pl.DataFrame) -> pl.DataFrame:
+    """Air Force numbers per night: drones and missiles launched and hit, and shot down.
+
+    Built from the private ledger, because only the evidence tells a hit from a launch;
+    the table holds numbers only. A count the extractor missed is missing here too."""
+    af = ledger.filter((pl.col("source") == "af") & pl.col("quantity").is_not_null())
+    hit = pl.col("evidence_quote").str.to_lowercase().str.contains(HIT)
+
+    def total(kind: str, hits: bool) -> pl.Expr:
+        cond = (pl.col("event_type") == kind) & (hit if hits else ~hit)
+        return pl.col("quantity").filter(cond).sum()
+
+    return (
+        af.group_by(pl.col("event_date").cast(pl.String).alias("night"))
+        .agg(
+            total("drone_strike", False).alias("drones_launched"),
+            total("missile_strike", False).alias("missiles_launched"),
+            total("drone_strike", True).alias("drones_hit"),
+            total("missile_strike", True).alias("missiles_hit"),
+            pl.col("quantity").filter(pl.col("event_type") == "air_defence_interception")
+            .sum().alias("shot_down"),
+        )
+        .sort("night")
+    )  # fmt: skip
+
+
 def build(folder: Path = RELEASE) -> tuple[pl.DataFrame, list[Path]]:
     ledger = pl.read_parquet(LEDGER)
     frame = public_frame(
@@ -200,7 +252,9 @@ def build(folder: Path = RELEASE) -> tuple[pl.DataFrame, list[Path]]:
     )
     check_public(frame, private_values(ledger))
     validate_rows(frame)
-    return frame, write_release(frame, folder)
+    air = folder / AIR.name
+    air_nights(ledger).write_csv(air)
+    return frame, write_release(frame, folder) + [air]
 
 
 def summary(frame: pl.DataFrame) -> str:

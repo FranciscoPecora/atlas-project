@@ -53,7 +53,7 @@
       "type": "string"
     },
     "source": {
-      "description": "gsu (Ukrainian General Staff via ArmyInform) or isw",
+      "description": "gsu (Ukrainian General Staff), af (Ukrainian Air Force), rumod (Russian Ministry of Defence Telegram channel) or isw",
       "title": "Source",
       "type": "string"
     },
@@ -260,7 +260,7 @@
       "type": "string"
     },
     "source_url": {
-      "description": "URL of the report",
+      "description": "URL of the report (rumod: of the channel post)",
       "title": "Source Url",
       "type": "string"
     },

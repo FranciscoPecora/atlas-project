@@ -85,3 +85,27 @@ def test_write_release_files(tmp_path):
 def test_summary_line():
     _, out = frame()
     assert release.summary(out).startswith("2 public events, 1 located")
+
+
+def test_latin_transliterates_only_cyrillic_names():
+    assert release.latin("Сумська") == "Sumska"
+    assert release.latin("Новоселівка") == "Novoselivka"
+    assert release.latin("Yasne") == "Yasne" and release.latin(None) is None
+
+
+def test_air_nights_tells_hits_from_launches():
+    def af(etype, qty, quote):
+        return ledger_row(0, source="af", event_type=etype, quantity=qty, evidence_quote=quote,
+                          event_date="2026-08-01")  # fmt: skip
+
+    ledger = pl.DataFrame([
+        af("drone_strike", 80, "противник атакував 80 ударними БПЛА"),
+        af("drone_strike", 14, "Зафіксовано влучання 14 ударних БПЛА"),
+        af("missile_strike", 2, "двома ракетами Іскандер-М"),
+        af("missile_strike", 1, "влучання ракети"),
+        af("air_defence_interception", 65, "збила 65"),
+        ledger_row(1),
+    ])  # fmt: skip
+    (row,) = release.air_nights(ledger).to_dicts()
+    assert row == {"night": "2026-08-01", "drones_launched": 80, "missiles_launched": 2,
+                   "drones_hit": 14, "missiles_hit": 1, "shot_down": 65}  # fmt: skip

@@ -11,7 +11,7 @@ URL. Rebuild the cleaned text with `make data` and check the hash to read it.
 | --- | --- | --- |
 | `event_id` | string | Stable id: report id, system, index in the report |
 | `report_id` | string | Source and report date, e.g. gsu-2026-08-01 |
-| `source` | string | gsu (Ukrainian General Staff via ArmyInform) or isw |
+| `source` | string | gsu (Ukrainian General Staff), af (Ukrainian Air Force), rumod (Russian Ministry of Defence Telegram channel) or isw |
 | `report_date` | date | Publication date of the report |
 | `event_date` | date | Date the event happened (default: report date - 1) |
 | `event_type` | EventType | One of 12 types (annotation guideline) |
@@ -32,14 +32,16 @@ URL. Rebuild the cleaned text with `make data` and check the hash to read it.
 | `evidence_start` | integer | Start offset of the evidence in the cleaned text |
 | `evidence_end` | integer | End offset (exclusive) |
 | `text_sha256` | string | SHA-256 of the cleaned report text the offsets index |
-| `source_url` | string | URL of the report |
+| `source_url` | string | URL of the report (rumod: of the channel post) |
 | `system` | string | Pipeline version that produced the row, e.g. S3-H |
 | `run_id` | string | Run that produced the row |
 
 ## Sources and licences
 
-- Reports: Ukrainian General Staff operational updates as republished by
-  ArmyInform (armyinform.com.ua), CC BY 4.0.
+- Reports: Ukrainian General Staff operational updates and Ukrainian Air Force
+  overnight reports as republished by ArmyInform (armyinform.com.ua), CC BY 4.0;
+  Russian Ministry of Defence posts on its public Telegram channel (t.me/mod_russia),
+  which states no licence: no text from it is published, only offsets and URLs.
 - Places: GeoNames (CC BY 4.0) and OpenStreetMap (ODbL), merged in
   `src/gazetteer.py`.
 - Rows are produced by a language-model pipeline and contain errors; see
