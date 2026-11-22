@@ -1,0 +1,74 @@
+{
+ "e01": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e02": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e03": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e04": {
+  "verdict": "right",
+  "note": ""
+ },
+ "e05": {
+  "verdict": "unsure",
+  "note": "a lot of places named, and the count of drones is 101"
+ },
+ "e06": {
+  "verdict": "unsure",
+  "note": "a lot of places named"
+ },
+ "e07": {
+  "verdict": "unsure",
+  "note": "a lot of places named"
+ },
+ "e08": {
+  "verdict": "right",
+  "note": ""
+ },
+ "p01": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p02": {
+  "verdict": "missing",
+  "note": "there should be an event"
+ },
+ "p03": {
+  "verdict": "missing",
+  "note": "there should be an event "
+ },
+ "p04": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p05": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p06": {
+  "verdict": "missing",
+  "note": "should be an event"
+ },
+ "p07": {
+  "verdict": "unsure",
+  "note": "it should be an event, but with no specified location"
+ },
+ "p08": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p09": {
+  "verdict": "complete",
+  "note": ""
+ },
+ "p10": {
+  "verdict": "complete",
+  "note": ""
+ }
+}
