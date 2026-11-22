@@ -203,7 +203,7 @@ ledger:
   # Run on the test reports only, so `make eval-test` can score every system.
   test_only_systems: [B2, S3-S]
   # Sources in the ledger. An A2 source runs only once its test key exists (A2).
-  sources: [gsu]
+  sources: [gsu, af, rumod]
 
 viina:
   # VIINA 2.0 (Zhukov and Ayers), Open Database License. One-event-per-place-per-day
