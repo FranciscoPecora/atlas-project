@@ -59,8 +59,7 @@ DROP_IF_UNSUPPORTED = ("event_type", "location_text", "epistemic_status", "event
 SOURCES = {
     "gsu": "Ukrainian General Staff, 08:00 operational update (the whole report is its claim)",
     "isw": "Institute for the Study of War, Russian Offensive Campaign Assessment",
-    "af": "Ukrainian Air Force, report on the overnight air attack (the whole report is its "
-    "claim)",
+    "af": "Ukrainian Air Force, report on the overnight air attack (the whole report is its claim)",
     "rumod": "Russian Ministry of Defence, Telegram channel posts of one day (every post is "
     "its claim)",
 }
