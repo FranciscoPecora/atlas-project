@@ -164,8 +164,9 @@ PAGE_TEXT = {
             "shot down. Launch areas (Bryansk, Kursk, Crimea) are not event places.",
             "A place is given only when an oblast or town is named; 'north, south and east "
             "of the country' is no place, and an empty place is correct then.",
-            "Hits 'at N locations' name no place and are not an extra event: those drones "
-            "are already counted in the attack (hard case 14). No box for them is correct.",
+            "Hits ('hits by 14 drones at 10 locations') are their own event: a drone strike "
+            "(or missile strike) with the number that hit and no place (hard case 14). "
+            "Falling debris is not an event.",
             "A report states its attack more than once: in the headline, in a first sentence "
             "and in a longer quote. The attack is labelled once per report. A headline or "
             "repeat paragraph with no box is complete when the attack has a box elsewhere in "
@@ -309,7 +310,7 @@ def page_path(split: str, source: str = "gsu") -> Path:
 def audit_round(cfg: dict[str, Any], split: str, source: str = "gsu") -> int:
     """GSU rounds come from config (A1); each A2 source has one round per split."""
     if source != "gsu":
-        return 1
+        return cfg["audit"].get("a2_rounds", {}).get(source, 1) if split == "dev" else 1
     return cfg["audit"]["round"] if split == "dev" else cfg["audit"]["test_round"]
 
 

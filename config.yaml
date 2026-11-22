@@ -133,6 +133,8 @@ audit:
   # leave a 95% interval up to 16.7%. Round 3 adds items that round 2 did not hold.
   round: 3
   test_round: 1
+  # Amendment A2 sources: dev round per source (AF round 1 was before hard case 14 changed).
+  a2_rounds: {af: 2}
   extra_rounds:
     3: {events: 100, paragraphs: 20, skip_rounds: [2]}
 

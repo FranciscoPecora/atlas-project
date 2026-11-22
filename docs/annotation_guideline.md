@@ -134,10 +134,11 @@ applies; these add what the two sources need.
   and give no event. Regions of hits or of interceptions are places only when an oblast
   or settlement is named (precision 3 for an oblast). "North, south and east of the
   country" is no place.
-- Hits: "hits of N drones at K locations" with no place is not an extra event (it is
-  part of the attack already counted). A hit with a named oblast or city is one
-  `drone_strike` or `missile_strike` there, with no `quantity` unless one is stated
-  for that place.
+- Hits: "hits of N drones (and M missiles) at K locations" is one `drone_strike` with
+  `quantity` N (and one `missile_strike` with M), actor RU, target UA, no place: the
+  launch says what was sent, the hits say how many got through. A hit with a named
+  oblast or city is one event there, with no `quantity` unless one is stated for that
+  place. Falling debris of downed drones is not an event.
 - Date: the night's date as written ("the night of 3 August" is 3 August), else the
   report date.
 - Evidence: the attack and the defence are stated more than once (headline, first
@@ -187,7 +188,7 @@ Fill after the pilot. For each: the sentence (paraphrased, no long quotes), the 
 | 11 | Ukrainian strikes on "areas of concentration" or "command posts" with a count but no place | One event per kind of target struck, type `other` when aviation, missiles and artillery are named together, actor UA, target RU, no location, with the count. Confirmed by the owner, 17 Nov 2026 | It is a distinct claimed event; it stays unmatched on location by design |
 | 12 | "In the area of", "towards", "near" a settlement | Precision 2 at the settlement (see 5). One event per settlement per paragraph per type | Same as hard case 4 |
 | 13 | A paragraph that opens with two directions and names no settlement ("On the North Slobozhanskyi and Kursk directions there was one clash, three air strikes, 66 shellings") | One event per kind for the two directions together: `location_text` is both directions as written, precision 2, with the count as `quantity`. Not one event per direction. Confirmed by the owner, 18 Nov 2026 | The count is stated for the pair. One event per direction would either lose the count (case 9) or count the same fighting twice |
-| 14 | AF: a total of hits "at K locations" with no place | Not an event; the attack event already counts the drones. Provisional, 19 Nov 2026 (A2) | Counting it would count the same drones twice |
+| 14 | AF: a total of hits "at K locations" with no place | One `drone_strike` (or `missile_strike`) with the number that hit as `quantity`, no place. Changed by the owner, 22 Nov 2026, before any AF test key (first ruling, 19 Nov: not an event) | The hits are a different fact from the launch: how many got through. Debris is not counted |
 | 15 | RUMOD: the evening digest repeats the day's earlier capture and interception posts | One event per claim per report, at its first mention. Provisional, 19 Nov 2026 (A2) | The digest restates; it is not a second claim |
 | 16 | RUMOD: interceptions over several Russian regions with one total | One event with the total and no place. Provisional, 19 Nov 2026 (A2) | Splitting would lose the count (case 9); the regions are outside the gazetteer |
 | 17 | AF: launch areas named ("from Bryansk, Kursk, Crimea") | Not event places, no event. Provisional, 19 Nov 2026 (A2) | They say where the attack came from, not where it happened |
