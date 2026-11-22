@@ -243,10 +243,10 @@ function drawAir() {
   const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
   c.width = w * dpr; c.height = h * dpr;
   const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
-  const max = Math.max(1, ...air.map((n) => Math.max(n.drones || 0, n.shot_down || 0)));
+  const max = Math.max(1, ...air.map((n) => Math.max(n.drones_launched || 0, n.shot_down || 0)));
   const bw = w / air.length;
   air.forEach((n, i) => {
-    const bh = ((n.drones || 0) / max) * (h - 8);
+    const bh = ((n.drones_launched || 0) / max) * (h - 8);
     ctx.fillStyle = "#a78bfa"; ctx.fillRect(i * bw, h - bh, Math.max(1, bw - 1), bh);
   });
   ctx.strokeStyle = "#34d399"; ctx.lineWidth = 1.5; ctx.beginPath();
@@ -263,9 +263,11 @@ fetch("data/air.json").then((r) => (r.ok ? r.json() : [])).then((rows) => {
   document.getElementById("air-panel").hidden = false;
   const sum = (k) => air.reduce((t, n) => t + (n[k] || 0), 0);
   document.getElementById("air-note").textContent =
-    `${air.length} nights, ${air[0].d} to ${air[air.length - 1].d}: ${sum("drones").toLocaleString()} drones ` +
-    `and ${sum("missiles").toLocaleString()} missiles launched, ${sum("shot_down").toLocaleString()} drones and ` +
-    `missiles shot down, as the Air Force reports. Not on the map: these reports name no places.`;
+    `${air.length} nights, ${air[0].night} to ${air[air.length - 1].night}, as the Air Force reports: ` +
+    `${sum("drones_launched").toLocaleString()} drones and ${sum("missiles_launched").toLocaleString()} missiles ` +
+    `launched, ${sum("shot_down").toLocaleString()} shot down, ${sum("drones_hit").toLocaleString()} drones and ` +
+    `${sum("missiles_hit").toLocaleString()} missiles hit. Counts the pipeline missed are missing here too. ` +
+    `Not on the map: these reports name almost no places.`;
   drawAir();
 }).catch(() => {});
 

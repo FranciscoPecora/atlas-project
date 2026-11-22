@@ -1,30 +1,38 @@
 {
-  "built_at": "2026-11-22T16:53+00:00",
+  "built_at": "2026-11-22T17:24+00:00",
   "delay_hours": 48,
   "cutoff_date": "2026-11-19",
   "first_report": "2026-07-19",
   "last_report": "2026-11-15",
-  "n_events": 4550,
-  "n_located": 4448,
+  "n_events": 5778,
+  "n_located": 4928,
   "n_withheld_delay": 0,
-  "n_reports": 108,
+  "n_reports": 332,
   "by_type": {
-    "ground_assault": 4103,
-    "shelling": 289,
-    "air_strike": 94,
-    "other": 62,
-    "missile_strike": 2
+    "ground_assault": 4141,
+    "air_defence_interception": 349,
+    "shelling": 312,
+    "drone_strike": 187,
+    "territorial_advance": 171,
+    "logistics_or_infrastructure_strike": 170,
+    "air_strike": 129,
+    "naval_event": 121,
+    "other": 111,
+    "missile_strike": 87
   },
   "by_status": {
-    "ua_claimed": 4550
+    "ua_claimed": 4912,
+    "ru_claimed": 866
   },
   "systems": [
     "S3-H"
   ],
   "n_pairs": 0,
-  "pairs_note": "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated confirmation of the same place. The ledger holds no claim of an advance. No source in the ledger reports geolocated confirmations, so there is nothing to pair them with yet. Confirmations need the ISW corpus, planned for a later version.",
+  "pairs_note": "Rule 7b pairs a Russian or Ukrainian claim of an advance with a later geolocated confirmation of the same place. The ledger holds 171 Russian claims of captured settlements. No source in the ledger reports geolocated confirmations, so there is nothing to pair them with yet. Confirmations need the ISW corpus, planned for a later version.",
   "by_source": {
-    "gsu": 4550
+    "gsu": 4550,
+    "rumod": 866,
+    "af": 362
   },
   "test_scores": {
     "B0": {
