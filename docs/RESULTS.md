@@ -58,6 +58,30 @@ Met: event F1 >= 0.80 for every system; cost below 0.10 EUR per report (S3-H 0.0
 
 Test-split limits: the General Staff test key is machine-made (amendment A1) and was made before hard case 13, so it may write two-direction paragraphs inconsistently; B0 shares the key's pre-fill rules; scores on these reports are high for every system, and the release says nothing yet about ISW text.
 
+## Version 1.1: Air Force and Russian MoD (test splits, scored once)
+
+SPEC amendment A2 ([spec_amendment_A2.md](spec_amendment_A2.md)) added two sources on 22 November 2026: the Ukrainian Air Force overnight reports (AF) and the Russian Ministry of Defence Telegram channel (RUMOD). Each has 15 gold reports on the General Staff dates (3 dev, 12 test), labelled by the reviewer model with no rule pre-fill and audited by the owner on a sample. Each test key was made once and frozen before any system ran on those reports, and each test split was scored once through `make eval-test SOURCE=af` and `SOURCE=rumod` (markers eval/test_run_af.json and eval/test_run_rumod.json). B0 and B1 are General Staff rules and are not run. Scores are per source and never pooled. Matching, intervals and seed are as above.
+
+**Key audits.** AF test: 0 of 30 events wrong (95% interval 0% to 11.4%), 0 of 10 paragraphs incomplete. RUMOD test: 1 of 29 judged events wrong (3.4%, 0.6% to 17.2%), 0 of 10 posts incomplete. Both dev keys failed their first audit because the check page left out guideline rules; after the page stated them, the owner rechecked the flagged items, and AF was re-reviewed after hard case 14 changed (hits are events). DECISIONS.md has every round.
+
+| System | AF, 54 events: P / R / F1 (95% interval) | RUMOD, 138 events: P / R / F1 (95% interval) | USD per report, AF / RUMOD |
+| --- | --- | --- | --- |
+| B2, one free-form prompt | 0.957 / 0.833 / **0.891** (0.814 to 0.956) | 0.808 / 0.761 / 0.784 (0.701 to 0.868) | 0.0005 / 0.0012 |
+| S1, schema-constrained extraction | 0.955 / 0.778 / 0.857 (0.787 to 0.931) | 0.865 / 0.833 / **0.849** (0.806 to 0.901) | 0.0005 / 0.0014 |
+| S2, S1 plus deterministic checks | 0.955 / 0.778 / 0.857 (0.787 to 0.931) | 0.865 / 0.833 / 0.849 (0.806 to 0.901) | 0.0005 / 0.0014 |
+| S3-H, shipped | 1.000 / 0.648 / 0.787 (0.731 to 0.846) | 0.901 / 0.594 / 0.716 (0.652 to 0.783) | 0.0011 / 0.0067 |
+| S3-S, Sonnet verifier | 1.000 / 0.667 / 0.800 (0.759 to 0.861) | 0.881 / 0.645 / 0.745 (0.693 to 0.802) | 0.0053 / 0.0173 |
+
+Quantity exact match: AF B2 1.000, S1 0.900, S3-H 0.852; RUMOD B2 0.966, S1 0.900, S3-H 0.769. Status accuracy is 1.000 everywhere and says little: each source has one status (AF `ua_claimed`, RUMOD `ru_claimed`).
+
+- **H1 fails on both new sources.** S3-H is below B2 on AF (-0.104) and below S1 on RUMOD (-0.133). The verifier raised precision (AF 0.955 to 1.000, RUMOD 0.865 to 0.901) and cut recall more: on RUMOD it dropped 40 of 133 records, all for the event type.
+- **The schema helps on varied text.** On RUMOD S1 beats B2 by 0.065, mostly in precision; on the General Staff B2 leads S1 by 0.006. The intervals overlap on both sources.
+- **S2 scores the same as S1** on both sources, to four decimals: the deterministic checks changed no matched or unmatched event.
+- **Dev (nothing tuned on it before the test runs):** AF, 12 events, F1 1.000 for S1, S2 and S3-H; RUMOD, 36 events, S1 0.789, S2 0.783, S3-H 0.621.
+- **Ledger:** AF 362 events from 102 nights (19 located), RUMOD 866 (461 located, 171 claimed captures). Rule 7b has 148 eligible Russian claims and 0 confirmations. A2 batch cost 1.18 USD.
+- **Exploratory, not pre-registered** (`uv run python -m src.cross_source`, public release only): of 166 located RUMOD capture claims, 77 have a General Staff assault within 5 km in the 30 days before (median 3 days) and 76 in the 30 days after. This says the feeds describe the same places in different terms, not who holds them.
+- **Limits:** small test sets (wide intervals); keys from the same model family as the systems; the owner reads neither language; two pipeline errors seen before the test runs were not fixed (12 AF events typed `other`, one oblast adjective geocoded to an OSM node).
+
 ## Dev results
 
 Dev split only: 3 General Staff reports, 175 gold events (2026-11-18, after hard case 13 was applied to the key; see below). Event F1 as in SPEC.md 5.1 at 10 km and 1 day; intervals resample whole reports. "Held-out" leaves out the report of 21 July, whose paragraphs are the worked examples in the extraction prompt (2 reports, 119 events).
