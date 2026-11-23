@@ -2,7 +2,8 @@
 
 The five worst error patterns of Claimline, found on the dev split (3 General Staff
 reports, 175 key events) and in the dev-period field audit, with the test-split
-aggregates beside them. Test errors are not inspected one by one: the test key is
+aggregates beside them. The Air Force (AF) and Russian MoD (RUMOD)
+sources added in version 1.1 have their own section at the end. Test errors are not inspected one by one: the test key is
 opened only by `eval/score.py`.
 
 Examples point into the cleaned report text by report, character offsets and source
@@ -113,3 +114,91 @@ alarm (pattern 1). F1 at
 - **Machine-made key.** Agreement between the systems and the General Staff key is
   easier than with a human key: same model family, same guideline (SPEC amendment A1).
   This raises every score in the test table; it is a limit, not a system error.
+
+## Version 1.1: Air Force and Russian MoD
+
+Found on the dev split (3 reports per source: AF 12 key events, RUMOD 36) and in the
+ledger; test errors are not inspected one by one. RUMOD examples point to the post
+that holds the offsets; the Russian MoD text states no licence and is never published.
+
+**Test-split aggregates (scored once, 2026-11-22).** Counts follow from the scorer's
+precision, recall and their n in eval/results.csv.
+
+| | AF B2 | AF S1 | AF S3-H | RUMOD B2 | RUMOD S1 | RUMOD S3-H |
+| --- | --- | --- | --- | --- | --- | --- |
+| Event F1 | 0.891 | 0.857 | 0.787 | 0.784 | 0.849 | 0.716 |
+| Missed key events | 9 of 54 | 12 of 54 | 19 of 54 | 33 of 138 | 23 of 138 | 56 of 138 |
+| False alarms | 2 | 2 | 0 | 25 | 18 | 9 |
+
+AF dev has no errors for any system (F1 1.000), so the AF patterns below come from the
+ledger. On RUMOD dev S1 has 8 misses and 7 false alarms; S3-H has 18 misses and 4 false
+alarms. The verifier dropped 11 of 33 records (8 for the event type, 3 for the date);
+on test it dropped 40 of 133.
+
+### 6. RUMOD list items quoted without their verb (verifier drops)
+
+- **What happens.** A strike post opens with one sentence ("struck the following
+  targets") and lists the targets below it, one line per port or ship. The extractor
+  quotes the line, which names the target but not the strike; the verifier then judges
+  the event type unsupported and drops the record. Of the 10 RUMOD dev events that S1
+  finds and S3-H misses, 8 are strikes on ports, ships and depots, most of them quoted
+  as list lines like the example below.
+- **Example.** `rumod-2026-07-29`, characters 2063 to 2105 and 2111 to 2181
+  (https://t.me/mod_russia/66085): a fuel tank in the port of Odesa and two cargo ships
+  in the port of Pivdennyi, each a line under one strike sentence.
+- **Cause.** The same as pattern 2 on General Staff text: one event per item, one
+  contiguous quote, and the verb is in another line.
+- **Fix.** Give the verifier the lead sentence of the post with each list item, or
+  let the quote run from the verb to the item when they are in one post.
+
+### 7. Informal posts typed differently by key and extractor
+
+- **What happens.** The channel mixes formal summaries with front-line slang: "our
+  birds catch up with the enemy" (drones), a verb made from the Geran drone's name,
+  "our drone pilots cleared the sky". The key and the systems disagree on the event
+  type, so each such post counts once as a miss and once as a false alarm.
+- **Example.** `rumod-2026-07-21`, characters 2632 to 2695
+  (https://t.me/mod_russia/65797): the key types it `drone_strike`, S1 `shelling`.
+- **Cause.** The guideline's verbs come from General Staff reports; section 8.4 does
+  not list RUMOD's slang.
+- **Fix.** A short list of RUMOD terms and their event types in section 8.4, decided
+  on dev.
+
+### 8. Repeat and recap posts counted again
+
+- **What happens.** The channel announces a capture, then posts "details of the
+  liberation" of the same places later. The repeat rule (guideline 8.4) labels an
+  event once per report, and the key leaves the recap out; S1 and S3-H both count it
+  as two more captures.
+- **Example.** `rumod-2026-07-29`, characters 3736 to 3811
+  (https://t.me/mod_russia/66094): details of the capture of two villages, one in
+  Donetsk and one in Kharkiv oblast.
+- **Cause.** The extractor sees each post on its own terms and has no rule against a
+  recap.
+- **Fix.** State the repeat rule in the extraction prompt for RUMOD, with this post as
+  the worked example; in the ledger, rule 7a already merges same-place repeats within 3
+  days.
+
+### 9. Directions and oblasts geocoded as places (AF and RUMOD)
+
+- **What happens.** "On the Kramatorsk and Krasnyi Lyman directions" is a sector, not
+  a place, but the key and the systems alike put it on Kramatorsk city, and S1 once
+  wrote both directions as one place, which geocodes to nothing. In AF reports, oblast names in
+  the regional form are matched to a village or to an OSM node of the same spelling:
+  "Kyiv region" lands on a village called Kyryivshchyna, and "Sumy region" on an
+  unlinked node named Sumska.
+- **Example.** `af-2026-07-30`, characters 301 to 353 and 367 to 490
+  (https://armyinform.com.ua/2026/07/30/osnovnyj-napryamok-udaru-%e2%80%94-kyyivshhyna-ta-lvivshhyna-syly-oborony-perehopyly-55-vorozhyh-raket-ta-265-bpla/):
+  the regions hit overnight, typed `other` and geocoded as places. 12 AF events are
+  typed `other` this way.
+- **Cause.** The geocoder's oblast words cover the General Staff's forms, not the
+  regional nouns the Air Force uses; the extractor has no event type for "regions
+  hit" and falls back to `other`.
+- **Fix.** Add the regional nouns to the oblast list at precision 3 (oblast), and a
+  guideline ruling that regions named as hit belong to the strike event, not to
+  separate events. The key has the same kind of error: on RUMOD dev the port of
+  Pivdennyi near Odesa is geocoded to an inland namesake.
+
+These four were seen before the test runs and not fixed, so that the test scores
+measure the system that was frozen.
+

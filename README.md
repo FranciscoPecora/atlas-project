@@ -13,6 +13,7 @@ I wrote the metrics and targets down before writing any pipeline code. I froze a
 - **The main hypothesis failed, on all three sources.** I expected verification layers to beat a single prompt by 0.08 F1. They did the opposite: on the General Staff one free-form prompt scored **0.962**, and on the two new sources the shipped pipeline again scored below plain schema extraction (Air Force 0.787 against 0.857, Russian MoD 0.716 against 0.849). The model verifier drops whole correct records: 40 of 133 on the Russian test reports.
 - **Where structure helps:** on the formulaic General Staff text the free-form prompt (B2) wins; on the varied Russian posts schema-constrained extraction (S1) beats it, 0.849 against 0.784.
 - **The confirmation question still cannot be answered.** The ledger now holds 148 Russian capture claims that rule 7b can follow, but none of the three sources reports independent geolocations, so there is nothing to pair them with. That needs ISW reports.
+- **The two sides describe the same places in different terms** (exploratory, not pre-registered). Of 166 Russian capture claims placed on the map, 77 had a General Staff assault reported within 5 km in the 30 days before (median 3 days), and 76 in the 30 days after: Ukraine kept reporting assaults it repelled at places Russia said it had taken. Assault reports do not say who holds a place, so this is a contrast between the feeds, not a verdict on either ([src/cross_source.py](src/cross_source.py)).
 - **Cost:** 1.6 US cents per General Staff report for the shipped pipeline at batch price, against a target of 10 euro cents; under 1 cent for the new sources.
 
 | System (test split, 12 reports, 621 events) | Precision | Recall | F1 (95% interval) | USD per report |
@@ -55,7 +56,7 @@ ArmyInform post ─► clean text ─► extract (Claude, schema output) ─► 
 
 ## What went wrong
 
-The five worst error patterns are in [FAILURES.md](FAILURES.md). The largest:
+The five worst General Staff error patterns, and four more for the Air Force and Russian MoD sources, are in [FAILURES.md](FAILURES.md). On the Russian posts the biggest loss is the verifier dropping strikes on ports and ships whose quote is a list line without its verb, the same fault as pattern 2 below. The largest General Staff patterns:
 
 1. **Wrong village with the same name.** About 1 in 6 places with a common name, such as Novoselivka, lands on the wrong village.
 2. **Quotes cut down to a bare place name.** The verifier then cannot see the verb and drops the record.
