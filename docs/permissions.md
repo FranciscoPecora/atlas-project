@@ -17,7 +17,7 @@ Access:
 - `www` redirects to `understandingwar.org`, which returns a Cloudflare 403 block to scripted requests (curl). Not bypassed.
 - Mirror `www.criticalthreats.org` serves a Cloudflare JavaScript challenge to scripted requests. Not usable for automated collection. Same policy applies (ISW & AEI Critical Threats Project section).
 
-Reply from ISW: _pending_ (no reply by 18 November 2026; follow-up drafted, to send on 23 November). Paste it here verbatim when it arrives, with the date.
+Reply from ISW: _pending_ (no reply by 26 November 2026, mailbox checked; the follow-up drafted on 18 November has not been sent). Paste it here verbatim when it arrives, with the date.
 
 ## ArmyInform (armyinform.com.ua), General Staff reports
 
