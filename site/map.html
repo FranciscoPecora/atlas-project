@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atlas map</title>
+<script>
+  // A refresh of the map goes back to the landing page; links straight to the map still open it.
+  try {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (nav && nav.type === "reload") location.replace("./");
+  } catch (e) {}
+</script>
 <meta name="description" content="Events extracted from Ukrainian and Russian official daily reports, with evidence offsets and claim status.">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
