@@ -3,360 +3,230 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claimline map</title>
-<meta name="description" content="Events extracted from Ukrainian and Russian official daily reports, with evidence offsets and claim status.">
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<title>Atlas</title>
+<meta name="description" content="Atlas turns Ukrainian and Russian official daily war reports into a ledger of claims, each tied to its evidence by character offsets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
   :root {
-    --bg: #0e1116; --panel: #151a21; --line: #262d38; --text: #d8dee6;
-    --muted: #8a94a3; --accent: #e8b04b; --link: #7fb2ff;
+    --bone: #e6dfcf;
+    --ink: #111;
+    --red: #b3261e;
+    --muted: rgba(17, 17, 17, .5);
+    --faint: rgba(17, 17, 17, .14);
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
-    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  a { color: var(--link); }
-  .app { display: grid; grid-template-columns: 340px 1fr; height: 100vh; }
-  aside { background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto;
-    padding: 16px; }
-  h1 { font-size: 20px; margin: 0 0 2px; letter-spacing: .2px; }
-  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
-    margin: 20px 0 8px; font-weight: 600; }
-  .sub { color: var(--muted); margin: 0 0 12px; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
-  .stat b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
-  .stat span { color: var(--muted); font-size: 12px; }
-  label.opt { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; }
-  label.opt.off { color: #4f5866; cursor: default; }
-  label.opt .n { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .swatch { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-  #timeline { width: 100%; height: 90px; display: block; cursor: crosshair;
-    background: var(--bg); border: 1px solid var(--line); border-radius: 6px; }
-  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px;
-    color: var(--muted); font-size: 12px; margin-top: 4px; }
-  button { background: transparent; color: var(--link); border: 1px solid var(--line);
-    border-radius: 4px; padding: 2px 8px; font: inherit; font-size: 12px; cursor: pointer; }
-  .note { background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
-    border-radius: 4px; padding: 8px 10px; color: var(--muted); font-size: 13px; }
-  .note b { color: var(--text); }
-  footer { color: var(--muted); font-size: 12px; margin-top: 20px; border-top: 1px solid var(--line);
-    padding-top: 12px; }
-  #map { height: 100%; }
-  .maplibregl-popup-content { background: var(--panel); color: var(--text);
-    border: 1px solid var(--line); max-height: 320px; overflow-y: auto; padding: 10px 12px;
-    font-size: 13px; }
-  .maplibregl-popup-tip { border-top-color: var(--panel) !important;
-    border-bottom-color: var(--panel) !important; }
-  .maplibregl-popup-close-button { color: var(--muted); }
-  .ev { border-top: 1px solid var(--line); padding: 6px 0; }
-  .ev:first-of-type { border-top: 0; }
-  .ev .k { color: var(--muted); }
-  .ev code { font-size: 11px; color: var(--muted); }
-  @media (max-width: 760px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: 55vh auto; height: auto; }
-    #map { height: 55vh; order: -1; }
-    aside { border-right: 0; border-top: 1px solid var(--line); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: var(--bone); color: var(--ink); overflow: hidden;
+    -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--mono); }
+  @media (pointer: fine) { body, a { cursor: none; } }
+
+  canvas#line { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; }
+
+  /* paper grain */
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 30;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.012) 2px 4px); }
+
+  .cursor { position: fixed; width: 6px; height: 6px; background: var(--red); border-radius: 50%;
+    pointer-events: none; z-index: 50; transform: translate(-50%, -50%); }
+  .cursor-ring { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(17,17,17,.3);
+    border-radius: 50%; pointer-events: none; z-index: 49; transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, border-color .2s; }
+  .cursor-ring.hot { width: 46px; height: 46px; border-color: var(--red); }
+  @media (pointer: coarse) { .cursor, .cursor-ring { display: none; } }
+
+  .bracket { position: fixed; width: 28px; height: 28px; border: 0 solid var(--faint); z-index: 20; }
+  .tl { top: 24px; left: 24px; border-width: 1px 0 0 1px; }
+  .tr { top: 24px; right: 24px; border-width: 1px 1px 0 0; }
+  .bl { bottom: 24px; left: 24px; border-width: 0 0 1px 1px; }
+  .br { bottom: 24px; right: 24px; border-width: 0 1px 1px 0; }
+
+  .label { position: fixed; left: 50%; transform: translateX(-50%); z-index: 20;
+    font-size: 9px; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; }
+  .classify { top: 24px; color: var(--muted); border: 1px solid var(--faint); padding: 3px 12px; }
+  .timestamp { bottom: 24px; color: rgba(17,17,17,.35); letter-spacing: .1em; }
+
+  .stage { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 44px; padding: 0 16px; text-align: center;
+    pointer-events: none; }
+  .anim .stage { animation: stageIn 1.4s cubic-bezier(.16,1,.3,1) both; }
+  .stage a { pointer-events: auto; }
+  @keyframes stageIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+
+  .anim .wordmark { animation: wordIn .9s .5s cubic-bezier(.16,1,.3,1) both; }
+  .wordmark h1 { font-family: "Times New Roman", Times, serif; font-weight: 700;
+    font-size: clamp(72px, 17vw, 200px); line-height: .9; letter-spacing: .06em; color: var(--ink);
+    padding-left: .06em; }
+  .wordmark p { font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--muted); margin-top: 18px; }
+  .wordmark p.by { font-size: 9px; letter-spacing: .18em; margin-top: 8px; color: rgba(17,17,17,.4); }
+  .wordmark p .r { color: var(--red); }
+  @keyframes wordIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .anim .actions { animation: wordIn .9s 1.2s cubic-bezier(.16,1,.3,1) both; }
+  .btn { display: inline-flex; align-items: center; gap: 12px; padding: 11px 30px;
+    border: 1px solid rgba(17,17,17,.25); color: var(--ink); background: rgba(230,223,207,.7);
+    font-family: var(--mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    text-decoration: none; transition: all .25s; }
+  .btn:hover, .btn:focus-visible { border-color: var(--red); color: var(--red);
+    background: rgba(179,38,30,.06); outline: none; }
+  .btn.ghost { border-color: transparent; color: var(--muted); background: transparent; }
+  .btn.ghost:hover, .btn.ghost:focus-visible { border-color: transparent; }
+  .arrow { transition: transform .25s; font-size: 14px; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  .figures { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;
+    font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .anim .figures { animation: wordIn .9s 1.6s cubic-bezier(.16,1,.3,1) both; }
+  .figures b { display: block; font-family: "Times New Roman", Times, serif; font-size: 22px;
+    letter-spacing: .02em; font-weight: 700; color: var(--ink); margin-bottom: 2px;
+    font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 520px) {
+    .bracket { display: none; }
+    .stage { gap: 32px; }
+    .figures { gap: 18px; }
   }
 </style>
 </head>
 <body>
-<div class="app">
-  <aside>
-    <h1>Claimline</h1>
-    <p class="sub">Events extracted from Ukrainian and Russian official daily reports by a
-      language-model pipeline, each tied to its evidence by character offsets. Every event
-      is a claim by the side that reported it.</p>
-    <div class="stats">
-      <div class="stat"><b id="s-events">–</b><span>events shown</span></div>
-      <div class="stat"><b id="s-reports">–</b><span>daily reports</span></div>
-      <div class="stat"><b id="s-f1">–</b><span>event F1, held-out test (General Staff)</span></div>
-      <div class="stat"><b id="s-range">–</b><span>report dates</span></div>
-    </div>
+<canvas id="line" aria-hidden="true"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+<div class="bracket tl"></div><div class="bracket tr"></div>
+<div class="bracket bl"></div><div class="bracket br"></div>
+<div class="label classify">OSINT · Open data · Claims, not facts</div>
+<div class="label timestamp" id="ts"></div>
 
-    <h2>Source</h2>
-    <div id="f-source"></div>
-
-    <h2>Claim status</h2>
-    <div id="f-status"></div>
-
-    <h2>Event type</h2>
-    <div id="f-type"></div>
-    <p class="note" style="margin-top:8px">The map shows where a report <b>names a place</b>
-      for each kind of event, not where it happens. The General Staff names villages for
-      ground assaults on every front, but gives air strikes and shelling only as totals for
-      the whole front, except on the northern border. So shelling appears only in the north,
-      although it happens everywhere.</p>
-
-    <h2>Timeline (drag to select days)</h2>
-    <canvas id="timeline"></canvas>
-    <div class="row"><span id="t-range">All days</span><button id="t-reset">Reset</button></div>
-
-    <div id="air-panel" hidden>
-      <h2>Overnight air attacks (Ukrainian Air Force)</h2>
-      <canvas id="air" style="width:100%;height:110px;display:block;background:var(--bg);border:1px solid var(--line);border-radius:6px"></canvas>
-      <div class="row"><span><span class="swatch" style="display:inline-block;background:#a78bfa"></span> drones launched
-        <span class="swatch" style="display:inline-block;background:#34d399;margin-left:8px"></span> shot down</span></div>
-      <p class="sub" id="air-note" style="font-size:12px;margin-top:6px"></p>
-    </div>
-
-    <h2>Claim and confirmation pairs</h2>
-    <div class="note" id="pairs"></div>
-
-    <footer>
-      <p id="delay"></p>
-      <p>Only located events are mapped; most sit at the village the report names, some at
-        the town that names a direction. Rows contain errors: about 1 in 6 places with a
-        common name is put at the wrong namesake village. The map shows what the reports
-        claim, not what happened.</p>
-      <p>Report text: General Staff and Air Force via <a href="https://armyinform.com.ua/">ArmyInform</a>,
-        CC BY 4.0. Russian Ministry of Defence: public Telegram channel; no text from it is
-        shown. Places: GeoNames (CC BY 4.0), OpenStreetMap (ODbL).
-        <a href="https://github.com/FranciscoPecora/claimline">Code, method and limits</a> ·
-        <a href="https://github.com/FranciscoPecora/claimline/blob/main/release/DATA_DICTIONARY.md">Data dictionary</a></p>
-    </footer>
-  </aside>
-  <div id="map"></div>
-</div>
+<main class="stage">
+  <div class="wordmark">
+    <h1>Atlas</h1>
+    <p>A ledger of battlefield <span class="r">claims</span></p>
+    <p class="by">Francisco Pecora</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="map.html"><span>Open the map</span><span class="arrow">→</span></a>
+    <a class="btn ghost" href="https://github.com/FranciscoPecora/claimline"><span>Method and results</span></a>
+  </div>
+  <div class="figures" id="figures" hidden>
+    <div><b id="f-events">–</b>events</div>
+    <div><b id="f-reports">–</b>daily reports</div>
+    <div><b>3</b>official sources</div>
+  </div>
+</main>
 
 <script>
-const TYPES = {
-  ground_assault: ["Ground assault", "#e8b04b"],
-  territorial_advance: ["Territorial advance", "#ff6b6b"],
-  withdrawal: ["Withdrawal", "#ff9f80"],
-  missile_strike: ["Missile strike", "#c084fc"],
-  drone_strike: ["Drone strike", "#a78bfa"],
-  air_strike: ["Air strike", "#60a5fa"],
-  shelling: ["Shelling", "#f472b6"],
-  air_defence_interception: ["Air-defence interception", "#34d399"],
-  force_movement: ["Force movement", "#2dd4bf"],
-  logistics_or_infrastructure_strike: ["Logistics or infrastructure strike", "#fbbf24"],
-  naval_event: ["Naval event", "#38bdf8"],
-  other: ["Other", "#9ca3af"],
-};
-const STATUSES = {
-  ua_claimed: "Claimed by Ukraine",
-  ru_claimed: "Claimed by Russia",
-  third_party_claimed: "Claimed by a third party",
-  geolocated_confirmed: "Geolocated, confirmed",
-  analyst_assessed: "Analyst assessment",
-};
-const SOURCES = {
-  gsu: "Ukrainian General Staff",
-  af: "Ukrainian Air Force",
-  rumod: "Russian Ministry of Defence",
-};
-const PRECISION = {1: "settlement", 2: "area or direction", 3: "oblast"};
-const state = { source: new Set(), status: new Set(), type: new Set(), from: null, to: null };
-let events = [], days = [];
-
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-
-function checkboxes(el, entries, counts, set) {
-  el.innerHTML = "";
-  for (const [key, label, color] of entries) {
-    const n = counts[key] || 0;
-    const row = document.createElement("label");
-    row.className = "opt" + (n ? "" : " off");
-    row.innerHTML = `<input type="checkbox" ${n ? "checked" : "disabled"}>` +
-      (color ? `<span class="swatch" style="background:${color}"></span>` : "") +
-      `<span>${esc(label)}</span><span class="n">${n.toLocaleString()}</span>`;
-    if (n) set.add(key);
-    row.querySelector("input").addEventListener("change", (e) => {
-      e.target.checked ? set.add(key) : set.delete(key);
-      update();
-    });
-    el.appendChild(row);
-  }
-}
-
-function filterExpr() {
-  const f = ["all",
-    ["in", ["get", "x"], ["literal", [...state.source]]],
-    ["in", ["get", "s"], ["literal", [...state.status]]],
-    ["in", ["get", "t"], ["literal", [...state.type]]]];
-  if (state.from) f.push([">=", ["get", "r"], state.from], ["<=", ["get", "r"], state.to]);
-  return f;
-}
-
-function visible() {
-  return events.filter((e) => state.source.has(e.x) && state.status.has(e.s) && state.type.has(e.t) &&
-    (!state.from || (e.r >= state.from && e.r <= state.to)));
-}
-
-function update() {
-  if (map.getLayer("events")) map.setFilter("events", filterExpr());
-  const shown = visible();
-  document.getElementById("s-events").textContent = shown.length.toLocaleString();
-  document.getElementById("t-range").textContent =
-    state.from ? `${state.from} to ${state.to}` : "All days";
-  drawTimeline();
-}
-
-// Timeline: events per report day for the current status and type filters.
-const canvas = document.getElementById("timeline");
-let drag = null;
-function drawTimeline() {
-  const dpr = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth, h = canvas.clientHeight;
-  canvas.width = w * dpr; canvas.height = h * dpr;
+(() => {
+  const canvas = document.getElementById("line");
   const ctx = canvas.getContext("2d");
-  ctx.scale(dpr, dpr);
-  const counts = new Map(days.map((d) => [d, 0]));
-  for (const e of events) {
-    if (state.source.has(e.x) && state.status.has(e.s) && state.type.has(e.t)) counts.set(e.r, (counts.get(e.r) || 0) + 1);
+  const cursor = document.getElementById("cursor");
+  const ring = document.getElementById("ring");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const RED = getComputedStyle(document.documentElement).getPropertyValue("--red").trim();
+
+  let W = 0, H = 0, dpr = 1;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  const max = Math.max(1, ...counts.values());
-  const bw = w / Math.max(1, days.length);
-  days.forEach((d, i) => {
-    const inRange = !state.from || (d >= state.from && d <= state.to);
-    ctx.fillStyle = inRange ? "#e8b04b" : "#3a414d";
-    const bh = (counts.get(d) / max) * (h - 8);
-    ctx.fillRect(i * bw, h - bh, Math.max(1, bw - 1), bh);
-  });
-}
-function dayAt(x) {
-  const r = canvas.getBoundingClientRect();
-  const i = Math.floor(((x - r.left) / r.width) * days.length);
-  return days[Math.min(days.length - 1, Math.max(0, i))];
-}
-canvas.addEventListener("pointerdown", (e) => {
-  drag = dayAt(e.clientX); state.from = state.to = drag; canvas.setPointerCapture(e.pointerId); update();
-});
-canvas.addEventListener("pointermove", (e) => {
-  if (!drag) return;
-  const d = dayAt(e.clientX);
-  [state.from, state.to] = d < drag ? [d, drag] : [drag, d];
-  update();
-});
-canvas.addEventListener("pointerup", () => { drag = null; });
-document.getElementById("t-reset").addEventListener("click", () => {
-  state.from = state.to = null; update();
-});
-window.addEventListener("resize", drawTimeline);
+  resize();
+  addEventListener("resize", resize);
 
-// Nightly Air Force counts: these events name no place, so they are not on the map.
-let air = [];
-function drawAir() {
-  const c = document.getElementById("air");
-  if (!air.length || !c) return;
-  const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
-  c.width = w * dpr; c.height = h * dpr;
-  const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
-  const max = Math.max(1, ...air.map((n) => Math.max(n.drones_launched || 0, n.shot_down || 0)));
-  const bw = w / air.length;
-  air.forEach((n, i) => {
-    const bh = ((n.drones_launched || 0) / max) * (h - 8);
-    ctx.fillStyle = "#a78bfa"; ctx.fillRect(i * bw, h - bh, Math.max(1, bw - 1), bh);
-  });
-  ctx.strokeStyle = "#34d399"; ctx.lineWidth = 1.5; ctx.beginPath();
-  air.forEach((n, i) => {
-    const x = i * bw + bw / 2, y = h - ((n.shot_down || 0) / max) * (h - 8);
-    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-  });
-  ctx.stroke();
-}
-window.addEventListener("resize", drawAir);
-fetch("data/air.json").then((r) => (r.ok ? r.json() : [])).then((rows) => {
-  air = rows || [];
-  if (!air.length) return;
-  document.getElementById("air-panel").hidden = false;
-  const sum = (k) => air.reduce((t, n) => t + (n[k] || 0), 0);
-  document.getElementById("air-note").textContent =
-    `${air.length} nights, ${air[0].night} to ${air[air.length - 1].night}, as the Air Force reports: ` +
-    `${sum("drones_launched").toLocaleString()} drones and ${sum("missiles_launched").toLocaleString()} missiles ` +
-    `launched, ${sum("shot_down").toLocaleString()} shot down, ${sum("drones_hit").toLocaleString()} drones and ` +
-    `${sum("missiles_hit").toLocaleString()} missiles hit. Counts the pipeline missed are missing here too. ` +
-    `Not on the map: these reports name almost no places.`;
-  drawAir();
-}).catch(() => {});
+  // The line is a rope: the head eases towards the pointer, every other node keeps a
+  // fixed distance from the one before it, so the body trails behind like a drawn front line.
+  const N = 90, SEG = 7, GAP = 8;
+  const nodes = Array.from({ length: N }, (_, i) => ({ x: W * 0.15 - i * SEG, y: H * 0.62 }));
+  let tx = W / 2, ty = H / 2, rx = tx, ry = ty, lastMove = -1e9, t = 0;
 
-const map = new maplibregl.Map({
-  container: "map",
-  style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-  center: [36.5, 48.4], zoom: 6, attributionControl: { compact: true },
-});
-map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
-
-function popupHtml(features) {
-  const items = features.slice(0, 25).map((f) => {
-    const p = f.properties;
-    const [label] = TYPES[p.t] || [p.t];
-    const qty = p.q != null && p.q !== "null" ? ` · ${p.q}` : "";
-    return `<div class="ev"><b>${esc(label)}</b>${esc(qty)} · ${esc(STATUSES[p.s] || p.s)}<br>
-      <span class="k">Source</span> ${esc(SOURCES[p.x] || p.x)}<br>
-      <span class="k">Place</span> ${esc(p.p)}${p.o ? ", " + esc(p.o) : ""} (${esc(PRECISION[p.g] || "unknown precision")})<br>
-      <span class="k">Event</span> ${esc(p.d)} · <span class="k">report</span> ${esc(p.r)}<br>
-      <span class="k">Evidence</span> characters ${esc(p.es)}–${esc(p.ee)} of the
-      <a href="${esc(p.u)}" target="_blank" rel="noopener">report</a><br>
-      <code>${esc(p.id)} · cluster ${esc(p.c)} (${esc(p.n)})</code></div>`;
+  addEventListener("pointermove", e => {
+    tx = e.clientX; ty = e.clientY; lastMove = performance.now();
+    cursor.style.left = tx + "px"; cursor.style.top = ty + "px";
   });
-  const more = features.length > 25 ? `<p class="k">and ${features.length - 25} more here</p>` : "";
-  return items.join("") + more;
-}
+  document.querySelectorAll("a").forEach(a => {
+    a.addEventListener("pointerenter", () => ring.classList.add("hot"));
+    a.addEventListener("pointerleave", () => ring.classList.remove("hot"));
+  });
 
-const mapReady = new Promise((ok) => map.once("load", ok));
-Promise.all([
-  fetch("data/meta.json").then((r) => r.json()),
-  fetch("data/events.geojson").then((r) => r.json()),
-]).then(([meta, gj]) => {
-  events = gj.features.map((f) => f.properties);
-  days = [];
-  for (let d = new Date(meta.first_report); d <= new Date(meta.last_report); d.setUTCDate(d.getUTCDate() + 1)) {
-    days.push(d.toISOString().slice(0, 10));
+  function step() {
+    t += 0.008;
+    // With no pointer for two seconds, the head wanders on a slow figure of eight.
+    if (performance.now() - lastMove > 2000) {
+      tx = W / 2 + Math.sin(t) * W * 0.34;
+      ty = H / 2 + Math.sin(t * 2) * H * 0.22;
+    }
+    const head = nodes[0];
+    head.x += (tx - head.x) * 0.14;
+    head.y += (ty - head.y) * 0.14;
+    for (let i = 1; i < N; i++) {
+      const a = nodes[i - 1], b = nodes[i];
+      const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+      if (d > SEG) { b.x = a.x + dx / d * SEG; b.y = a.y + dy / d * SEG; }
+    }
   }
-  const by = (key) => events.reduce((m, e) => (m[e[key]] = (m[e[key]] || 0) + 1, m), {});
-  checkboxes(document.getElementById("f-source"), Object.entries(SOURCES).map(([k, v]) => [k, v]), by("x"), state.source);
-  checkboxes(document.getElementById("f-status"), Object.entries(STATUSES).map(([k, v]) => [k, v]), by("s"), state.status);
-  const typeEntries = Object.entries(TYPES).map(([k, [l, c]]) => [k, l, c])
-    .sort((a, b) => (by("t")[b[0]] || 0) - (by("t")[a[0]] || 0));
-  checkboxes(document.getElementById("f-type"), typeEntries, by("t"), state.type);
 
-  const f1 = (meta.test_scores || {})[meta.systems[0]];
-  document.getElementById("s-f1").textContent = f1 ? f1.event_f1.toFixed(2) : "–";
-  document.getElementById("s-f1").title = f1 ?
-    `${meta.systems[0]}: 95% interval ${f1.event_f1_low.toFixed(3)} to ${f1.event_f1_high.toFixed(3)}` : "";
-  document.getElementById("s-reports").textContent = meta.n_reports;
-  const short = (d) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
-  document.getElementById("s-range").textContent = `${short(meta.first_report)} – ${short(meta.last_report)}`;
-  document.getElementById("pairs").innerHTML = `<b>${meta.n_pairs} pairs.</b> ${esc(meta.pairs_note)}`;
-  document.getElementById("delay").textContent =
-    `Built ${meta.built_at.replace("T", " ")} UTC. Nothing dated within ${meta.delay_hours} hours ` +
-    `of the build is shown (${meta.n_withheld_delay} events withheld); latest day shown ${meta.last_report}. ` +
-    `${meta.n_events - meta.n_located} events have no map location.`;
-  update();
-  return mapReady.then(() => addLayer(gj));
-}).catch((err) => {
-  document.getElementById("pairs").textContent = "Could not load the data: " + err;
-});
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = RED;
+    // Walk the polyline and drop a dot every GAP pixels, fading towards the tail.
+    let carry = 0, k = 0;
+    const total = (N - 1) * SEG;
+    for (let i = 1; i < N; i++) {
+      const a = nodes[i - 1], b = nodes[i];
+      const len = Math.hypot(b.x - a.x, b.y - a.y);
+      for (let s = carry; s < len; s += GAP) {
+        const f = s / (len || 1), along = (k * GAP) / total;
+        ctx.globalAlpha = Math.max(0, 1 - along * 0.85);
+        ctx.beginPath();
+        ctx.arc(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f, 2.1 - along * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+        k++;
+      }
+      carry = (carry - len) % GAP; if (carry < 0) carry += GAP;
+    }
+    ctx.globalAlpha = 1;
+  }
 
-function addLayer(gj) {
-  const colors = ["match", ["get", "t"]];
-  for (const [k, [, c]] of Object.entries(TYPES)) colors.push(k, c);
-  colors.push("#9ca3af");
-  map.addSource("events", { type: "geojson", data: gj });
-  map.addLayer({
-    id: "events", type: "circle", source: "events",
-    paint: {
-      "circle-color": colors,
-      "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 2.5, 9, 6, 12, 9],
-      "circle-opacity": 0.55,
-      "circle-stroke-color": "#0e1116", "circle-stroke-width": 0.5,
-    },
-  });
-  map.on("click", "events", (e) => {
-    new maplibregl.Popup({ maxWidth: "360px" }).setLngLat(e.lngLat)
-      .setHTML(popupHtml(e.features)).addTo(map);
-  });
-  map.on("mouseenter", "events", () => { map.getCanvas().style.cursor = "pointer"; });
-  map.on("mouseleave", "events", () => { map.getCanvas().style.cursor = ""; });
-  const xs = gj.features.map((f) => f.geometry.coordinates[0]).sort((a, b) => a - b);
-  const ys = gj.features.map((f) => f.geometry.coordinates[1]).sort((a, b) => a - b);
-  const q = (a, p) => a[Math.floor(p * (a.length - 1))];  // trim outliers: 1st to 99th percentile
-  if (xs.length) map.fitBounds([[q(xs, .01), q(ys, .01)], [q(xs, .99), q(ys, .99)]], { padding: 40, duration: 0 });
-  update();
-}
+  function frame() {
+    step(); draw();
+    rx += (tx - rx) * 0.12; ry += (ty - ry) * 0.12;
+    ring.style.left = rx + "px"; ring.style.top = ry + "px";
+    requestAnimationFrame(frame);
+  }
+
+  if (still) {
+    // Settle the rope along a gentle curve and draw it once.
+    nodes.forEach((n, i) => { n.x = W * 0.12 + i * SEG * 1.0; n.y = H * 0.7 + Math.sin(i / 9) * 18; });
+    draw();
+    addEventListener("resize", draw);
+  } else {
+    // Entrance animations start only once frames run, so the text is never stuck hidden.
+    requestAnimationFrame(() => {
+      document.documentElement.classList.add("anim");
+      requestAnimationFrame(frame);
+    });
+    // By 3 s every entrance has finished; dropping the class then changes nothing on
+    // screen, and shows the text anyway where animations were paused.
+    setTimeout(() => document.documentElement.classList.remove("anim"), 3000);
+  }
+
+  const ts = document.getElementById("ts");
+  const tick = () => { ts.textContent = new Date().toUTCString().replace("GMT", "UTC"); };
+  tick(); setInterval(tick, 1000);
+
+  // Headline numbers come from the same meta.json the map reads.
+  fetch("data/meta.json").then(r => r.ok ? r.json() : null).then(m => {
+    if (!m) return;
+    const fmt = n => n.toLocaleString("en-GB");
+    document.getElementById("f-events").textContent = fmt(m.n_events);
+    document.getElementById("f-reports").textContent = fmt(m.n_reports);
+    document.getElementById("figures").hidden = false;
+  }).catch(() => {});
+})();
 </script>
 </body>
 </html>
