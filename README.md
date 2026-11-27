@@ -2,7 +2,7 @@
 
 Atlas turns daily war reports into a ledger of events. Each record keeps who made the claim, the exact passage it rests on (stored as character offsets, not text), and whether anyone later confirmed it.
 
-**[Website](https://franciscopecora.github.io/claimline/)** · [Live map](https://franciscopecora.github.io/claimline/map.html) · [Public data](release/DATA_DICTIONARY.md) · [Failure analysis](FAILURES.md) · [Detailed results](docs/RESULTS.md) · [Pre-registered spec](SPEC.md)
+**[Website](https://franciscopecora.github.io/atlas-project/)** · [Live map](https://franciscopecora.github.io/atlas-project/map.html) · [Public data](release/DATA_DICTIONARY.md) · [Failure analysis](FAILURES.md) · [Detailed results](docs/RESULTS.md) · [Pre-registered spec](SPEC.md)
 
 ## Result
 

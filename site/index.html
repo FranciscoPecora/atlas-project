@@ -7,20 +7,20 @@
 <meta name="description" content="Atlas turns Ukrainian and Russian official daily war reports into a ledger of claims, each tied to its evidence by character offsets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap">
 <style>
   :root {
     --bone: #e6dfcf;
     --ink: #111;
     --red: #b3261e;
-    --muted: rgba(17, 17, 17, .5);
-    --faint: rgba(17, 17, 17, .14);
+    --muted: rgba(17, 17, 17, .72);
+    --faint: rgba(17, 17, 17, .45);
     --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; background: var(--bone); color: var(--ink); overflow: hidden;
     -webkit-font-smoothing: antialiased; }
-  body { font-family: var(--mono); }
+  body { font-family: var(--mono); font-weight: 600; }
   @media (pointer: fine) { body, a { cursor: none; } }
 
   canvas#line { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; }
@@ -29,24 +29,24 @@
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 30;
     background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.012) 2px 4px); }
 
-  .cursor { position: fixed; width: 6px; height: 6px; background: var(--red); border-radius: 50%;
+  .cursor { position: fixed; width: 8px; height: 8px; background: var(--red); border-radius: 50%;
     pointer-events: none; z-index: 50; transform: translate(-50%, -50%); }
-  .cursor-ring { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(17,17,17,.3);
+  .cursor-ring { position: fixed; width: 30px; height: 30px; border: 2px solid rgba(17,17,17,.5);
     border-radius: 50%; pointer-events: none; z-index: 49; transform: translate(-50%, -50%);
     transition: width .2s, height .2s, border-color .2s; }
   .cursor-ring.hot { width: 46px; height: 46px; border-color: var(--red); }
   @media (pointer: coarse) { .cursor, .cursor-ring { display: none; } }
 
   .bracket { position: fixed; width: 28px; height: 28px; border: 0 solid var(--faint); z-index: 20; }
-  .tl { top: 24px; left: 24px; border-width: 1px 0 0 1px; }
-  .tr { top: 24px; right: 24px; border-width: 1px 1px 0 0; }
-  .bl { bottom: 24px; left: 24px; border-width: 0 0 1px 1px; }
-  .br { bottom: 24px; right: 24px; border-width: 0 1px 1px 0; }
+  .tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
+  .tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
+  .bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
+  .br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
 
   .label { position: fixed; left: 50%; transform: translateX(-50%); z-index: 20;
-    font-size: 9px; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; }
-  .classify { top: 24px; color: var(--muted); border: 1px solid var(--faint); padding: 3px 12px; }
-  .timestamp { bottom: 24px; color: rgba(17,17,17,.35); letter-spacing: .1em; }
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; }
+  .classify { top: 24px; color: var(--muted); border: 2px solid var(--faint); padding: 4px 14px; }
+  .timestamp { bottom: 24px; color: rgba(17,17,17,.6); letter-spacing: .1em; }
 
   .stage { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 44px; padding: 0 16px; text-align: center;
@@ -59,27 +59,27 @@
   .wordmark h1 { font-family: "Times New Roman", Times, serif; font-weight: 700;
     font-size: clamp(72px, 17vw, 200px); line-height: .9; letter-spacing: .06em; color: var(--ink);
     padding-left: .06em; }
-  .wordmark p { font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+  .wordmark p { font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
     color: var(--muted); margin-top: 18px; }
-  .wordmark p.by { font-size: 9px; letter-spacing: .18em; margin-top: 8px; color: rgba(17,17,17,.4); }
+  .wordmark p.by { font-size: 10px; letter-spacing: .18em; margin-top: 10px; color: rgba(17,17,17,.6); }
   .wordmark p .r { color: var(--red); }
   @keyframes wordIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
   .anim .actions { animation: wordIn .9s 1.2s cubic-bezier(.16,1,.3,1) both; }
-  .btn { display: inline-flex; align-items: center; gap: 12px; padding: 11px 30px;
-    border: 1px solid rgba(17,17,17,.25); color: var(--ink); background: rgba(230,223,207,.7);
-    font-family: var(--mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+  .btn { display: inline-flex; align-items: center; gap: 12px; padding: 13px 32px;
+    border: 2px solid var(--ink); color: var(--ink); background: rgba(230,223,207,.7);
+    font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
     text-decoration: none; transition: all .25s; }
   .btn:hover, .btn:focus-visible { border-color: var(--red); color: var(--red);
     background: rgba(179,38,30,.06); outline: none; }
   .btn.ghost { border-color: transparent; color: var(--muted); background: transparent; }
   .btn.ghost:hover, .btn.ghost:focus-visible { border-color: transparent; }
-  .arrow { transition: transform .25s; font-size: 14px; }
+  .arrow { transition: transform .25s; font-size: 15px; }
   .btn:hover .arrow { transform: translateX(4px); }
 
   .figures { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;
-    font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
   .anim .figures { animation: wordIn .9s 1.6s cubic-bezier(.16,1,.3,1) both; }
   .figures b { display: block; font-family: "Times New Roman", Times, serif; font-size: 22px;
     letter-spacing: .02em; font-weight: 700; color: var(--ink); margin-bottom: 2px;
@@ -109,7 +109,7 @@
   </div>
   <div class="actions">
     <a class="btn" href="map.html"><span>Open the map</span><span class="arrow">→</span></a>
-    <a class="btn ghost" href="https://github.com/FranciscoPecora/claimline"><span>Method and results</span></a>
+    <a class="btn ghost" href="https://github.com/FranciscoPecora/atlas-project"><span>Method and results</span></a>
   </div>
   <div class="figures" id="figures" hidden>
     <div><b id="f-events">–</b>events</div>
