@@ -130,7 +130,7 @@ def main(argv: list[str] | None = None) -> None:
     cfg = load_config()
 
     def scorer() -> None:
-        os.environ["CLAIMLINE_EVAL_TEST"] = "1"
+        os.environ["ATLAS_EVAL_TEST"] = "1"
         score.main(["--split", "test", "--source", source])
 
     marker = marker_path(source)

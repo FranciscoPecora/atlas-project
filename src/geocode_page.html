@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claimline place check</title>
+<title>Atlas place check</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -61,7 +61,7 @@
 <script id="items" type="application/json">/*ITEMS*/[]</script>
 <script>
 const ITEMS = JSON.parse(document.getElementById("items").textContent);
-const KEY = "claimline-places-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const KEY = "atlas-places-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
 const LETTERS = "ABCDEFGHIJKL";
 let answers = {};
 let pos = -1;
@@ -87,7 +87,7 @@ function pick(value) { answers[ITEMS[pos].id] = value; keep(); draw(); setTimeou
 function firstOpen() { const i = ITEMS.findIndex(it => !answers[it.id]); return i < 0 ? ITEMS.length : i; }
 function intro() {
   return [
-    el("h1", {}, "Claimline place check"),
+    el("h1", {}, "Atlas place check"),
     el("p", {}, "Many Ukrainian villages share a name. For " + ITEMS.length +
       " places you pick which one the report means. You do not need to know the area: the report itself gives the clue."),
     el("div", { class: "card" },
@@ -175,14 +175,14 @@ function screen() {
 }
 function save() {
   const blob = new Blob([JSON.stringify({ version: 1, kind: "places", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-places-answers.json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "atlas-places-answers.json" });
   document.body.append(a); a.click(); a.remove();
 }
 function done() {
   const left = ITEMS.filter(i => !answers[i.id]).length;
   return [
     el("h1", {}, left ? left + " places have no answer yet" : "All " + ITEMS.length + " places answered"),
-    el("p", {}, "Click Save. A file named claimline-places-answers.json goes to your Downloads folder. Then tell Claude: places done."),
+    el("p", {}, "Click Save. A file named atlas-places-answers.json goes to your Downloads folder. Then tell Claude: places done."),
     el("div", { class: "buttons" },
       el("button", { class: "btn plain", onclick: () => go(left ? firstOpen() : ITEMS.length - 1) }, left ? "Answer the rest" : "← Back"),
       el("button", { class: "btn main", onclick: save }, "Save answers"))

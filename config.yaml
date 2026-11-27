@@ -1,4 +1,4 @@
-# Claimline configuration. Every eval run logs these values and their hash.
+# Atlas configuration. Every eval run logs these values and their hash.
 # Model IDs, effort and thresholds live here only. No model ID in code.
 
 corpus:

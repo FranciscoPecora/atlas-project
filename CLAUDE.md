@@ -1,4 +1,4 @@
-# Claimline
+# Atlas
 
 Battlefield report extractor. Turns ISW and Ukrainian General Staff daily reports
 into a ledger of events with claim source, evidence offsets and confirmation status.

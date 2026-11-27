@@ -10,7 +10,7 @@ Fair Use and Attribution Policy (https://understandingwar.org/fair-use-and-attri
 
 > Any modification, commercial exploitation, redistribution, or incorporation of ISW Materials into other datasets, mapping platforms, analytic products or systems requires prior written permission from ISW.
 
-The Claimline ledger and map fall under "incorporation into other datasets, mapping platforms". Section 3 also forbids redistribution "in bulk, via API, or through automated means". Required attribution: "Source: Institute for the Study of War".
+The Atlas ledger and map fall under "incorporation into other datasets, mapping platforms". Section 3 also forbids redistribution "in bulk, via API, or through automated means". Required attribution: "Source: Institute for the Study of War".
 
 Access:
 - `www.understandingwar.org/robots.txt`: generic agents allowed outside `/wp-json/`, `/wp-admin/`, `/cdn-cgi/`. AI crawlers (GPTBot, ClaudeBot, CCBot, PerplexityBot, Bytespider) get `Crawl-delay: 600`.
@@ -27,4 +27,4 @@ Site footer: content is licensed under Creative Commons Attribution 4.0 Internat
 
 robots.txt: all agents allowed except `/wp-admin/`, `/wp-json/`, `/wp-login.php`, `/wp-register.php`, `*/embed`, `/cgi-bin`, `*?s=`. Sitemap at `/sitemap.xml`. The collector must not use the WordPress REST API (`/wp-json/`).
 
-Obligation for Claimline: every published record from this source carries its `source_url`, and the README credits ArmyInform with a link.
+Obligation for Atlas: every published record from this source carries its `source_url`, and the README credits ArmyInform with a link.

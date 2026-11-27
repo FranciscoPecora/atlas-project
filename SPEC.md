@@ -1,4 +1,4 @@
-# Claimline SPEC
+# Atlas SPEC
 
 Frozen 16 November 2026, before any pipeline code. Metric definitions and numeric targets in this file do not change after this commit. If one turns out to be wrong, the change goes in a new dated section at the end ("Amendments") with the reason, and the original text stays.
 
@@ -288,7 +288,7 @@ by `eval/score.py`.
 ## Appendix A. Schema (normative)
 
 ```python
-"""Claimline event schema. Normative copy lives in SPEC.md section 2."""
+"""Atlas event schema. Normative copy lives in SPEC.md section 2."""
 
 from __future__ import annotations
 

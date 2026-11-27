@@ -1,8 +1,8 @@
-# Claimline
+# Atlas
 
-Claimline turns daily war reports into a ledger of events. Each record keeps who made the claim, the exact passage it rests on (stored as character offsets, not text), and whether anyone later confirmed it.
+Atlas turns daily war reports into a ledger of events. Each record keeps who made the claim, the exact passage it rests on (stored as character offsets, not text), and whether anyone later confirmed it.
 
-**[Live map](https://franciscopecora.github.io/claimline/)** · [Public data](release/DATA_DICTIONARY.md) · [Failure analysis](FAILURES.md) · [Detailed results](docs/RESULTS.md) · [Pre-registered spec](SPEC.md)
+**[Website](https://franciscopecora.github.io/claimline/)** · [Live map](https://franciscopecora.github.io/claimline/map.html) · [Public data](release/DATA_DICTIONARY.md) · [Failure analysis](FAILURES.md) · [Detailed results](docs/RESULTS.md) · [Pre-registered spec](SPEC.md)
 
 ## Result
 
@@ -38,7 +38,7 @@ An event counts as found when the type matches, the place is within 10 km and th
 
 ## Why this matters
 
-Open-source analysts read the same daily reports by hand and copy them into spreadsheets, and in that step the line between "Russia says", "Ukraine says" and "seen on video" tends to blur. Claimline keeps that line in every record (`epistemic_status`), and it points to the evidence by character offsets and a hash. Anyone can therefore check a record against the original without the dataset republishing the text.
+Open-source analysts read the same daily reports by hand and copy them into spreadsheets, and in that step the line between "Russia says", "Ukraine says" and "seen on video" tends to blur. Atlas keeps that line in every record (`epistemic_status`), and it points to the evidence by character offsets and a hash. Anyone can therefore check a record against the original without the dataset republishing the text.
 
 ## How it works
 
@@ -93,7 +93,7 @@ make all
 ```
 
 - `make data` collects and cleans the reports (slow, network). Building the gazetteer needs GeoNames `UA.txt` in `data/raw/gazetteer/` (see `src/gazetteer.py`).
-- `make all` runs lint, the tests (320), the dev-split scores and the site data.
+- `make all` runs lint, the tests (323), the dev-split scores and the site data.
 - Without the private saved model runs, the scorer scores the two baselines and says which systems it skipped.
 - `make fresh-clone` repeats `make all` in a clean clone that holds only the dev reports and the gazetteer.
 - The paid steps are `make ledger` (the full corpus through the Batches API: about 1.7 USD for the General Staff, 1.2 USD for the two new sources) and `make eval-test SOURCE=gsu|af|rumod`, which refuses to run a second time for a source.

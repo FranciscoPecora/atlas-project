@@ -5,7 +5,7 @@
 # is copied (no saved model runs, no ledger), so model systems are skipped by the scorer.
 set -euo pipefail
 repo="$(git rev-parse --show-toplevel)"
-dest="${1:-$(mktemp -d)}/claimline"
+dest="${1:-$(mktemp -d)}/atlas"
 git clone --quiet --no-hardlinks "$repo" "$dest"
 git -C "$dest" checkout --quiet "$(git -C "$repo" rev-parse HEAD)"
 for f in "$repo"/eval/gold/dev/*.jsonl; do

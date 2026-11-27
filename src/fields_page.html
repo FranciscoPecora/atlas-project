@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claimline field check</title>
+<title>Atlas field check</title>
 <style>
   :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
           --good:#1f7a4d; --bad:#b3372e; --mid:#8a6d1a; --accent:#27457a; --mark:#fff1a8; }
@@ -56,7 +56,7 @@
 <script id="items" type="application/json">/*ITEMS*/[]</script>
 <script>
 const ITEMS = JSON.parse(document.getElementById("items").textContent);
-const KEY = "claimline-fields-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const KEY = "atlas-fields-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
 const TYPES = {
   ground_assault: "Ground attack", territorial_advance: "Advance (ground taken)",
   withdrawal: "Withdrawal", missile_strike: "Missile strike", drone_strike: "Drone strike",
@@ -118,7 +118,7 @@ function answer(unsure) {
 function toggle(field) { pending.has(field) ? pending.delete(field) : pending.add(field); draw(); }
 function intro() {
   return [
-    el("h1", {}, "Claimline field check"),
+    el("h1", {}, "Atlas field check"),
     el("p", {}, "A program read " + ITEMS.length + " short quotes from Ukrainian General Staff reports and filled in a record for each event. " +
       "You check one thing: does the quote say what the record says?"),
     el("div", { class: "card" },
@@ -167,7 +167,7 @@ function screen() {
 }
 function save() {
   const blob = new Blob([JSON.stringify({ version: 1, kind: "fields", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-fields-answers.json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "atlas-fields-answers.json" });
   document.body.append(a); a.click(); a.remove();
 }
 function done() {
@@ -176,7 +176,7 @@ function done() {
   return [
     el("h1", {}, left ? left + " records have no answer yet" : "All " + ITEMS.length + " records answered"),
     el("p", {}, flagged + " records have at least one line marked not supported."),
-    el("p", {}, "Click Save. A file named claimline-fields-answers.json goes to your Downloads folder. Then tell Claude: fields done."),
+    el("p", {}, "Click Save. A file named atlas-fields-answers.json goes to your Downloads folder. Then tell Claude: fields done."),
     el("div", { class: "buttons" },
       el("button", { class: "plain", onclick: () => go(left ? firstOpen() : ITEMS.length - 1) }, left ? "Answer the rest" : "← Back"),
       el("button", { class: "main", onclick: save }, "Save answers"))

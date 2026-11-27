@@ -1,6 +1,6 @@
 # Failures
 
-The five worst error patterns of Claimline, found on the dev split (3 General Staff
+The five worst error patterns of Atlas, found on the dev split (3 General Staff
 reports, 175 key events) and in the dev-period field audit, with the test-split
 aggregates beside them. The Air Force (AF) and Russian MoD (RUMOD)
 sources added in version 1.1 have their own section at the end. Test errors are not inspected one by one: the test key is

@@ -72,7 +72,7 @@ def test_accuracy_over_matched_pairs():
 
 
 def test_load_gold_refuses_test_split_outside_make_eval_test(tmp_path, monkeypatch):
-    monkeypatch.delenv("CLAIMLINE_EVAL_TEST", raising=False)
+    monkeypatch.delenv("ATLAS_EVAL_TEST", raising=False)
     with pytest.raises(PermissionError):
         load_gold("test", tmp_path)
     (tmp_path / "dev").mkdir()

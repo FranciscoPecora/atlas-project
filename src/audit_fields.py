@@ -18,7 +18,7 @@ the same limit amendment A1 states for the key audit.
 data/audit/fields_sample.csv holds quotes and stays local (git-ignored). The
 annotator marks it on a local page (`make mark-fields`): one record per screen,
 each field as a plain sentence; click the lines the quote does not support, Enter
-for the next. The page saves claimline-fields-answers.json to Downloads; `score`
+for the next. The page saves atlas-fields-answers.json to Downloads; `score`
 copies it (ids, field names, unsure flags: no text) to eval/audit/ to commit.
 """
 
@@ -43,7 +43,7 @@ LOCAL = DATA / "audit" / "fields_sample.csv"
 ANSWERS_JSON = ROOT / "eval" / "audit" / "fields_answers.json"
 PAGE = DATA / "audit" / "fields_check.html"
 TEMPLATE = Path(__file__).with_name("fields_page.html")
-DOWNLOADS = Path.home() / "Downloads" / "claimline-fields-answers.json"
+DOWNLOADS = Path.home() / "Downloads" / "atlas-fields-answers.json"
 VALUE_COLUMNS = list(JUDGED)
 MARK_COLUMNS = ["checked", "unsupported_fields"]
 

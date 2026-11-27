@@ -1,9 +1,9 @@
-# Claimline build plan (Claude Code edition)
+# Atlas build plan (Claude Code edition)
 
 **Project 1 of 3. Build window: 16 November to 27 December 2026, with 28 December to 3 January as buffer.**
-Revised 16 November 2026. This file replaces the Claimline section and kickoff prompt of the original three-project plan.
+Revised 16 November 2026. This file replaces the Atlas section and kickoff prompt of the original three-project plan.
 
-Claimline turns daily war reporting into a queryable ledger of events in which every record keeps who claimed it, the exact words it rests on, and whether it was later confirmed.
+Atlas turns daily war reporting into a queryable ledger of events in which every record keeps who claimed it, the exact words it rests on, and whether it was later confirmed.
 
 ## How to use this file
 
@@ -264,7 +264,7 @@ On Windows, work inside WSL. `make` and the shell commands in this plan assume a
 ### Create the repo
 
 ```bash
-mkdir claimline && cd claimline
+mkdir atlas && cd atlas
 git init
 uv init --python 3.12
 mkdir -p src eval notebooks site .claude/skills/quiz .claude/skills/milestone
@@ -404,7 +404,7 @@ eval/gold/test/    test labels, Claude Code may NOT read (deny rule)
 Save this as `CLAUDE.md` in the repo root.
 
 ````markdown
-# Claimline
+# Atlas
 
 Battlefield report extractor. Turns ISW and Ukrainian General Staff daily reports
 into a ledger of events with claim source, evidence offsets and confirmation status.
@@ -458,7 +458,7 @@ Paste one prompt per fresh session. Each ends with a "Done when" list that `/mil
 ### Milestone 1, week 1 (16 to 22 November): spec, guideline, collector
 
 ```text
-Milestone 1 of Claimline. Read PLAN.md sections 1 to 6. There is no SPEC.md yet.
+Milestone 1 of Atlas. Read PLAN.md sections 1 to 6. There is no SPEC.md yet.
 
 Propose a plan first, then do this in order:
 
@@ -498,7 +498,7 @@ Your own work this week, outside Claude Code: send the ISW permission email, rea
 ### Milestone 2, week 2 (23 to 29 November): gold set, gazetteer, B0 and B1
 
 ```text
-Milestone 2 of Claimline. Read SPEC.md and PLAN.md sections 4 and 5.
+Milestone 2 of Atlas. Read SPEC.md and PLAN.md sections 4 and 5.
 Do not read anything under eval/gold/test/.
 
 Propose a plan first, then:
@@ -531,7 +531,7 @@ Your own work this week: finish labelling. Lock the test labels (commit them, no
 ### Milestone 3, week 3 (30 November to 6 December): B2, S1, S2
 
 ```text
-Milestone 3 of Claimline. Read SPEC.md and PLAN.md section 5, including the Claude
+Milestone 3 of Atlas. Read SPEC.md and PLAN.md section 5, including the Claude
 API settings. Do not read anything under eval/gold/test/.
 
 Propose a plan first, then:
@@ -561,7 +561,7 @@ Done when:
 ### Milestone 4, week 4 (7 to 13 December): verifier, geocoder, units
 
 ```text
-Milestone 4 of Claimline. Read SPEC.md and PLAN.md section 5.
+Milestone 4 of Atlas. Read SPEC.md and PLAN.md section 5.
 Do not read anything under eval/gold/test/.
 
 Propose a plan first, then:
@@ -592,7 +592,7 @@ Done when:
 ### Milestone 5, week 5 (14 to 20 December): linking, the finding, the test run
 
 ```text
-Milestone 5 of Claimline. Read SPEC.md and PLAN.md sections 5 and 6.
+Milestone 5 of Atlas. Read SPEC.md and PLAN.md sections 5 and 6.
 Do not read anything under eval/gold/test/.
 
 Propose a plan first, then:
@@ -627,7 +627,7 @@ Done when:
 ### Milestone 6, week 6 (21 to 27 December): site, finding, release
 
 ```text
-Milestone 6 of Claimline. Read PLAN.md sections 7 and 8.
+Milestone 6 of Atlas. Read PLAN.md sections 7 and 8.
 
 Propose a plan first, then:
 

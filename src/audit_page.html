@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claimline spot check</title>
+<title>Atlas spot check</title>
 <style>
   :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
           --good:#1f7a4d; --bad:#b3372e; --mid:#8a6d1a; --accent:#27457a; }
@@ -49,7 +49,7 @@
 const ITEMS = JSON.parse(document.getElementById("items").textContent);
 const PAGE = Object.assign({ reports: "3 Ukrainian reports",
   date: "The date is always the day before the report. You do not need to check it." }, /*PAGE*/{});
-const KEY = "claimline-audit-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const KEY = "atlas-audit-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
 const TYPES = {
   ground_assault: "Ground attack", territorial_advance: "Advance (ground taken)",
   withdrawal: "Withdrawal", missile_strike: "Missile strike", drone_strike: "Drone strike",
@@ -96,7 +96,7 @@ function choice(item, verdict, text, cls) {
 }
 function intro() {
   return [
-    el("h1", {}, "Claimline spot check"),
+    el("h1", {}, "Atlas spot check"),
     el("p", {}, "A program built the answer key for " + PAGE.reports + ". You check a random sample: " +
       ITEMS.filter(i => i.kind === "event").length + " single events and " +
       ITEMS.filter(i => i.kind === "paragraph").length + " whole paragraphs. About " + Math.ceil(ITEMS.length * 0.3) + " to " + Math.ceil(ITEMS.length * 0.45) + " minutes. You can stop at any time and continue later."),
@@ -151,14 +151,14 @@ function question(item) {
 }
 function save() {
   const blob = new Blob([JSON.stringify({ version: 1, saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-audit-answers.json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "atlas-audit-answers.json" });
   document.body.append(a); a.click(); a.remove();
 }
 function done() {
   const left = ITEMS.filter(i => !answers[i.id]).length;
   return [
     el("h1", {}, left ? left + " items have no answer" : "All " + ITEMS.length + " items answered"),
-    el("p", {}, "Click the button. A file named claimline-audit-answers.json is saved to your Downloads folder. Then tell Claude: audit done."),
+    el("p", {}, "Click the button. A file named atlas-audit-answers.json is saved to your Downloads folder. Then tell Claude: audit done."),
     el("div", { class: "buttons" },
       el("button", { class: "plain", onclick: () => { pos = ITEMS.length - 1; keep(); draw(); } }, "← Back"),
       el("button", { class: "main", onclick: save }, "Save answers"))

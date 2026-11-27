@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claimline hand labelling</title>
+<title>Atlas hand labelling</title>
 <style>
   :root { --bg:#f6f5f1; --card:#fff; --ink:#1c1c1a; --soft:#6a6a64; --line:#dcdad2;
           --good:#1f7a4d; --bad:#b3372e; --accent:#27457a; --pick:#e4ebf7; --mark:#fff1b8; }
@@ -57,7 +57,7 @@
 <script id="items" type="application/json">/*ITEMS*/[]</script>
 <script>
 const ITEMS = JSON.parse(document.getElementById("items").textContent);
-const KEY = "claimline-handlabel-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
+const KEY = "atlas-handlabel-" + ITEMS.length + "-" + document.getElementById("items").textContent.length;
 const MAX_SECONDS = 180;
 // [value, button text, shortcut key or "", when to use it]
 const TYPES = [
@@ -169,7 +169,7 @@ function english(item) {
 function intro() {
   const done = ITEMS.filter(i => (answers[i.id] || {}).done).length;
   return [
-    el("h1", {}, "Claimline hand labelling"),
+    el("h1", {}, "Atlas hand labelling"),
     el("p", {}, "You read " + ITEMS.length + " paragraphs of " + new Set(ITEMS.map(i => i.report_id)).size +
       " Ukrainian General Staff reports in English and record every battlefield event yourself. " +
       "No program has filled anything in. About " + Math.ceil(ITEMS.length * 1.2) + " to " + Math.ceil(ITEMS.length * 2) +
@@ -262,7 +262,7 @@ function question(item) {
 function save() {
   leave(); keep();
   const blob = new Blob([JSON.stringify({ version: 1, kind: "handlabel", saved: new Date().toISOString(), answers }, null, 1)], { type: "application/json" });
-  const a = el("a", { href: URL.createObjectURL(blob), download: "claimline-handlabel-answers.json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "atlas-handlabel-answers.json" });
   document.body.append(a); a.click(); a.remove();
 }
 function done() {
@@ -270,7 +270,7 @@ function done() {
   const events = ITEMS.reduce((n, i) => n + ((answers[i.id] || {}).events || []).length, 0);
   return [
     el("h1", {}, left ? left + " paragraphs are not marked done" : "All " + ITEMS.length + " paragraphs done"),
-    el("p", {}, "You recorded " + events + " events. Click the button: a file named claimline-handlabel-answers.json is saved to your Downloads folder. Then tell Claude: labels done."),
+    el("p", {}, "You recorded " + events + " events. Click the button: a file named atlas-handlabel-answers.json is saved to your Downloads folder. Then tell Claude: labels done."),
     el("div", { class: "grid" },
       el("button", { onclick: () => go(left ? ITEMS.findIndex(i => !(answers[i.id] || {}).done) : ITEMS.length - 1, false) }, left ? "Go to the first one" : "← Back"),
       el("button", { class: "main", onclick: save }, "Save answers"))

@@ -1,4 +1,4 @@
-"""Claimline event schema. Normative copy lives in SPEC.md section 2."""
+"""Atlas event schema. Normative copy lives in SPEC.md section 2."""
 
 from __future__ import annotations
 

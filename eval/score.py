@@ -175,7 +175,7 @@ def accuracy(matches: list[tuple[Event, Event]], field: str, only_gold_set: bool
 def load_gold(split: str, gold_dir: Path | None = None, source: str = "gsu") -> list[Event]:
     """Gold events of one source's split (never pooled across sources, amendment A2).
     The test split opens only under `make eval-test`."""
-    if split == "test" and os.environ.get("CLAIMLINE_EVAL_TEST") != "1":
+    if split == "test" and os.environ.get("ATLAS_EVAL_TEST") != "1":
         raise PermissionError("the test split is scored only through `make eval-test`")
     folder = (gold_dir or ROOT / "eval" / "gold") / split
     events: list[Event] = []

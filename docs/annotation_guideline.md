@@ -1,4 +1,4 @@
-# Claimline annotation guideline
+# Atlas annotation guideline
 
 Version 0.1, draft of 16 November 2026. Revised once after the 5-section pilot (version 1.0). SPEC.md wins if this guideline disagrees with it.
 

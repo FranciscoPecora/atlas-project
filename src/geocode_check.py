@@ -49,7 +49,7 @@ LOCAL = DATA / "audit" / "geocode_check.csv"
 ANSWERS_JSON = ROOT / "eval" / "audit" / "geocode_check_answers.json"  # ids and picks only
 PAGE = DATA / "audit" / "places_check.html"
 TEMPLATE = Path(__file__).with_name("geocode_page.html")
-DOWNLOADS = Path.home() / "Downloads" / "claimline-places-answers.json"
+DOWNLOADS = Path.home() / "Downloads" / "atlas-places-answers.json"
 MAX_ROWS = 12
 LETTERS = string.ascii_uppercase
 
